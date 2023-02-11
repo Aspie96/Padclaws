@@ -119,12 +119,14 @@ async function demoEvent() {
 	return event;
 }
 
-const sockets = relays.map((relay) => new WebSocket(relay));
+const sockets = relays.map(relay => new WebSocket(relay));
 
 function sendToSockets(sockets, message) {
 	message = JSON.stringify(message);
 	const requests = sockets.map(socket => {
-		socket.send(message);
+		if(socket.readyState == WebSocket.OPEN) {
+			socket.send(message);
+		}
 	});
 	return requests;
 }
@@ -145,7 +147,11 @@ function createSubscription(sockets, filters, callback, subId) {
 	subId ||= generateSubId();
 	const message = ["REQ", subId, filters];
 	sendToSockets(sockets, message);
-	subscriptions[subId] = callback;
+	subscriptions[subId] = event => {
+		if(testEvent(filters, event)) {
+			callback(event);
+		}
+	};
 	return subId;
 }
 
@@ -159,6 +165,26 @@ function getEventById(sockets, id) {
 	});
 }
 
+function testEvent(filters, event) {
+	var test = true;
+	if("ids" in filters) {
+		test &&= filters.ids.includes(event.id);
+	}
+	if("authors" in filters) {
+		test &&= filters.authors.includes(event.pubkey);
+	}
+	if("kinds" in filters) {
+		test &&= filters.kinds.includes(event.kind);
+	}
+	if("since" in filters) {
+		test &&= event.created_at > filters.since;
+	}
+	if("until" in filters) {
+		test &&= event.created_at < filters.since;
+	}
+	return test;
+}
+
 function getFeed(sockets, callback, authors, since, subId) {
 	if(typeof authors == "string") {
 		authors = [authors];
@@ -169,7 +195,7 @@ function getFeed(sockets, callback, authors, since, subId) {
 	}
 	const collectedIds = [];
 	subId = createSubscription(sockets, filters, event => {
-		if(!collectedIds.includes(event.id) && authors.includes(event.pubkey)) {
+		if(!collectedIds.includes(event.id)) {
 			collectedIds.push(event.id);
 			callback(event);
 		}
