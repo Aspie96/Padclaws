@@ -4,8 +4,26 @@
 	<head>
 		<title>Nostr Client</title>
 		<script type="text/javascript" src="./js/noble-secp256k1.js"></script>
-		<script type="text/javascript" src="./script.js"></script>
+		<script type="text/javascript" src="./js/nostr.js"></script>
+		<script type="module" src="./js/program.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/vue-router@4"></script>
+		<script type="text/javascript" src="./js/handlebars.js"></script>
 	</head>
 	<body>
+		<div id="app">
+			<p>
+				<!-- use the router-link component for navigation. -->
+				<!-- specify the link by passing the `to` prop. -->
+				<!-- `<router-link>` will render an `<a>` tag with the correct `href` attribute -->
+				<router-link to="/">Go to Home</router-link>
+				<router-link to="/note/446e3abdddb3d10b9958ac0f4cdfef92081729994ffa26b35de2bb25bdd4cbd9">Go to About</router-link>
+				<router-link to="/feed/31c0536a78f3d4a79fa7e1aacde914e2f16d8be5dc7f7dbd7f844a6d3358b78a">Go to About</router-link>
+				<router-link to="/write">Go to About</router-link>
+			  </p>
+			  <!-- route outlet -->
+			  <!-- component matched by the route will render here -->
+			  <router-view></router-view>
+		</div>
 	</body>
 </html>
