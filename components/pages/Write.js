@@ -1,14 +1,13 @@
 import WriteView from "../WriteView.js"
 
 const keys = {
-	private: "864d9fdf8c798ad6a06bbc1063fce37b1d87faf785b52538ba7cf99fe1da937c",
-	public: "19f3ac17bea0e3132a733cfed0b4bbcd4870a41eaaa0e84f3f2d151b54c2ed2d"
+	private: "a1fefad8eb460a09d4b34a74a5d1570bdc6ffd6a062d417d1c3aba02c7a4343a",
+	public: "6525360895fb155a5daf41e017ef5619d76fcc948f5d52635ce69ac498b09c3f"
 };
 
 export default {
 	data() {
 		return {
-			note: "",
 			submitting: false,
 			noteId: null
 		};
@@ -20,6 +19,7 @@ export default {
 			const event = await nostrClient.postNote(keys, note);
 			this.submitting = false;
 			this.noteId = event.id;
+			this.$refs.writeView.note = "";
 		}
 	},
 
@@ -28,6 +28,6 @@ export default {
 	},
 
 	template: `
-	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" />
+	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" ref="writeView" />
 	`
 }

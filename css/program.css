@@ -1,0 +1,107 @@
+html {
+	box-sizing: border-box;
+	font-size: 17px;
+	background-color: #000;
+	color: #CCC;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+#menu {
+	width: 20%;
+	float: left;
+}
+
+#menu a {
+	display: inline-block;
+	font-size: 20px;
+	text-decoration: none;
+	padding: 10px 20px;
+	border-bottom: 1px solid #444;
+	width: 100%;
+	color: #FFF;
+}
+
+main {
+	width: 50%;
+	float: left;
+	padding: 30px;
+}
+
+textarea {
+	width: 100%;
+	margin-bottom: 10px;
+	height: 70px;
+	border: 1px solid #444;
+	border-radius: 10px;
+	min-height: 50px;
+	resize: vertical;
+	padding: 6px 4px;
+	background-color: #222;
+	color: #AAA;
+	font-size: 15px;
+}
+
+textarea:focus {
+	outline: none;
+	border-color: #00F;
+	color: #FFF;
+}
+
+label {
+	float: left;
+	text-align: right;
+}
+
+.btn-submit {
+	float: right;
+	background-color: #008;
+	color: #FFF;
+	padding: 10px 20px;
+	font-size: 15px;
+	border-radius: 10px;
+	font-weight: bold;
+	text-decoration: none;
+	border: 3px outset #008;
+	cursor: pointer;
+}
+
+.btn-submit:disabled {
+	background-color: #222;
+	color: #444;
+	border-color: #222;
+	cursor: default;
+}
+
+.note-box {
+	border: 1px solid #333;
+	padding: 15px 25px;
+	background-color: #111;
+}
+
+.note-content {
+	margin-top: 10px;
+	white-space: pre-wrap;
+}
+
+a.user-pubkey {
+	font-weight: bold;
+	color: #FFF;
+}

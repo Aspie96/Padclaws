@@ -36,6 +36,6 @@ export default {
 	},
 
 	template:`
-	<note-view :loading="loading" />
+	<note-view :loading="loading" :note="note" />
 	`
 }

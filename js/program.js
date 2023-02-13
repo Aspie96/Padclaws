@@ -16,36 +16,12 @@ const router = VueRouter.createRouter({
 	routes
 })
 
+const relays = await (await fetch("../data/relays.json")).json();
+
+window.nostrClient = createNostrClient(relays);
+
 const app = Vue.createApp();
 
 app.use(router);
 
 app.mount("#app");
-
-/*const app = createApp({
-	components: {
-		NoteView
-	},
-	created() {
-		this.fetchData();
-	},
-	data() {
-		return {
-			note: null
-		}
-	},
-	methods: {
-		async fetchData() {
-			const event = await nostrClient.getEventById("446e3abdddb3d10b9958ac0f4cdfef92081729994ffa26b35de2bb25bdd4cbd9");
-			this.note = {
-				author: nostrUtils.getAuthor(event),
-				content: event.content
-			};
-		}
-	}
-});
-app.mount("#app");*/
-
-/*getEventById("446e3abdddb3d10b9958ac0f4cdfef92081729994ffa26b35de2bb25bdd4cbd9");*/
-
-

@@ -6,13 +6,6 @@ const nostrEventKinds = Object.freeze({
 	recommend_server: 2
 });
 
-const relays = [
-	"wss://nostr.nodeofsven.com",
-	"wss://no-str.org",
-	"wss://offchain.pub"
-];
-
-
 const nostrUtils = function() {
 	async function hashString(text) {
 		const textAsBuffer = new TextEncoder().encode(text);
@@ -152,7 +145,7 @@ const nostrUtils = function() {
 }();
 
 
-const nostrClient = function(relays) {
+const createNostrClient = function(relays) {
 	const sockets = relays.map(relay => new WebSocket(relay));
 	const subscriptions = {};
 
@@ -219,6 +212,7 @@ const nostrClient = function(relays) {
 		const event = await nostrUtils.createEvent(keys, kind, tags, content);
 		const requests = sendEvent(event);
 		await Promise.any(requests);
+		await getEventById(event.id);
 		return event;
 	}
 
@@ -226,7 +220,7 @@ const nostrClient = function(relays) {
 		socket.addEventListener("open", async (e) => {});
 		socket.addEventListener("message", e => {
 			const message = JSON.parse(e.data);
-			const type = message[0]
+			const type = message[0];
 			if(type == "EVENT") {
 				const subId = message[1];
 				if(!(subId in subscriptions)) return;
@@ -237,9 +231,9 @@ const nostrClient = function(relays) {
 		});
 	}
 
-	function sendEvent(sockets, event) {
+	function sendEvent(event) {
 		const message = ["EVENT", event];
-		const requests = sendToSockets(sockets, message);
+		const requests = sendToSockets(message);
 		return requests;
 	}
 
@@ -249,4 +243,121 @@ const nostrClient = function(relays) {
 		postNote,
 		sendEvent
 	});
-}(relays);
+};
+
+
+const gatherNostrRelays = function() {
+	async function fromRelayRegisry() {
+		const URL = "https://raw.githubusercontent.com/fiatjaf/nostr-relay-registry/master/relays.js";
+		const document = await (await fetch(URL)).text();
+		var rx = /export const relays = \[([^\]]+)\]/s;
+		var arr = rx.exec(document);
+		var list = arr[1];
+		var urls = [];
+		rx = /^\s+'(wss:\/\/[a-z0-9\._\-]+\.[a-z]+)'/gm;
+		var m;
+		while(m = rx.exec(list)) {
+			urls.push(m[1]);
+		}
+		return urls;
+	}
+
+	async function fromNostrInfo() {
+		const URL = "https://raw.githubusercontent.com/Giszmo/nostr.info/master/assets/js/main.js";
+		const document = await (await fetch(URL)).text();
+		var rx = /window.relays = \[([^\]]+)\]/s;
+		var arr = rx.exec(document);
+		var list = arr[1];
+		var urls = [];
+		rx = /^\s+'(wss:\/\/[a-z0-9\._\-]+\.[a-z]+)'/gm;
+		var m;
+		while(m = rx.exec(list)) {
+			urls.push(m[1]);
+		}
+		return urls;
+	}
+
+	async function fromNostrWatch() {
+		const URL = "https://raw.githubusercontent.com/dskvr/nostr-watch/develop/relays.yaml";
+		const document = await (await fetch(URL)).text();
+		var rx = /relays:(.*)$/s;
+		var arr = rx.exec(document);
+		var list = arr[1];
+		var urls = [];
+		rx = /^\s+\-\s+(wss:\/\/[a-z0-9\._\-]+\.[a-z]+)/gm;
+		var m;
+		while(m = rx.exec(list)) {
+			urls.push(m[1]);
+		}
+		return urls;
+	}
+
+	function connect(relay) {
+		const socket = new WebSocket(relay);
+		return new Promise(resolve => {
+			socket.addEventListener("open", () => resolve(socket));
+		});
+	}
+
+	function timeout(ms) {
+		return new Promise(resolve => setTimeout(() => resolve(false), ms));
+	}
+
+	function receiveEvent(socket, subId) {
+		return new Promise(resolve => {
+			socket.addEventListener("message", e => {
+				const message = JSON.parse(e.data);
+				const type = message[0];
+				if(type == "EVENT" && message[1] == subId) {
+					const event = Object.freeze(message[2]);
+					if(nostrUtils.verifyEvent(event)) {
+						resolve(event);
+					}
+				}
+			});
+			socket.addEventListener("error", e => {
+				resolve(null);
+			});
+		});
+	}
+
+	async function testRelay(event, relay, subId) {
+		const socket = await connect(relay);
+		var message = ["EVENT", event];
+		message = JSON.stringify(message);
+		await socket.send(message);
+		const filters = { ids: [event.id] };
+		message = ["REQ", subId, filters];
+		message = JSON.stringify(message);
+		socket.send(message);
+		const received = await receiveEvent(socket, subId);
+		return received && received.id == event.id;
+	}
+
+	function testRelayLimited(event, relay, subId) {
+		const promise1 = timeout(10000);
+		const promise2 = testRelay(event, relay, subId);
+		const result = Promise.race([promise1, promise2]);
+		return result;
+	}
+
+	function testRelays(relays, event, subId) {
+		const tests = relays.map(relay => testRelayLimited(event, relay, subId));
+		const results = Promise.all(tests);
+		return results;
+	}
+
+	return async function() {
+		const relays1 = await fromRelayRegisry();
+		const relays2 = await fromNostrInfo();
+		const relays3 = await fromNostrWatch();
+		var relays = relays1.filter(relay => relays2.includes(relay))
+		relays = relays.filter(relay => relays3.includes(relay));
+		const keys = nostrUtils.generateKeys();
+		const event = await nostrUtils.createEvent(keys, 1, [], "Demo.");
+		const subId = crypto.randomUUID();
+		const tests = await testRelays(relays, event, subId);
+		relays = relays.filter((relay, index) => tests[index]);
+		return relays;
+	}
+}();
