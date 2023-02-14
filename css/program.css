@@ -1,12 +1,30 @@
+@font-face {
+	font-family: Programma;
+	src: url(../fonts/Programma-Bold.woff2);
+}
+
+@font-face {
+	font-family: 'Atkinson Hyperlegible';
+	src: url(../fonts/AtkinsonHyperlegible-Regular.ttf);
+}
+
+@font-face {
+	font-family: 'Atkinson Hyperlegible';
+	src: url(../fonts/AtkinsonHyperlegible-Bold.ttf);
+	font-weight: bold;
+}
+
 html {
 	box-sizing: border-box;
 	font-size: 17px;
 	background-color: #000;
 	color: #CCC;
+	scrollbar-color: #789 #223;
 }
 
-*, *:before, *:after {
+* {
 	box-sizing: inherit;
+	font-family: 'Atkinson Hyperlegible';
 }
 
 body, h1, h2, h3, h4, h5, h6, p, ol, ul {
@@ -26,23 +44,74 @@ img {
 
 #menu {
 	width: 20%;
-	float: left;
+	position: fixed;
 }
 
-#menu a {
+#menu .menu-link {
 	display: inline-block;
 	font-size: 20px;
 	text-decoration: none;
-	padding: 10px 20px;
-	border-bottom: 1px solid #444;
+	padding: 0 15px;
+	line-height: 50px;
+	vertical-align: middle;
+	border-width: 0;
+	border-bottom: 2px solid #444;
 	width: 100%;
+	color: #AAA;
+	background-color: #000;
+	cursor: pointer;
+}
+
+#menu .menu-link .ti {
+	margin-right: 20px;
+}
+
+#menu .menu-link:hover {
+	background-color: #222;
 	color: #FFF;
 }
 
+#menu .menu-link.router-link-active {
+	border-bottom: 2px solid #07A;
+	background-color: #222;
+	color: #FFF;
+}
+
+#menu .menu-link.router-link-active .ti {
+	color: #9CF;
+}
+
 main {
-	width: 50%;
-	float: left;
-	padding: 30px;
+	width: 60%;
+	margin: 0 auto;
+	padding: 40px;
+}
+
+@media (max-width: 768px) {
+	#menu {
+		display: block;
+		width: 60px;
+		text-align: center;
+	}
+	#menu .menu-link .ti {
+		margin: 0;
+	}
+	#menu .menu-option {
+		display: none;
+	}
+	main {
+		width: 100%;
+		padding: 80px;
+	}
+	#menu.menuOpen {
+		width: 100%;
+	}
+	#menu.menuOpen .menu-link .ti {
+		margin-right: 20px;
+	}
+	#menu.menuOpen .menu-option {
+		display: inline;
+	}
 }
 
 textarea {
@@ -53,15 +122,15 @@ textarea {
 	border-radius: 10px;
 	min-height: 50px;
 	resize: vertical;
-	padding: 6px 4px;
+	padding: 10px 5px;
 	background-color: #222;
 	color: #AAA;
-	font-size: 15px;
+	font-size: 1em;
 }
 
 textarea:focus {
 	outline: none;
-	border-color: #00F;
+	border-color: #07F;
 	color: #FFF;
 }
 
@@ -72,14 +141,14 @@ label {
 
 .btn-submit {
 	float: right;
-	background-color: #008;
+	background-color: #038;
 	color: #FFF;
-	padding: 10px 20px;
+	padding: 13px 25px;
 	font-size: 15px;
 	border-radius: 10px;
 	font-weight: bold;
 	text-decoration: none;
-	border: 3px outset #008;
+	border: 3px outset #038;
 	cursor: pointer;
 }
 
@@ -102,6 +171,55 @@ label {
 }
 
 a.user-pubkey {
+	font-family: Programma, monospace;
+	display: inline-block;
+	width: 10ch;
+	overflow: hidden;
+	text-overflow: clip;
+	box-sizing: content-box;
+	background-color: #444;
+	padding: 0.5ex 0 0.5ex 1ch;
+	border-right: 1ch solid rgba(0, 0, 0, 0);
+	border-radius: 1ex;
 	font-weight: bold;
 	color: #FFF;
+	text-decoration: none;
+}
+
+a.note-date {
+	color: #AAA;
+	font-size: 0.9em;
+	float: right;
+}
+
+form {
+	overflow: auto;
+}
+
+.alert {
+	margin: 10px 0;
+	border: 1px solid #07A;
+	border-radius: 10px;
+	padding: 10px 20px;
+	background-color: #013;
+	display: flex;
+	align-items: middle;
+}
+
+.alert.alert-red {
+	border-color: #A33;
+	background-color: #300;
+}
+
+.alert a {
+	color: #EEE;
+}
+
+.alert .ti {
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.alert .alert-text {
+	vertical-align: middle;
 }

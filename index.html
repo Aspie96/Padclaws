@@ -4,6 +4,7 @@
 	<head>
 		<title>Nostr Client</title>
 		<link rel="stylesheet" href="./css/program.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css" />
 		<script type="text/javascript" src="./js/noble-secp256k1.js"></script>
 		<script type="text/javascript" src="./js/nostr.js"></script>
 		<script type="module" src="./js/program.js"></script>
@@ -12,22 +13,9 @@
 	</head>
 	<body>
 		<div id="app">
-			<nav id="menu">
-				<ul>
-					<li>
-						<router-link to="/">Go to Home</router-link>
-					</li>
-					<li>
-						<router-link to="/note/446e3abdddb3d10b9958ac0f4cdfef92081729994ffa26b35de2bb25bdd4cbd9">Go to About</router-link>
-					</li>
-					<li>
-						<router-link to="/feed/31c0536a78f3d4a79fa7e1aacde914e2f16d8be5dc7f7dbd7f844a6d3358b78a">Go to About</router-link>
-					</li>
-					<li>
-						<router-link to="/write">Go to About</router-link>
-					</li>
-				</ul>
-			</nav>
+			<div>
+				<menu-view />
+			</div>
 			<main>
 				<router-view></router-view>
 			</main>

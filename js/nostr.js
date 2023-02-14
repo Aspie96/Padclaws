@@ -50,7 +50,6 @@ const nostrUtils = function() {
 		}
 		return Object.freeze(keys);;
 	}
-
 	async function signEvent(eventHash, privateKey) {
 		var signature = await nobleSecp256k1.schnorr.sign(eventHash, privateKey)
 		signature = nobleSecp256k1.utils.bytesToHex(signature);
@@ -134,6 +133,7 @@ const nostrUtils = function() {
 
 	return Object.freeze({
 		generatePrivateKey,
+		isHash,
 		getPublicKey,
 		generateKeys,
 		getAuthor,
@@ -149,10 +149,25 @@ const createNostrClient = function(relays) {
 	const sockets = relays.map(relay => new WebSocket(relay));
 	const subscriptions = {};
 
+	function waitSocketOpen(socket) {
+		return new Promise(resolve => {
+			socket.addEventListener("open", async () => {
+				resolve();
+			});
+		});
+	}
+
 	function sendToSockets(message) {
 		message = JSON.stringify(message);
-		const openSockets = sockets.filter(socket => socket.readyState == WebSocket.OPEN);
-		const requests = openSockets.map(socket => socket.send(message));
+		const openSockets = sockets.filter(socket => {
+			return socket.readyState == WebSocket.OPEN || socket.readyState == WebSocket.CONNECTING;
+		});
+		const requests = openSockets.map(async socket => {
+			if(socket.readyState == WebSocket.CONNECTING) {
+				await waitSocketOpen(socket);
+			}
+			return await socket.send(message);
+		});
 		return requests;
 	}
 
@@ -217,7 +232,6 @@ const createNostrClient = function(relays) {
 	}
 
 	for(const socket of sockets) {
-		socket.addEventListener("open", async (e) => {});
 		socket.addEventListener("message", e => {
 			const message = JSON.parse(e.data);
 			const type = message[0];

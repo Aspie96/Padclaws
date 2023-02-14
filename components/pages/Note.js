@@ -4,6 +4,7 @@ export default {
 	data() {
 		return {
 			loading: false,
+			invalid: false,
 			note: null
 		};
 	},
@@ -20,13 +21,21 @@ export default {
 
 	methods: {
 		async fetchData() {
+			const eventId = this.$route.params.id;
+			if(!nostrUtils.isHash(eventId, 32)) {
+				this.invalid = true;
+				return;
+			}
+			this.invalid = false;
 			this.loading = true;
 			this.note = null;
 			const event = await nostrClient.getEventById(this.$route.params.id);
 			this.loading = false;
 			this.note =  {
+				id: event.id,
 				author: nostrUtils.getAuthor(event),
-				content: event.content
+				content: event.content,
+				date: nostrUtils.getDate(event)
 			};
 		}
 	},
@@ -36,6 +45,10 @@ export default {
 	},
 
 	template:`
-	<note-view :loading="loading" :note="note" />
+	<p v-if="invalid" class="alert alert-red">
+		<span class="ti ti-alert-triangle"></span>
+		<span class="alert-text">Invalid event ID. Check the URL.</span>
+	</p>
+	<note-view v-else :loading="loading" :note="note" />
 	`
 }
