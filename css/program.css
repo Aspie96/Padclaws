@@ -47,7 +47,7 @@ img {
 	position: fixed;
 }
 
-#menu .menu-link {
+#menu a {
 	display: inline-block;
 	font-size: 20px;
 	text-decoration: none;
@@ -62,22 +62,22 @@ img {
 	cursor: pointer;
 }
 
-#menu .menu-link .ti {
+#menu a .ti {
 	margin-right: 20px;
 }
 
-#menu .menu-link:hover {
+#menu a:hover {
 	background-color: #222;
 	color: #FFF;
 }
 
-#menu .menu-link.router-link-active {
+#menu a.router-link-active {
 	border-bottom: 2px solid #07A;
 	background-color: #222;
 	color: #FFF;
 }
 
-#menu .menu-link.router-link-active .ti {
+#menu a.router-link-active .ti {
 	color: #9CF;
 }
 
@@ -87,13 +87,32 @@ main {
 	padding: 40px;
 }
 
+#menu-toggle {
+	display: none;
+}
+
 @media (max-width: 768px) {
+	#menu-toggle {
+		display: block;
+		position: fixed;
+		width: 55px;
+		height: 55px;
+		top: 5px;
+		left: 5px;
+		font-size: 20px;
+		background-color: #222;
+		border: 2px outset #444;
+		color: #EEE;
+		cursor: pointer;
+	}
+
 	#menu {
 		display: block;
 		width: 60px;
 		text-align: center;
+		top: 70px;
 	}
-	#menu .menu-link .ti {
+	#menu a .ti {
 		margin: 0;
 	}
 	#menu .menu-option {
@@ -105,9 +124,11 @@ main {
 	}
 	#menu.menuOpen {
 		width: 100%;
+		text-align: left;
 	}
-	#menu.menuOpen .menu-link .ti {
+	#menu.menuOpen a .ti {
 		margin-right: 20px;
+		padding-left: 5px;
 	}
 	#menu.menuOpen .menu-option {
 		display: inline;
