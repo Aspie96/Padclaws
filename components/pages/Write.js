@@ -28,6 +28,6 @@ export default {
 	},
 
 	template: `
-	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" ref="writeView" />
+	<WriteView :submitting="submitting" @submit="onSubmit" :noteId="noteId" ref="writeView" />
 	`
 }

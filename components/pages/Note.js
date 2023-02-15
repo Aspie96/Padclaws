@@ -49,6 +49,6 @@ export default {
 		<span class="ti ti-alert-triangle"></span>
 		<span class="alert-text">Invalid event ID. Check the URL.</span>
 	</p>
-	<note-view v-else :loading="loading" :note="note" />
+	<NoteView v-else :loading="loading" :note="note" />
 	`
 }

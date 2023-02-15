@@ -6,7 +6,7 @@ import MenuView from "../components/MenuView.js"
 const Home = { template: "<div>Home</div>" }
 
 const routes = [
-	{ path: '/', component: Home },
+	{ path: "/", component: Home },
 	{ path: "/note/:id", component: Note },
 	{ path: "/feed/:id", component: Feed },
 	{ path: "/write", component: Write }
@@ -21,12 +21,9 @@ const relays = await (await fetch("../data/relays.json")).json();
 
 window.nostrClient = createNostrClient(relays);
 
-const app = Vue.createApp({
-	components: {
-		MenuView,
-		RouterView: VueRouter.RouterView
-	}
-});
+const app = Vue.createApp();
+
+app.component("MenuView", MenuView);
 
 app.use(router);
 

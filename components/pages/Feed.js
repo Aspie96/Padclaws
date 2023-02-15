@@ -52,6 +52,6 @@ export default {
 		<span class="ti ti-alert-triangle"></span>
 		<span class="alert-text">Invalid public key. Check the URL.</span>
 	</p>
-	<feed-view v-else :notes="notes" />
+	<FeedView v-else :notes="notes" />
 	`
 }

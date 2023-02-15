@@ -11,7 +11,7 @@ export default {
 
 	template: `
 	<template v-for="note in notes">
-		<note-view :note="note" />
+		<NoteView :note="note" />
 	</template>
 	`
 }
