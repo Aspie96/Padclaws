@@ -14,6 +14,11 @@
 	font-weight: bold;
 }
 
+@font-face {
+	font-family: 'Noto Color Emoji';
+	src: url(../fonts/NotoColorEmoji-Regular.ttf);
+}
+
 html {
 	box-sizing: border-box;
 	font-size: 17px;
@@ -24,7 +29,7 @@ html {
 
 * {
 	box-sizing: inherit;
-	font-family: 'Atkinson Hyperlegible';
+	font-family: 'Atkinson Hyperlegible', 'Noto Color Emoji';
 }
 
 body, h1, h2, h3, h4, h5, h6, p, ol, ul {
@@ -99,22 +104,26 @@ main {
 	#menu-toggle {
 		display: block;
 		position: fixed;
-		width: 55px;
-		height: 55px;
-		top: 5px;
-		left: 5px;
-		font-size: 20px;
-		background-color: #222;
-		border: 2px outset #444;
+		width: 60px;
+		height: 60px;
+		font-size: 25px;
+		background-color: #000;
+		border-width: 0;
+		border-bottom: 2px solid #444;
 		color: #EEE;
 		cursor: pointer;
+	}
+
+	#menu-toggle:hover {
+		background-color: #222;
+		color: #FFF;
 	}
 
 	#menu {
 		display: block;
 		width: 60px;
 		text-align: center;
-		top: 70px;
+		top: 60px;
 	}
 	#menu a .ti {
 		margin: 0;

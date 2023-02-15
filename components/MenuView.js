@@ -11,7 +11,7 @@ export default {
 	<button type="button" id="menu-toggle" @click="isMenuOpen = !isMenuOpen">
 		<span class="ti ti-menu-2"></span>
 	</button>
-	<nav id="menu" :class="{ menuOpen: isMenuOpen }">
+	<nav id="menu" :class="{ menuOpen: isMenuOpen }" @click="isMenuOpen=false">
 		<ul>
 			<li>
 				<router-link to="/">
