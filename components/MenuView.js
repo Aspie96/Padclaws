@@ -8,6 +8,15 @@ export default {
 		};
 	},
 
+	computed: {
+		backPage() {
+			if(this.$route.path == "/login") {
+				return this.$route.query.page;
+			}
+			return this.$route.path;
+		}
+	},
+ 
 	template: `
 	<button type="button" id="menu-toggle" @click="isMenuOpen = !isMenuOpen">
 		<span class="ti ti-menu-2"></span>
@@ -24,7 +33,7 @@ export default {
 				<li>
 					<button type="button" @click="Session.logout()">
 						<span class="ti ti-logout"></span>
-						<span class="menu-option">Logout</span>
+						<span class="menu-option">Log out</span>
 					</button>
 				</li>
 				<li>
@@ -35,7 +44,7 @@ export default {
 				</li>
 			</template>
 			<li v-else>
-				<router-link to="/login">
+				<router-link :to="{ path: '/login', query: { page: backPage } }">
 					<span class="ti ti-login"></span>
 					<span class="menu-option">Log in</span>
 				</router-link>

@@ -12,7 +12,12 @@ export default {
 	methods: {
 		async onSubmit() {
 			this.Session.login(this.privateKey);
-			this.$router.push("/");
+			const path = this.$route.query.page;
+			if(path) {
+				this.$router.replace(path);
+			} else {
+				this.$router.push("/");
+			}
 		},
 
 		privateKeyInput(privateKey) {
