@@ -51,12 +51,21 @@ a {
 	color: #1B4;
 }
 
+button {
+	cursor: pointer;
+}
+
+button:disabled {
+	cursor: default;
+}
+
 #menu {
 	width: 20%;
 	position: fixed;
 }
 
-#menu a {
+#menu li a, #menu li button {
+	text-align: left;
 	display: inline-block;
 	font-size: 20px;
 	text-decoration: none;
@@ -68,25 +77,24 @@ a {
 	width: 100%;
 	color: #AAA;
 	background-color: #000;
-	cursor: pointer;
 }
 
-#menu a .ti {
+#menu li a .ti, #menu li button .ti {
 	margin-right: 20px;
 }
 
-#menu a:hover {
+#menu li a:hover, #menu li button:hover {
 	background-color: #222;
 	color: #FFF;
 }
 
-#menu a.router-link-active {
+#menu li a.router-link-active {
 	border-bottom: 2px solid #07A;
 	background-color: #222;
 	color: #FFF;
 }
 
-#menu a.router-link-active .ti {
+#menu li a.router-link-active .ti {
 	color: #9CF;
 }
 
@@ -111,7 +119,6 @@ main {
 		border-width: 0;
 		border-bottom: 2px solid #444;
 		color: #EEE;
-		cursor: pointer;
 	}
 
 	#menu-toggle:hover {
@@ -125,8 +132,9 @@ main {
 		text-align: center;
 		top: 60px;
 	}
-	#menu a .ti {
+	#menu li a .ti, #menu li button .ti {
 		margin: 0;
+		margin-left: 5px;
 	}
 	#menu .menu-option {
 		display: none;
@@ -139,9 +147,8 @@ main {
 		width: 100%;
 		text-align: left;
 	}
-	#menu.menuOpen a .ti {
+	#menu.menuOpen li a .ti, #menu.menuOpen li button .ti {
 		margin-right: 20px;
-		padding-left: 5px;
 	}
 	#menu.menuOpen .menu-option {
 		display: inline;
@@ -150,7 +157,6 @@ main {
 
 textarea {
 	width: 100%;
-	margin-bottom: 10px;
 	height: 70px;
 	border: 1px solid #444;
 	border-radius: 10px;
@@ -174,7 +180,6 @@ label {
 }
 
 .btn-submit {
-	float: right;
 	background-color: #038;
 	color: #FFF;
 	padding: 13px 25px;
@@ -183,7 +188,6 @@ label {
 	font-weight: bold;
 	text-decoration: none;
 	border: 3px outset #038;
-	cursor: pointer;
 }
 
 .btn-submit:disabled {
@@ -226,8 +230,61 @@ a.note-date {
 	float: right;
 }
 
-form {
-	overflow: auto;
+.form-group {
+	display: flex;
+	align-items: center;
+}
+
+.form-group label {
+	flex-shrink: 0;
+	display: inline-block;
+	width: 25%;
+	min-width: 150px;
+	padding-right: 5%;
+	background-color: #013;
+	height: 40px;
+	line-height: 36px;
+	border: 2px solid #126;
+	border-radius: 10px 0 0 10px;
+}
+
+.form-group input, .form-group output {
+	flex-grow: 1;
+	height: 40px;
+	border: 2px solid #444;
+	border-radius: 0 10px 10px 0;
+	padding: 10px 5px;
+	background-color: #222;
+	color: #AAA;
+}
+
+.form-group .label-output {
+	background-color: #112;
+	border-color: #333;
+	color: #999;
+}
+
+.form-group output {
+	border: 2px solid #333;
+	background-color: #111;
+	color: #999;
+}
+
+.form-group input:focus {
+	outline: none;
+	border-color: #05C;
+	color: #FFF;
+}
+
+.form-buttons {
+	margin-top: 10px;
+	text-align: right;
+}
+
+.key-output {
+	font-family: Programma, monospace;
+	overflow: hidden;
+	font-size: 0.9em;
 }
 
 .alert {

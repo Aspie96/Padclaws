@@ -15,9 +15,11 @@ export default {
 	],
 
 	template: `
-	<form>
-		<textarea required v-model="note" :disabled="submitting" placeholder="Here's the problem with teleportation&hellip;"></textarea>
-		<button type="submit" class="btn-submit" @click="$emit('submit', note)" :disabled="!note.trim() || submitting">Publish</button>
+	<form @submit.prevent="$emit('submit', note)">
+		<textarea required v-model="note" name="note" :disabled="submitting" placeholder="Here's the problem with teleportation&hellip;"></textarea>
+		<div class="form-buttons">
+			<button type="submit" label-outputclass="btn-submit" :disabled="!note.trim() || submitting">Publish</button>
+		</div>
 	</form>
 	<p v-if="noteId && !submitting" class="alert alert-blue">
 		<span class="ti ti-check"></span>

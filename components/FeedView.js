@@ -1,4 +1,4 @@
-import NoteView from "./NoteView.js";
+import NoteView from "./NoteView.js"
 
 export default {
 	props: {
@@ -10,8 +10,6 @@ export default {
 	},
 
 	template: `
-	<template v-for="note in notes">
-		<NoteView :note="note" />
-	</template>
+	<NoteView v-for="note in notes" :key="note.id" :note="note" />
 	`
 }

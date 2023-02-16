@@ -1,9 +1,10 @@
-export default {
-	props: { },
+import Session from "../js/session.js"
 
+export default {
 	data() {
 		return {
-			isMenuOpen: false
+			isMenuOpen: false,
+			Session
 		};
 	},
 
@@ -19,6 +20,26 @@ export default {
 					<span class="menu-option">Home</span>
 				</router-link>
 			</li>
+			<template v-if="Session.logged">
+				<li>
+					<button type="button" @click="Session.logout()">
+						<span class="ti ti-logout"></span>
+						<span class="menu-option">Logout</span>
+					</button>
+				</li>
+				<li>
+					<router-link to="/write">
+						<span class="ti ti-pencil"></span>
+						<span class="menu-option">Write note</span>
+					</router-link>
+				</li>
+			</template>
+			<li v-else>
+				<router-link to="/login">
+					<span class="ti ti-login"></span>
+					<span class="menu-option">Log in</span>
+				</router-link>
+			</li>
 			<li>
 				<router-link to="/note/446e3abdddb3d10b9958ac0f4cdfef92081729994ffa26b35de2bb25bdd4cbd9">
 					<span class="ti ti-info-square-rounded"></span>
@@ -28,12 +49,6 @@ export default {
 			<li>
 				<router-link to="/feed/31c0536a78f3d4a79fa7e1aacde914e2f16d8be5dc7f7dbd7f844a6d3358b78a">
 					<span class="menu-option">Go to About</span>
-				</router-link>
-			</li>
-			<li>
-				<router-link to="/write">
-					<span class="ti ti-pencil"></span>
-					<span class="menu-option">Write note</span>
 				</router-link>
 			</li>
 		</ul>
