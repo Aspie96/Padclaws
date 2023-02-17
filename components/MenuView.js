@@ -31,6 +31,12 @@ export default {
 			</li>
 			<template v-if="Session.logged">
 				<li>
+					<router-link to="/relays">
+						<span class="ti ti-pencil"></span>
+						<span class="menu-option">Relays</span>
+					</router-link>
+				</li>
+				<li>
 					<button type="button" @click="Session.logout()">
 						<span class="ti ti-logout"></span>
 						<span class="menu-option">Log out</span>

@@ -3,6 +3,7 @@ import Feed from "../components/pages/Feed.js"
 import Write from "../components/pages/Write.js"
 import MenuView from "../components/MenuView.js"
 import Login from "../components/pages/Login.js"
+import Relays from "../components/pages/Relays.js"
 
 const Home = { template: "<div>Home</div>" }
 
@@ -11,7 +12,8 @@ const routes = [
 	{ path: "/note/:id", component: Note },
 	{ path: "/feed/:id", component: Feed },
 	{ path: "/write", component: Write },
-	{ path: "/login", component: Login }
+	{ path: "/login", component: Login },
+	{ path: "/relays", component: Relays }
 ]
 
 const router = VueRouter.createRouter({

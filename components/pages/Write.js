@@ -26,6 +26,6 @@ export default {
 	},
 
 	template: `
-	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" ref="writeView" />
+	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" storageKey="/write" ref="writeView" />
 	`
 }

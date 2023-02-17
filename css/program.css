@@ -179,7 +179,18 @@ label {
 	text-align: right;
 }
 
-.btn-submit {
+.form-buttons button {
+	background-color: #111;
+	color: #FFF;
+	padding: 13px 25px;
+	font-size: 15px;
+	border-radius: 10px;
+	font-weight: bold;
+	text-decoration: none;
+	border: 3px outset #AAA;
+}
+
+.form-buttons .btn-submit {
 	background-color: #038;
 	color: #FFF;
 	padding: 13px 25px;
@@ -190,7 +201,7 @@ label {
 	border: 3px outset #038;
 }
 
-.btn-submit:disabled {
+.form-buttons button:disabled {
 	background-color: #222;
 	color: #444;
 	border-color: #222;
@@ -314,3 +325,57 @@ a.note-date {
 .alert .alert-text {
 	vertical-align: middle;
 }
+
+.relays-container {
+	border: 2px solid #333;
+	height: 100px;
+	overflow: auto;
+}
+
+.relay-known-box, .relay-used-box {
+	width: 50%;
+	display: inline-block;
+}
+
+.relay-known, .relay-used {
+	display: flex;
+	margin: 5px;
+	vertical-align: middle;
+	background-color: #222;
+	border-radius: 5px;
+}
+
+.relay-known button, .relay-used button {
+	flex-shrink: 0;
+	background-color: #274;
+	border-width: 0;
+	width: 25px;
+	border-radius: 5px;
+	color: #DDD;
+	height: 25px;
+}
+
+.form-buttons .relays-known-all-btn {
+	background-color: #274;
+	color: #DDD;
+	padding: 10px 10px;
+	font-size: 15px;
+	border: 2px outset #274;
+}
+
+.relay-used button {
+	background-color: #A22;
+}
+
+.relay-uri {
+	font-family: Programma, monospace;
+	font-size: 0.8em;
+	line-height: 25px;
+	padding-left: 10px;
+	width: 100%;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+
