@@ -1,3 +1,4 @@
+import Session from "../../js/session.js"
 import KnownRelaysView from "../KnownRelaysView.js"
 import UsedRelaysView from "../UsedRelaysView.js"
 
@@ -23,14 +24,8 @@ function compStrings(a, b) {
 export default {
 	data() {
 		return {
-			knownRelays: [
-				"wss://nostr1.lnprivate.network",
-				"wss://nostr2.lnprivate.network",
-				"wss://nostr3.lnprivate.network",
-				"wss://nostr4.lnprivate.network",
-				"wss://nostr5.lnprivate.network"
-			],
-			usedRelays: []
+			knownRelays: Session.unusedKnownRelays,
+			usedRelays: Session.usedRelays
 		}
 	},
 
@@ -42,27 +37,30 @@ export default {
 	methods: {
 		add(index) {
 			const relay = this.knownRelays[index];
-			this.knownRelays.splice(index, 1);
-			addInOrder(this.usedRelays, relay, compStrings);
+			Session.addRelay(relay);
 		},
 
 		addAll() {
-			console.log("demo");
-			for(const relay of this.knownRelays) {
-				addInOrder(this.usedRelays, relay, compStrings);
-			}
-			this.knownRelays = [];
+			Session.addAllRelays();
 		},
 
 		remove(index) {
 			const relay = this.usedRelays[index];
-			this.usedRelays.splice(index, 1);
-			addInOrder(this.knownRelays, relay, compStrings);
+			Session.removeRelay(relay);
 		}
 	},
 
 	template: `
 	<UsedRelaysView :relays="usedRelays" @remove="remove" />
+	<details>
+		<summary><span class="ti ti-caret-right"></span><span class="ti ti-caret-down"></span>Custom relays</summary>
+		<p>You can use custom relay servers. Add them below, one per line, as websocket addresses.</p>
+		<div class="relays-custom-box">
+			<label>Custom relays:</label>
+			<textarea required name="note" placeholder="wss://relay1.example.com\nwss://relay2.example.com"></textarea>
+			<button type="button">Add</button>
+		</div>
+	</details>
 	<KnownRelaysView :relays="knownRelays" @add="add" @addAll="addAll" />
 	`
 }

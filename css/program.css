@@ -180,7 +180,7 @@ label {
 }
 
 .form-buttons button {
-	background-color: #111;
+	background-color: #222;
 	color: #FFF;
 	padding: 13px 25px;
 	font-size: 15px;
@@ -363,6 +363,30 @@ a.note-date {
 	border: 2px outset #274;
 }
 
+.relays-custom-box {
+	display: flex;
+	margin-top: 20px;
+}
+
+.relays-custom-box button {
+	float: right;
+	margin-left: 10px;
+	height: 40px;
+	margin-top: auto;
+	background-color: #111;
+	color: #FFF;
+	padding: 10px 10px;
+	font-size: 15px;
+	border-radius: 10px;
+	font-weight: bold;
+	text-decoration: none;
+	border: 3px outset #AAA;
+}
+
+.relays-custom-box label {
+	margin: auto 10px 0 0;
+}
+
 .relay-used button {
 	background-color: #A22;
 }
@@ -376,6 +400,50 @@ a.note-date {
 	text-align: left;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
+details {
+	border: 1px solid #777;
+    border-radius: 5px;
+    padding: 1em 1em 0 1em;
+	margin: 20px 0;
+}
 
+details * {
+	box-sizing: border-box;
+}
+
+summary {
+    font-weight: bold;
+    margin: -1em -1em 0 -1em;
+    padding: 1em;
+	list-style-type: none;
+	border-bottom: 1px solid #333;
+	background-color: #111;
+}
+
+summary .ti {
+	margin-right: 1ex;
+}
+
+summary .ti-caret-down {
+	display: none;
+}
+
+details[open] {
+    padding: 1em;
+}
+
+details[open] summary {
+    padding: 1em;
+	margin-bottom: 20px;
+}
+
+details[open] .ti-caret-down {
+	display: inline;
+}
+
+details[open] .ti-caret-right {
+	display: none;
+}

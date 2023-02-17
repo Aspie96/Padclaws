@@ -17,7 +17,7 @@ export default {
 			const event = await nostrClient.postNote(keys, note);
 			this.submitting = false;
 			this.noteId = event.id;
-			this.$refs.writeView.note = "";
+			this.$refs.writeView.clear();
 		}
 	},
 

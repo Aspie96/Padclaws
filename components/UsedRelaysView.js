@@ -12,7 +12,7 @@ export default {
 
 	template: `
 	<fieldset class="relays-container">
-		<legend>Used relays</legend>
+		<legend>Used relays ({{ relays.length }})</legend>
 		<div class="relay-used-box" v-for="(relay, index) in relays" :key="relay">
 			<div class="relay-used">
 				<button type="button" :id="'used-relay-' + index" @click="onRelayClick(index)">

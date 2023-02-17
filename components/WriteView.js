@@ -20,6 +20,11 @@ export default {
 			if(this.$props.storageKey) {
 				sessionStorage.setItem(this.storageKey, this.note);
 			}
+		},
+
+		clear() {
+			this.note = "";
+			sessionStorage.removeItem(this.storageKey);
 		}
 	},
 

@@ -145,9 +145,52 @@ const nostrUtils = function() {
 }();
 
 
-const createNostrClient = function(relays) {
-	const sockets = relays.map(relay => new WebSocket(relay));
+const nostrClient = function() {
+	const relays = [];
+	const sockets = [];
 	const subscriptions = {};
+
+	function* getRelays() {
+		yield* relays;
+	}
+
+	function createSocket(relay) {
+		const socket = new WebSocket(relay);
+		socket.addEventListener("message", e => {
+			const message = JSON.parse(e.data);
+			const type = message[0];
+			if(type == "EVENT") {
+				const subId = message[1];
+				if(!(subId in subscriptions)) return;
+				const event = Object.freeze(message[2]);
+				if(!nostrUtils.verifyEvent(event)) return;
+				subscriptions[subId](event);
+			}
+		});
+		return socket;
+	}
+
+	function addRelay(relay) {
+		if(relays.includes(relay)) {
+			return false;
+		}
+		relays.push(relay);
+		const socket = createSocket(relay);
+		sockets.push(socket);
+		return true;
+	}
+
+	function removeRelay(relay) {
+		const index = relays.indexOf(relay);
+		if(index == -1) {
+			return false;
+		}
+		relays.splice(index, 1);
+		const socket = sockets[index];
+		socket.close();
+		sockets.splice(index, 1);
+		return true;
+	}
 
 	function waitSocketOpen(socket) {
 		return new Promise(resolve => {
@@ -231,20 +274,6 @@ const createNostrClient = function(relays) {
 		return event;
 	}
 
-	for(const socket of sockets) {
-		socket.addEventListener("message", e => {
-			const message = JSON.parse(e.data);
-			const type = message[0];
-			if(type == "EVENT") {
-				const subId = message[1];
-				if(!(subId in subscriptions)) return;
-				const event = Object.freeze(message[2]);
-				if(!nostrUtils.verifyEvent(event)) return;
-				subscriptions[subId](event);
-			}
-		});
-	}
-
 	function sendEvent(event) {
 		const message = ["EVENT", event];
 		const requests = sendToSockets(message);
@@ -252,12 +281,15 @@ const createNostrClient = function(relays) {
 	}
 
 	return Object.freeze({
+		getRelays,
+		addRelay,
+		removeRelay,
 		getEventById,
 		getFeed,
 		postNote,
 		sendEvent
 	});
-};
+}();
 
 
 const gatherNostrRelays = function() {

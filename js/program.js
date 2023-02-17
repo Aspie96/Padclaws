@@ -21,10 +21,6 @@ const router = VueRouter.createRouter({
 	routes
 });
 
-const relays = await (await fetch("../data/relays.json")).json();
-
-window.nostrClient = createNostrClient(relays);
-
 const app = Vue.createApp();
 
 app.component("MenuView", MenuView);

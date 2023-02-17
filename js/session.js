@@ -16,9 +16,12 @@ if(keyRegex.test(storedKey)) {
 	sessionStorage.removeItem("privateKey");
 }
 
-export default Vue.reactive({
+const session = Vue.reactive({
 	logged,
 	userKeys,
+	knownRelays: null,
+	usedRelays: [],
+	unusedKnownRelays: [],
 
 	login(privateKey) {
 		const publicKey = nostrUtils.getPublicKey(privateKey);
@@ -41,5 +44,34 @@ export default Vue.reactive({
 			return null;
 		}
 		return nostrUtils.getPublicKey(privateKey);
+	},
+
+	async refreshRelays() {
+		if(!this.knownRelays) {
+			this.knownRelays = await (await fetch("../data/relays.json")).json();
+		}
+		this.usedRelays.splice(0, this.usedRelays.length, ...nostrClient.getRelays());
+		this.unusedKnownRelays.splice(0, this.unusedKnownRelays.length, ...this.knownRelays.filter(relay => !this.usedRelays.includes(relay)));
+	},
+
+	addRelay(relay) {
+		nostrClient.addRelay(relay);
+		this.refreshRelays();
+	},
+
+	addAllRelays() {
+		for(const relay of this.unusedKnownRelays) {
+			nostrClient.addRelay(relay);
+		}
+		this.refreshRelays();
+	},
+
+	removeRelay(relay) {
+		nostrClient.removeRelay(relay);
+		this.refreshRelays();
 	}
 });
+
+session.refreshRelays();
+
+export default session;
