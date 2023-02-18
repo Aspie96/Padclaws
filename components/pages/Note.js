@@ -1,4 +1,5 @@
 import NoteView from "../NoteView.js"
+import AlertView from "../AlertView.js"
 
 export default {
 	data() {
@@ -41,14 +42,12 @@ export default {
 	},
 
 	components: {
-		NoteView
+		NoteView,
+		AlertView
 	},
 
 	template:`
-	<p v-if="invalid" class="alert alert-red">
-		<span class="ti ti-alert-triangle"></span>
-		<span class="alert-text">Invalid event ID. Check the URL.</span>
-	</p>
+	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid event ID. Check the URL.</AlertView>
 	<NoteView v-else :loading="loading" :note="note" />
 	`
 }

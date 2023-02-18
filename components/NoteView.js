@@ -1,3 +1,5 @@
+import AlertView from "./AlertView.js";
+
 /*var re_source = re_weburl.source;
 re_source = re_source.slice(1, re_source.length - 1)
 re_source = "\\b(" + re_source + ")\\b";
@@ -37,11 +39,12 @@ export default {
 		}
 	},
 
+	components: {
+		AlertView
+	},
+
 	template: `
-	<p v-if="loading" class="alert alert-blue">
-		<span class="ti ti-hourglass"></span>
-		<span class="alert-text">Loading&hellip;</span>
-	</p>
+	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<article class="note-box" v-if="note">
 		<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
 		<router-link class="note-date" :to="'/note/' + note.id">

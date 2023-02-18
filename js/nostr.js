@@ -170,13 +170,30 @@ const nostrClient = function() {
 		return socket;
 	}
 
+	function addInOrder(array, item, compar) {
+		var index = 0;
+		while(index < array.length && compar(item, array[index]) > 0) {
+			index++;
+		}
+		array.splice(index, 0, item);
+		return index;
+	}
+
 	function addRelay(relay) {
 		if(relays.includes(relay)) {
 			return false;
 		}
-		relays.push(relay);
+		const index = addInOrder(relays, relay, (a, b) => {
+			if(a > b) {
+				return 1
+			}
+			if(a < b) {
+				return -1;
+			}
+			return 0;
+		});
 		const socket = createSocket(relay);
-		sockets.push(socket);
+		sockets.splice(index, 0, socket);
 		return true;
 	}
 
@@ -377,7 +394,10 @@ const gatherNostrRelays = function() {
 		message = JSON.stringify(message);
 		socket.send(message);
 		const received = await receiveEvent(socket, subId);
-		return received && received.id == event.id;
+		if(received && received.id == event.id) {
+			return socket.url;
+		}
+		return null;
 	}
 
 	function testRelayLimited(event, relay, subId) {
@@ -403,7 +423,8 @@ const gatherNostrRelays = function() {
 		const event = await nostrUtils.createEvent(keys, 1, [], "Demo.");
 		const subId = crypto.randomUUID();
 		const tests = await testRelays(relays, event, subId);
-		relays = relays.filter((relay, index) => tests[index]);
+		relays = tests.filter(relay => relay);
+		relays.sort();
 		return relays;
 	}
 }();

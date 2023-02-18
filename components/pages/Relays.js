@@ -1,52 +1,63 @@
 import Session from "../../js/session.js"
 import KnownRelaysView from "../KnownRelaysView.js"
 import UsedRelaysView from "../UsedRelaysView.js"
+import AlertView from "../AlertView.js";
 
-function addInOrder(array, item, compar) {
-	var index = 0;
-	while(index < array.length && compar(item, array[index]) > 0) {
-		console.log(item, array[index]);
-		index++;
-	}
-	array.splice(index, 0, item);
-}
-
-function compStrings(a, b) {
-	if(a > b) {
-		return 1;
-	}
-	if(a < b) {
-		return -1;
-	}
-	return 0;
-}
+const ws_regex = /^(?:(?:wss?:)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 
 export default {
 	data() {
 		return {
 			knownRelays: Session.unusedKnownRelays,
-			usedRelays: Session.usedRelays
+			usedRelays: Session.usedRelays,
+			customRelaysStr: "",
+			wrongRelays: [],
+			saved: false
 		}
 	},
 
 	components: {
 		KnownRelaysView,
-		UsedRelaysView
+		UsedRelaysView,
+		AlertView
 	},
 
 	methods: {
 		add(index) {
+			this.saved = false;
 			const relay = this.knownRelays[index];
 			Session.addRelay(relay);
+			this.saved = true;
 		},
 
 		addAll() {
+			this.saved = false;
 			Session.addAllRelays();
+			this.saved = true;
 		},
 
 		remove(index) {
+			this.saved = false;
 			const relay = this.usedRelays[index];
 			Session.removeRelay(relay);
+			this.saved = true;
+		},
+
+		addCustom() {
+			this.saved = false;
+			var relays = this.customRelaysStr.split("\n");
+			relays = relays.map(relay => relay.trim());
+			relays = relays.filter(relay => relay);
+			this.wrongRelays = relays.filter(relay => !ws_regex.test(relay));
+			if(this.wrongRelays.length > 0) {
+				return;
+			}
+			if(relays.length > 0) {
+				relays = relays.map(relay => new URL(relay).href);
+				Session.addCustomRelays(relays);
+				this.saved = true;
+			}
+			this.customRelaysStr = "";
 		}
 	},
 
@@ -54,13 +65,22 @@ export default {
 	<UsedRelaysView :relays="usedRelays" @remove="remove" />
 	<details>
 		<summary><span class="ti ti-caret-right"></span><span class="ti ti-caret-down"></span>Custom relays</summary>
-		<p>You can use custom relay servers. Add them below, one per line, as websocket addresses.</p>
+		<p>You can use custom relay servers. Add them below, one per line, as WebSocket URIs.</p>
 		<div class="relays-custom-box">
-			<label>Custom relays:</label>
-			<textarea required name="note" placeholder="wss://relay1.example.com\nwss://relay2.example.com"></textarea>
-			<button type="button">Add</button>
+			<label for="custom-relays">Custom relays:</label>
+			<textarea v-model="customRelaysStr" name="custom-relays" id="custom-relays" placeholder="wss://relay1.example.com/\nwss://relay2.example.com/"></textarea>
+			<button type="button" @click="addCustom">Add</button>
 		</div>
+		<AlertView v-if="wrongRelays.length" color="red" icon="alert-triangle">
+			<span>The following are not valid WebSocket URIs:</span>
+			<ul class="list">
+				<li v-for="relay in wrongRelays" @key="relay">
+					<span class="relay-value-red">{{ relay }}</span>
+				</li>
+			</ul>
+		</AlertView>
 	</details>
 	<KnownRelaysView :relays="knownRelays" @add="add" @addAll="addAll" />
+	<AlertView v-if="saved" color="blue" icon="check">Preferences saved.</AlertView>
 	`
 }

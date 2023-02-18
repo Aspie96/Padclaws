@@ -306,6 +306,7 @@ a.note-date {
 	background-color: #013;
 	display: flex;
 	align-items: middle;
+	overflow: hidden;
 }
 
 .alert.alert-red {
@@ -324,6 +325,7 @@ a.note-date {
 
 .alert .alert-text {
 	vertical-align: middle;
+	max-width: 100%;
 }
 
 .relays-container {
@@ -446,4 +448,16 @@ details[open] .ti-caret-down {
 
 details[open] .ti-caret-right {
 	display: none;
+}
+
+.list {
+	list-style:initial;
+	margin: 10px 0 0 20px;
+}
+
+.relay-value-red {
+	font-family: Programma, monospace;
+	background-color: #411;
+	color: #CBB;
+	padding: 2px;
 }

@@ -1,3 +1,5 @@
+import AlertView from "./AlertView.js";
+
 export default {
 	props: {
 		submitting: Boolean,
@@ -34,6 +36,10 @@ export default {
 		}
 	},
 
+	components: {
+		AlertView
+	},
+
 	template: `
 	<form @submit.prevent="$emit('submit', note)" @change="saveFormDataState">
 		<textarea required v-model="note" name="note" :disabled="submitting" placeholder="Here's the problem with teleportation&hellip;"></textarea>
@@ -41,9 +47,6 @@ export default {
 			<button type="submit" class="btn-submit" :disabled="!note.trim() || submitting">Publish</button>
 		</div>
 	</form>
-	<p v-if="noteId && !submitting" class="alert alert-blue">
-		<span class="ti ti-check"></span>
-		<span class="alert-text">Note published. <router-link :to="'/note/' + noteId">View note</router-link></span>
-	</p>
+	<AlertView v-if="noteId && !submitting" color="blue" icon="check">Note published. <router-link :to="'/note/' + noteId">View note</router-link></AlertView>
 	`
 }
