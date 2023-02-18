@@ -4,18 +4,22 @@ export default {
 		relays: Array
 	},
 
-	methods: {
-		onRelayClick(index) {
-			this.$emit("remove", index);
+	emits: [
+		"remove"
+	],
+
+	computed: {
+		sortedRelays() {
+			return this.relays.toSorted((a, b) => a[0].localeCompare(b[0]));
 		}
 	},
 
 	template: `
 	<fieldset class="relays-container">
-		<legend>Used relays ({{ relays.length }})</legend>
-		<div class="relay-used-box" v-for="(relay, index) in relays" :key="relay">
+		<legend>Used relays ({{ sortedRelays.length }})</legend>
+		<div class="relay-used-box" v-for="([relay, config], index) in sortedRelays">
 			<div class="relay-used">
-				<button type="button" :id="'used-relay-' + index" @click="onRelayClick(index)">
+				<button type="button" :id="'used-relay-' + index" @click="this.$emit('remove', relay)">
 					<span class="ti ti-minus"></span>
 				</button>
 				<label :for="'used-relay-' + index" class="relay-uri">{{ relay }}</label>

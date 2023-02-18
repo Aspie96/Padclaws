@@ -12,9 +12,9 @@ export default {
 	template: `
 	<fieldset class="relays-container">
 		<legend>Known relays ({{ relays.length }})</legend>
-		<div class="relay-known-box" v-for="(relay, index) in relays" :key="relay">
+		<div class="relay-known-box" v-for="(relay, index) in relays">
 			<div class="relay-known">
-				<button type="button" :id="'known-relay-' + index" @click="$emit('add', index)">
+				<button type="button" :id="'known-relay-' + index" @click="$emit('add', relay)">
 					<span class="ti ti-plus"></span>
 				</button>
 				<label :for="'known-relay-' + index" class="relay-uri">{{ relay }}</label>

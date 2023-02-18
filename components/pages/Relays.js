@@ -8,12 +8,11 @@ const ws_regex = /^(?:(?:wss?:)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1
 export default {
 	data() {
 		return {
-			knownRelays: Session.unusedKnownRelays,
-			usedRelays: Session.usedRelays,
+			relays: Session.relays,
 			customRelaysStr: "",
 			wrongRelays: [],
 			saved: false
-		}
+		};
 	},
 
 	components: {
@@ -23,10 +22,9 @@ export default {
 	},
 
 	methods: {
-		add(index) {
+		add(relay) {
 			this.saved = false;
-			const relay = this.knownRelays[index];
-			Session.addRelay(relay);
+			Session.addRelay(relay, true, true);
 			this.saved = true;
 		},
 
@@ -36,10 +34,9 @@ export default {
 			this.saved = true;
 		},
 
-		remove(index) {
+		remove(relay) {
 			this.saved = false;
-			const relay = this.usedRelays[index];
-			Session.removeRelay(relay);
+			Session.removeRelay(relay, true, true);
 			this.saved = true;
 		},
 
@@ -54,7 +51,7 @@ export default {
 			}
 			if(relays.length > 0) {
 				relays = relays.map(relay => new URL(relay).href);
-				Session.addCustomRelays(relays);
+				Session.addCustomRelays(relays, true, true);
 				this.saved = true;
 			}
 			this.customRelaysStr = "";
@@ -62,7 +59,7 @@ export default {
 	},
 
 	template: `
-	<UsedRelaysView :relays="usedRelays" @remove="remove" />
+	<UsedRelaysView :relays="relays.used" @remove="remove" />
 	<details>
 		<summary><span class="ti ti-caret-right"></span><span class="ti ti-caret-down"></span>Custom relays</summary>
 		<p>You can use custom relay servers. Add them below, one per line, as WebSocket URIs.</p>
@@ -80,7 +77,7 @@ export default {
 			</ul>
 		</AlertView>
 	</details>
-	<KnownRelaysView :relays="knownRelays" @add="add" @addAll="addAll" />
+	<KnownRelaysView :relays="relays.unusedKnown" @add="add" @addAll="addAll" />
 	<AlertView v-if="saved" color="blue" icon="check">Preferences saved.</AlertView>
 	`
 }

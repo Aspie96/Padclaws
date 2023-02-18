@@ -18,9 +18,9 @@ if(keyRegex.test(storedKey)) {
 
 var relays = localStorage.getItem("relays");
 if(relays) {
-	relays = JSON.parse(localStorage.getItem("relays"))
-	for(const relay of relays) {
-		nostrClient.addRelay(relay);
+	relays = JSON.parse(relays);
+	for(const relay in relays) {
+		nostrClient.addRelay(relay, relays[relay].read, relays[relay].write);
 	}
 }
 
@@ -28,9 +28,11 @@ if(relays) {
 const session = Vue.reactive({
 	logged,
 	userKeys,
-	knownRelays: null,
-	usedRelays: [],
-	unusedKnownRelays: [],
+	relays: {
+		known: null,
+		used: [],
+		unusedKnown: []
+	},
 
 	login(privateKey) {
 		const publicKey = nostrUtils.getPublicKey(privateKey);
@@ -56,23 +58,24 @@ const session = Vue.reactive({
 	},
 
 	async refreshRelays(store) {
-		if(!this.knownRelays) {
-			this.knownRelays = await (await fetch("../data/relays.json")).json();
+		if(!this.relays.known) {
+			this.relays.known = await (await fetch("../data/relays.json")).json();
 		}
-		this.usedRelays.splice(0, this.usedRelays.length, ...nostrClient.getRelays());
-		this.unusedKnownRelays.splice(0, this.unusedKnownRelays.length, ...this.knownRelays.filter(relay => !this.usedRelays.includes(relay)));
+		const usedRelays = nostrClient.getRelays();
+		this.relays.used = Object.entries(usedRelays);
+		this.relays.unusedKnown = this.relays.known.filter(relay => !(relay in usedRelays));
 		if(store) {
-			localStorage.setItem("relays", JSON.stringify(this.usedRelays));
+			localStorage.setItem("relays", JSON.stringify(usedRelays));
 		}
 	},
 
-	addRelay(relay) {
-		nostrClient.addRelay(relay);
+	addRelay(relay, read, write) {
+		nostrClient.addRelay(relay, read, write);
 		this.refreshRelays(true);
 	},
 
 	addAllRelays() {
-		this.addCustomRelays(this.unusedKnownRelays);
+		this.addCustomRelays(this.relays.unusedKnown, true, true);
 	},
 
 	removeRelay(relay) {
@@ -81,20 +84,20 @@ const session = Vue.reactive({
 	},
 
 	replaceRelays(relays) {
-		for(const relay of this.usedRelays) {
-			if(!relays.includes(relay)) {
+		for(const [relay, config] of this.relays.used) {
+			if(!(relay in relays)) {
 				nostrClient.removeRelay(relay);
 			}
 		}
-		for(const relay of relays) {
-			nostrClient.addRelay(relay);
+		for(const relay in relays) {
+			nostrClient.setRelay(relay, relays[relay].read, relays[relay].write);
 		}
 		this.refreshRelays(false);
 	},
 
-	addCustomRelays(relays) {
+	addCustomRelays(relays, read, write) {
 		for(const relay of relays) {
-			nostrClient.addRelay(relay);
+			nostrClient.addRelay(relay, read, write);
 		}
 		this.refreshRelays(true);
 	}

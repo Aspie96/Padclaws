@@ -1,5 +1,11 @@
 "use strict";
 
+if(!window.structuredClone) {
+	window.structuredClone = object => {
+		return JSON.stringify(JSON.parse(object));
+	}
+}
+
 const nostrEventKinds = Object.freeze({
 	set_metadata: 0,
 	text_note: 1,
@@ -146,12 +152,27 @@ const nostrUtils = function() {
 
 
 const nostrClient = function() {
-	const relays = [];
-	const sockets = [];
+	const relays = {};
+	const sockets = {};
 	const subscriptions = {};
 
-	function* getRelays() {
-		yield* relays;
+	function getRelays() {
+		return structuredClone(relays);
+	}
+
+	function* getSockets(mode) {
+		for(const relay in relays) {
+			const socket = sockets[relay];
+			var cond = !mode || relays[relay][mode];
+			cond &&= (socket.readyState == WebSocket.OPEN || socket.readyState == WebSocket.CONNECTING);
+			if(cond) {
+				yield socket;
+			}
+		}
+	}
+
+	function normalizeRelay(relay) {
+		return new URL(relay).href;
 	}
 
 	function createSocket(relay) {
@@ -170,42 +191,58 @@ const nostrClient = function() {
 		return socket;
 	}
 
-	function addInOrder(array, item, compar) {
-		var index = 0;
-		while(index < array.length && compar(item, array[index]) > 0) {
-			index++;
+	function addRelay(relay, read, write) {
+		relay = normalizeRelay(relay);
+		read = !!read;
+		write = !!write;
+		if(relays[relay]) {
+			relays[relay].read ||= read;
+			relays[relay].write ||= write;
+		} else {
+			relays[relay] = {
+				read,
+				write
+			};
 		}
-		array.splice(index, 0, item);
-		return index;
+		if(relays[relay].read || relays[relay].write) {
+			if(!sockets[relay]) {
+				sockets[relay] = createSocket(relay);
+			}
+		} else {
+			sockets[relay] = null;
+		}
 	}
 
-	function addRelay(relay) {
-		if(relays.includes(relay)) {
-			return false;
+	function setRelay(relay, read, write) {
+		relay = normalizeRelay(relay);
+		read = !!read;
+		write = !!write;
+		relays[relay] = {
+			read,
+			write
+		};
+		if(read || write) {
+			if(!sockets[relay]) {
+				sockets[relay] = createSocket(relay);
+			}
+		} else {
+			if(sockets[relay]) {
+				sockets[relay].close();
+				sockets[relay] = null;
+			}
 		}
-		const index = addInOrder(relays, relay, (a, b) => {
-			if(a > b) {
-				return 1
-			}
-			if(a < b) {
-				return -1;
-			}
-			return 0;
-		});
-		const socket = createSocket(relay);
-		sockets.splice(index, 0, socket);
-		return true;
 	}
 
 	function removeRelay(relay) {
-		const index = relays.indexOf(relay);
-		if(index == -1) {
+		relay = normalizeRelay(relay);
+		if(!(relay in relays)) {
 			return false;
 		}
-		relays.splice(index, 1);
-		const socket = sockets[index];
-		socket.close();
-		sockets.splice(index, 1);
+		delete relays[relay];
+		if(sockets[relay]) {
+			sockets[relay].close();
+		}
+		delete sockets[relay];
 		return true;
 	}
 
@@ -217,17 +254,19 @@ const nostrClient = function() {
 		});
 	}
 
-	function sendToSockets(message) {
+	async function sendToSocket(socket, message) {
+		if(socket.readyState == WebSocket.CONNECTING) {
+			await waitSocketOpen(socket);
+		}
+		return await socket.send(message);
+	}
+
+	function sendToSockets(message, mode) {
 		message = JSON.stringify(message);
-		const openSockets = sockets.filter(socket => {
-			return socket.readyState == WebSocket.OPEN || socket.readyState == WebSocket.CONNECTING;
-		});
-		const requests = openSockets.map(async socket => {
-			if(socket.readyState == WebSocket.CONNECTING) {
-				await waitSocketOpen(socket);
-			}
-			return await socket.send(message);
-		});
+		const requests = [];
+		for(const socket of getSockets(mode)) {
+			requests.push(sendToSocket(socket, message));
+		}
 		return requests;
 	}
 
@@ -235,16 +274,16 @@ const nostrClient = function() {
 		return crypto.randomUUID();
 	}
 
-	async function cancelSubscription(id) {
+	function cancelSubscription(id) {
 		delete subscriptions[id];
 		const message = ["CLOSE", id];
-		return await sendToSockets(message);
+		sendToSockets(message, "read");
 	}
 
 	function createSubscription(filters, callback, subId) {
 		subId ||= generateSubId();
 		const message = ["REQ", subId, filters];
-		sendToSockets(message);
+		sendToSockets(message, "read");
 		subscriptions[subId] = event => {
 			if(nostrUtils.testEvent(filters, event)) {
 				callback(event);
@@ -293,13 +332,14 @@ const nostrClient = function() {
 
 	function sendEvent(event) {
 		const message = ["EVENT", event];
-		const requests = sendToSockets(message);
+		const requests = sendToSockets(message, "write");
 		return requests;
 	}
 
 	return Object.freeze({
 		getRelays,
 		addRelay,
+		setRelay,
 		removeRelay,
 		getEventById,
 		getFeed,
