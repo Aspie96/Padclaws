@@ -185,7 +185,7 @@ const nostrClient = function() {
 				if(!(subId in subscriptions)) return;
 				const event = Object.freeze(message[2]);
 				if(!nostrUtils.verifyEvent(event)) return;
-				subscriptions[subId](event);
+				subscriptions[subId].callback(event);
 			}
 		});
 		return socket;
@@ -261,11 +261,25 @@ const nostrClient = function() {
 		return await socket.send(message);
 	}
 
-	function sendToSockets(message, mode) {
+	function sendToSockets(message, mode, socketsOut) {
 		message = JSON.stringify(message);
 		const requests = [];
 		for(const socket of getSockets(mode)) {
+			if(socketsOut) {
+				socketsOut.push(socket);
+			}
 			requests.push(sendToSocket(socket, message));
+		}
+		return requests;
+	}
+
+	function sendToChosenSockets(message, sockets) {
+		message = JSON.stringify(message);
+		const requests = [];
+		for(const socket of sockets) {
+			if(socket.readyState == WebSocket.OPEN || socket.readyState == WebSocket.CONNECTING) {
+				requests.push(sendToSocket(socket, message));
+			}
 		}
 		return requests;
 	}
@@ -275,19 +289,23 @@ const nostrClient = function() {
 	}
 
 	function cancelSubscription(id) {
-		delete subscriptions[id];
 		const message = ["CLOSE", id];
-		sendToSockets(message, "read");
+		sendToChosenSockets(message, subscriptions[id].sockets);
+		delete subscriptions[id];
 	}
 
 	function createSubscription(filters, callback, subId) {
 		subId ||= generateSubId();
 		const message = ["REQ", subId, filters];
-		sendToSockets(message, "read");
-		subscriptions[subId] = event => {
-			if(nostrUtils.testEvent(filters, event)) {
-				callback(event);
-			}
+		const sockets = [];
+		sendToSockets(message, "read", sockets);
+		subscriptions[subId] = {
+			callback: event => {
+				if(nostrUtils.testEvent(filters, event)) {
+					callback(event);
+				}
+			},
+			sockets
 		};
 		return subId;
 	}
