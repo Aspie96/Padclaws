@@ -114,16 +114,20 @@ const nostrUtils = function() {
 		return event.pubkey;
 	}
 
+	function getTagValues(event, tag) {
+		return event.tags.filter(arr => arr[0] == tag);
+	}
+
 	function getDate(event) {
 		return new Date(event.created_at * 1000);
 	}
 
 	function testEvent(filters, event) {
 		if("ids" in filters) {
-			if(!filters.ids.includes(event.id)) return false;
+			if(!filters.ids.some(id => event.id.startsWith(id))) return false;
 		}
 		if("authors" in filters) {
-			if(!filters.authors.includes(getAuthor(event))) return false;
+			if(!filters.authors.some(id => getAuthor(event).startsWith(id))) return false;
 		}
 		if("kinds" in filters) {
 			if(!filters.kinds.includes(event.kind)) return false;
@@ -143,6 +147,7 @@ const nostrUtils = function() {
 		getPublicKey,
 		generateKeys,
 		getAuthor,
+		getTagValues,
 		getDate,
 		verifyEvent,
 		createEvent,

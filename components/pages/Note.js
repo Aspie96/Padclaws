@@ -6,7 +6,7 @@ export default {
 		return {
 			loading: false,
 			invalid: false,
-			note: null
+			event: null
 		};
 	},
 
@@ -29,15 +29,9 @@ export default {
 			}
 			this.invalid = false;
 			this.loading = true;
-			this.note = null;
-			const event = await nostrClient.getEventById(this.$route.params.id);
+			this.event = null;
+			this.event = await nostrClient.getEventById(this.$route.params.id);
 			this.loading = false;
-			this.note =  {
-				id: event.id,
-				author: nostrUtils.getAuthor(event),
-				content: event.content,
-				date: nostrUtils.getDate(event)
-			};
 		}
 	},
 
@@ -48,6 +42,6 @@ export default {
 
 	template:`
 	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid event ID. Check the URL.</AlertView>
-	<NoteView v-else :loading="loading" :note="note" />
+	<NoteView v-else :loading="loading" :event="event" />
 	`
 }

@@ -4,7 +4,7 @@ export default {
 	data() {
 		return {
 			invalid: false,
-			notes: []
+			events: []
 		};
 	},
 
@@ -20,7 +20,7 @@ export default {
 
 	methods: {
 		fetchData() {
-			this.notes = [];
+			this.events = [];
 			const authorId = this.$route.params.id;
 			if(!nostrUtils.isHash(authorId, 32)) {
 				this.invalid = true;
@@ -28,17 +28,11 @@ export default {
 			}
 			this.invalid = false;
 			nostrClient.getFeed(event => {
-				const note = {
-					id: event.id,
-					author: nostrUtils.getAuthor(event),
-					content: event.content,
-					date: nostrUtils.getDate(event)
-				};
 				var index = 0;
-				while(index < this.notes.length && this.notes[index].date > note.date) {
+				while(index < this.events.length && this.events[index].date > event.date) {
 					index++;
 				}
-				this.notes.splice(index, 0, note);
+				this.events.splice(index, 0, event);
 			}, authorId);
 		}
 	},
@@ -52,6 +46,6 @@ export default {
 		<span class="ti ti-alert-triangle"></span>
 		<span class="alert-text">Invalid public key. Check the URL.</span>
 	</p>
-	<FeedView v-else :notes="notes" />
+	<FeedView v-else :events="events" />
 	`
 }

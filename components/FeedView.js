@@ -2,7 +2,7 @@ import NoteView from "./NoteView.js"
 
 export default {
 	props: {
-		notes: Array
+		events: Array
 	},
 
 	components: {
@@ -10,6 +10,6 @@ export default {
 	},
 
 	template: `
-	<NoteView v-for="note in notes" :key="note.id" :note="note" />
+	<NoteView v-for="event in events" :key="event.id" :event="event" />
 	`
 }
