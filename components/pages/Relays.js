@@ -40,6 +40,12 @@ export default {
 			this.saved = true;
 		},
 
+		readWriteChange(relay, read, write) {
+			this.saved = false;
+			Session.setRelay(relay, read, write);
+			this.saved = true;
+		},
+
 		addCustom() {
 			this.saved = false;
 			var relays = this.customRelaysStr.split("\n");
@@ -59,7 +65,7 @@ export default {
 	},
 
 	template: `
-	<UsedRelaysView :relays="relays.used" @remove="remove" />
+	<UsedRelaysView :relays="relays.used" @remove="remove" @readWriteChange="readWriteChange" />
 	<details>
 		<summary><span class="ti ti-caret-right"></span><span class="ti ti-caret-down"></span>Custom relays</summary>
 		<p>You can use custom relay servers. Add them below, one per line, as WebSocket URIs.</p>

@@ -63,6 +63,7 @@ const session = Vue.reactive({
 		}
 		const usedRelays = nostrClient.getRelays();
 		this.relays.used = Object.entries(usedRelays);
+		this.relays.used.sort((a, b) => a[0].localeCompare(b[0]));
 		this.relays.unusedKnown = this.relays.known.filter(relay => !(relay in usedRelays));
 		if(store) {
 			localStorage.setItem("relays", JSON.stringify(usedRelays));
@@ -71,6 +72,11 @@ const session = Vue.reactive({
 
 	addRelay(relay, read, write) {
 		nostrClient.addRelay(relay, read, write);
+		this.refreshRelays(true);
+	},
+
+	setRelay(relay, read, write) {
+		nostrClient.setRelay(relay, read, write);
 		this.refreshRelays(true);
 	},
 

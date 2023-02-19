@@ -325,23 +325,30 @@ a.note-date {
 
 .alert .alert-text {
 	vertical-align: middle;
-	max-width: 100%;
 }
 
 .relays-container {
+	min-width: 0;
 	border: 2px solid #333;
 	height: 100px;
 	overflow: auto;
+	width: 100%;
 }
 
-.relay-known-box, .relay-used-box {
+.relay-known-box {
 	width: 50%;
 	display: inline-block;
+	padding: 5px;
+}
+
+.relay-used-box {
+	width: 100%;
+	padding: 5px;
 }
 
 .relay-known, .relay-used {
+	overflow: hidden;
 	display: flex;
-	margin: 5px;
 	vertical-align: middle;
 	background-color: #222;
 	border-radius: 5px;
@@ -355,6 +362,43 @@ a.note-date {
 	border-radius: 5px;
 	color: #DDD;
 	height: 25px;
+}
+
+.io-option {
+	display: inline-flex;
+	padding: 0 5px;
+	height: 100%;
+	padding-top: 3px;
+}
+
+.io-option input[type=checkbox] {
+	appearance: none;
+	position: relative;
+	background-color: #111;
+	margin: 0 5px;
+	color: currentColor;
+	font-size: inherit;
+	width: 17px;
+	height: 17px;
+	outline: 2px solid #999;
+	border-radius: 3px;
+}
+
+.io-option input[type=checkbox]:checked {
+	background-color: #029;
+	outline-color: #05B;
+}
+
+.io-option input[type=checkbox]:checked:before {
+	position: absolute;
+	font-family: tabler-icons;
+	display: inline-block;
+	content: '\ea5e';
+	height: 100%;
+	color: #EEE;
+	width: 100%;
+	text-align: center;
+	line-height: 17px;
 }
 
 .form-buttons .relays-known-all-btn {
@@ -394,15 +438,20 @@ a.note-date {
 }
 
 .relay-uri {
+	flex-grow: 1;
+	text-align: left;
 	font-family: Programma, monospace;
 	font-size: 0.8em;
 	line-height: 25px;
 	padding-left: 10px;
-	width: 100%;
-	text-align: left;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.relay-uri.unused {
+	color: #888;
+	text-decoration: line-through;
 }
 
 details {
