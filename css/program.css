@@ -328,6 +328,18 @@ input[type=checkbox]:checked:before {
 	font-size: 0.9em;
 }
 
+.load-more-btn {
+	background-color: #000;
+	width: 100%;
+	color: #FFF;
+	padding: 10px 25px;
+	font-size: 17px;
+	border-radius: 0;
+	font-weight: bold;
+	text-decoration: none;
+	border: 2px outset #AAA;
+}
+
 .alert {
 	margin: 10px 0;
 	border: 1px solid #07A;

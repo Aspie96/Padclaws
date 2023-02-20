@@ -1,5 +1,9 @@
 "use strict";
 
+function timeout(ms) {
+	return new Promise(resolve => setTimeout(() => resolve(false), ms));
+}
+
 if(!window.structuredClone) {
 	window.structuredClone = object => {
 		return JSON.stringify(JSON.parse(object));
@@ -70,6 +74,14 @@ const nostrUtils = function() {
 		return regex.test(value);
 	}
 
+	function isHashPrefix(value, length) {
+		if(typeof value != "string") {
+			return false;
+		}
+		const regex = new RegExp(`^[0-9a-f]{8,${length * 2}}$`);
+		return regex.test(value);
+	}
+
 	async function verifyEvent(event) {
 		if(!isHash(event.id, 32)) return false;
 		if(!isHash(event.pubkey, 32)) return false;
@@ -136,7 +148,7 @@ const nostrUtils = function() {
 			if(event.created_at <= filters.since) return false;
 		}
 		if("until" in filters) {
-			if(event.created_at >= filters.since) return false;
+			if(event.created_at >= filters.until) return false;
 		}
 		return true;
 	}
@@ -144,6 +156,7 @@ const nostrUtils = function() {
 	return Object.freeze({
 		generatePrivateKey,
 		isHash,
+		isHashPrefix,
 		getPublicKey,
 		generateKeys,
 		getAuthor,
@@ -174,6 +187,57 @@ const nostrClient = function() {
 				yield socket;
 			}
 		}
+	}
+
+	function hasEvents(author, maxTime, until) {
+		maxTime ||= 500;
+		const filters = {
+			authors: [author],
+			limit: 1
+		};
+		if(Number.isInteger(until)) {
+			filters.until = until;
+		}
+		const p1 = new Promise(resolve => {
+			const subId = createSubscription(filters, event => {
+				cancelSubscription(subId);
+				resolve(true);
+			});
+		});
+		const p2 = timeout(maxTime);
+		return Promise.race([p1, p2]);
+	}
+
+	function getReasonableTimestamp(author, current, delay, increment) {
+		current ||= Math.round(Date.now() / 1000);
+		delay ||= 100;
+		increment ||= 60 * 60 * 24;
+		return new Promise(async resolve => {
+			var until = current + 1;
+			var since = until - increment;
+			var subIds = [];
+			var loop = true;
+			while(loop) {
+				const filters = {
+					authors: [author],
+					since,
+					until,
+					limit: 1
+				};
+				const subId = createSubscription(filters, event => {
+					for(const subId of subIds) {
+						cancelSubscription(subId);
+					}
+					resolve(since);
+					loop = false;
+				});
+				subIds.push(subId);
+				await timeout(delay);
+				increment *= 2;
+				until = since + 1;
+				since = until - increment;
+			}
+		});
 	}
 
 	function normalizeRelay(relay) {
@@ -325,13 +389,18 @@ const nostrClient = function() {
 		});
 	}
 
-	function getFeed(callback, authors, since, subId) {
+	function getFeed(callback, authors, since, subId, until) {
 		if(typeof authors == "string") {
 			authors = [authors];
 		}
-		const filters = { "authors": authors };
+		const filters = {
+			authors
+		};
 		if(Number.isInteger(since)) {
 			filters.since = since;
+		}
+		if(Number.isInteger(until)) {
+			filters.until = until;
 		}
 		const collectedIds = [];
 		subId = createSubscription(filters, event => {
@@ -360,9 +429,12 @@ const nostrClient = function() {
 	}
 
 	return Object.freeze({
+		hasEvents,
+		getReasonableTimestamp,
 		getRelays,
 		addRelay,
 		setRelay,
+		cancelSubscription,
 		removeRelay,
 		getEventById,
 		getFeed,
@@ -423,10 +495,6 @@ const gatherNostrRelays = function() {
 		return new Promise(resolve => {
 			socket.addEventListener("open", () => resolve(socket));
 		});
-	}
-
-	function timeout(ms) {
-		return new Promise(resolve => setTimeout(() => resolve(false), ms));
 	}
 
 	function receiveEvent(socket, subId) {
