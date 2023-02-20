@@ -97,16 +97,13 @@ export default {
 	},
 
 	template:`
-	<p v-if="invalid" class="alert alert-red">
-		<span class="ti ti-alert-triangle"></span>
-		<span class="alert-text">Invalid public key. Check the URL.</span>
-	</p>
+	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
 	<FeedView v-else :events="events" />
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<AlertView v-if="noEvents" color="blue" icon="mood-empty">
 		<template v-if="events.length == 0">No events found.</template>
 		<template v-else>No other events found.</template>
 	</AlertView>
-	<button v-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore">Load more&hellip;</button>
+	<button v-else-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore">Load more&hellip;</button>
 	`
 }
