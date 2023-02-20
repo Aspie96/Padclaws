@@ -23,7 +23,7 @@ export default {
 	methods: {
 		async fetchData() {
 			const eventId = this.$route.params.id;
-			if(!nostrUtils.isHash(eventId, 32)) {
+			if(!nostrUtils.isHashPrefix(eventId, 32)) {
 				this.invalid = true;
 				return;
 			}
