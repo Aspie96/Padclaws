@@ -58,6 +58,7 @@ export default {
 
 	computed: {
 		note() {
+			console.log(nostrUtils.parseETags(this.event));
 			if(!this.event) {
 				return null;
 			}

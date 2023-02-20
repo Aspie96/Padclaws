@@ -130,6 +130,42 @@ const nostrUtils = function() {
 		return event.tags.filter(arr => arr[0] == tag);
 	}
 
+	function parseETags(event) {
+		const tags = getTagValues(event, "e");
+		if(tags.some(tag => tag.lenght >= 3)) {
+			console.log("demo");
+			const result = {
+				reply: null,
+				mention: [],
+				root: null
+			};
+			for(const tag in tags) {
+				if(tag.length >= 3) {
+					if(tag[2] == "reply") {
+						result.reply = tag[1];
+					} else if(tag[2] == "mention") {
+						result.mention.push(tag[1]);
+					} else if(tag[2] == "root") {
+						result.mention = tag[1];
+					}
+				}
+			}
+			return result;
+		}
+		if(tags.length <= 2) {
+			return {
+				reply: tags[0] ? tags[0][1] : null,
+				mention: [],
+				root: tags[1] ? tags[1][1] : null
+			};
+		}
+		return {
+			reply: tags[0][1],
+			mention: tags.slice(1, tags.lenght - 1).map(tag => tag[1]),
+			root: tags[1][1]
+		};
+	}
+
 	function getDate(event) {
 		return new Date(event.created_at * 1000);
 	}
@@ -160,7 +196,7 @@ const nostrUtils = function() {
 		getPublicKey,
 		generateKeys,
 		getAuthor,
-		getTagValues,
+		parseETags,
 		getDate,
 		verifyEvent,
 		createEvent,
