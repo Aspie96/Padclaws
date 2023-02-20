@@ -5,15 +5,16 @@ export default {
 	},
 
 	data() {
-		var index = mention.substring(2, mention.length - 1);
+		var index = this.mention.substring(2, this.mention.length - 1);
 		index = parseInt(index);
-		const pTags = nostrUtils.getTagValues("p");
-		if(index < pTags.length) {
+		const tags = this.event.tags;
+		if(index <= tags.length && tags[index][0] == "p") {
 			return {
 				valid: true,
-				user: pTags[index][1]
+				user: tags[index][1]
 			};
 		}
+		console.log(this.event);
 		return {
 			valid: false,
 			user: null
@@ -22,6 +23,6 @@ export default {
 
 	template: `
 	<router-link v-if="valid" :to="'/feed/' + user">{{ user }}</router-link>
-	<template v-else>mention</template>
+	<template v-else>{{ mention }}</template>
 	`
 }

@@ -21,13 +21,14 @@ function* findByRegex(text, regex, itemName, def) {
 	do {
 		m = regex.exec(text);
 		if(m) {
-			const url = m[1];
+			console.log(m);
+			const item = m[1];
 			yield* def(text.slice(index, m.index));
 			yield {
 				type: itemName,
-				value: url
+				value: item
 			};
-			index = m.index + url.length;
+			index = m.index + item.length;
 		}
 	} while(m);
 	yield* def(text.slice(index));
@@ -41,7 +42,7 @@ export default {
 
 	methods: {
 		*findItems(text) {
-			const mentionRegex = /#\[[0-9]+\]/g;
+			const mentionRegex = /(#\[[0-9]+\])/g;
 			yield* findByRegex(text, re_link, "url", text => findByRegex(text, mentionRegex, "mention", yieldText));
 		},
 
