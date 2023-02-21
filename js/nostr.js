@@ -113,9 +113,9 @@ const nostrUtils = function() {
 		var event = {
 			pubkey: keys.public,
 			created_at: timestamp,
-			kind: kind,
-			tags: tags,
-			content: content
+			kind,
+			tags,
+			content
 		};
 		event.id = await hashEvent(event);
 		event.sig = await signEvent(event.id, keys.private);
@@ -228,6 +228,7 @@ const nostrClient = function() {
 		maxTime ||= 500;
 		const filters = {
 			authors: [author],
+			kinds: [1],
 			limit: 1
 		};
 		if(Number.isInteger(until)) {
@@ -255,6 +256,7 @@ const nostrClient = function() {
 			while(loop) {
 				const filters = {
 					authors: [author],
+					kinds: [1],
 					since,
 					until,
 					limit: 1
@@ -415,7 +417,7 @@ const nostrClient = function() {
 	}
 
 	function getEventById(id) {
-		const filters = { "ids": [id] };
+		const filters = { ids: [id] };
 		return new Promise(resolve => {
 			const subId = createSubscription(filters, event => {
 				cancelSubscription(subId);
@@ -429,7 +431,8 @@ const nostrClient = function() {
 			authors = [authors];
 		}
 		const filters = {
-			authors
+			authors,
+			kinds: [1]
 		};
 		if(Number.isInteger(since)) {
 			filters.since = since;
