@@ -22,7 +22,6 @@ function* findByRegex(text, regex, itemName, def) {
 	do {
 		m = regex.exec(text);
 		if(m) {
-			console.log(m);
 			const item = m[1];
 			yield* def(text.slice(index, m.index));
 			yield {

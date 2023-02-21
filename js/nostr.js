@@ -133,7 +133,6 @@ const nostrUtils = function() {
 	function parseETags(event) {
 		const tags = getTagValues(event, "e");
 		if(tags.some(tag => tag.lenght >= 3)) {
-			console.log("demo");
 			const result = {
 				reply: null,
 				mention: [],

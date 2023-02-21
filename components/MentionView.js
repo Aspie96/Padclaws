@@ -14,7 +14,6 @@ export default {
 				user: tags[index][1]
 			};
 		}
-		console.log(this.event);
 		return {
 			valid: false,
 			user: null
