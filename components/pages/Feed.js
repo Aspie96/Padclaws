@@ -104,6 +104,6 @@ export default {
 		<template v-if="events.length == 0">No events found.</template>
 		<template v-else>No other events found.</template>
 	</AlertView>
-	<button v-else-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore">Load more&hellip;</button>
+	<button v-else-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore"><span class="ti ti-chevrons-down"></span>Load more&hellip;<span class="ti ti-chevrons-down"></span></button>
 	`
 }
