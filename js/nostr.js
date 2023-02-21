@@ -132,36 +132,50 @@ const nostrUtils = function() {
 
 	function parseETags(event) {
 		const tags = getTagValues(event, "e");
-		if(tags.some(tag => tag.lenght >= 3)) {
-			const result = {
-				reply: null,
+		if(tags.length == 0) {
+			return {
+				root: null,
 				mention: [],
-				root: null
+				reply: null
 			};
-			for(const tag in tags) {
-				if(tag.length >= 3) {
-					if(tag[2] == "reply") {
+		}
+		if(tags.every(tag => tag.length >= 4)) {
+			if(tags.length == 1 && tags[0][3] == "root") {
+				return {
+					root: tags[0][1],
+					mention: [],
+					reply: tags[0][1]
+				};
+			}
+			const result = {
+				root: null,
+				mention: [],
+				reply: null
+			};
+			for(const tag of tags) {
+				if(tag.length >= 4) {
+					if(tag[3] == "reply") {
 						result.reply = tag[1];
-					} else if(tag[2] == "mention") {
+					} else if(tag[3] == "mention") {
 						result.mention.push(tag[1]);
-					} else if(tag[2] == "root") {
+					} else if(tag[3] == "root") {
 						result.mention = tag[1];
 					}
 				}
 			}
 			return result;
 		}
-		if(tags.length <= 2) {
+		if(tags.length == 1) {
 			return {
-				reply: tags[0] ? tags[0][1] : null,
+				root: null,
 				mention: [],
-				root: tags[1] ? tags[1][1] : null
+				reply: tags[0][1]
 			};
 		}
 		return {
-			reply: tags[0][1],
-			mention: tags.slice(1, tags.lenght - 1).map(tag => tag[1]),
-			root: tags[1][1]
+			root: tags[0][1],
+			mention: tags.slice(1, tags.length - 1).map(tag => tag[1]),
+			reply: tags[tags.length - 1][1]
 		};
 	}
 

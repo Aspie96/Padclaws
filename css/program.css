@@ -209,14 +209,14 @@ label {
 }
 
 .note-box {
-	border: 1px solid #333;
-	padding: 15px 25px;
+	border: 1px solid #555;
 	background-color: #111;
 }
 
 .note-content {
-	margin-top: 10px;
+	margin: 10px 0 5px 0;
 	white-space: pre-wrap;
+	padding: 0 25px 15px 25px;
 	overflow-wrap: break-word;
 }
 
@@ -236,6 +236,26 @@ a.user-pubkey {
 	text-decoration: none;
 }
 
+.in-reply-to {
+	padding: 0 15px;
+	background-color: #333;
+	margin-bottom: -5px;
+}
+
+.in-reply-to .ti {
+	margin-right: 10px;
+}
+
+.in-reply-to .note-id {
+	font-family: Programma, monospace;
+	display: inline-flex;
+	width: 9ch;
+	overflow: hidden;
+	text-overflow: clip;
+	color: #CCC;
+	text-decoration-style: dotted;
+}
+
 .mention {
 	font-family: Programma, monospace;
 	display: inline-flex;
@@ -244,6 +264,10 @@ a.user-pubkey {
 	vertical-align: baseline;
 	overflow: hidden;
 	text-overflow: clip;
+}
+
+.note-data {
+	padding: 15px 25px 0 25px;
 }
 
 a.note-date {

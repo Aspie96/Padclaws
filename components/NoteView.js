@@ -60,11 +60,13 @@ export default {
 			if(!this.event) {
 				return null;
 			}
+			const eTags = nostrUtils.parseETags(this.event);
 			return {
 				id: this.event.id,
 				author: nostrUtils.getAuthor(this.event),
 				content: this.event.content,
-				date: nostrUtils.getDate(this.event)
+				date: nostrUtils.getDate(this.event),
+				reply: eTags.reply
 			};
 		}
 	},
@@ -78,10 +80,15 @@ export default {
 	template: `
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<article class="note-box" v-if="note">
-		<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
-		<router-link class="note-date" :to="'/note/' + note.id">
-			<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
-		</router-link>
+		<header>
+			<div v-if="note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="'/note/' + note.reply">{{ note.reply }}</router-link></div>
+			<div class="note-data">
+				<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
+				<router-link class="note-date" :to="'/note/' + note.id">
+					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
+				</router-link>
+			</div>
+		</header>
 		<div class="note-content">
 			<template v-for="item in findItems(note.content)">
 				<template v-if="item.type == 'text'">{{ item.value }}</template>

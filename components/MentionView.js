@@ -8,7 +8,7 @@ export default {
 		var index = this.mention.substring(2, this.mention.length - 1);
 		index = parseInt(index);
 		const tags = this.event.tags;
-		if(index <= tags.length && tags[index][0] == "p") {
+		if(index < tags.length && tags[index][0] == "p") {
 			return {
 				valid: true,
 				user: tags[index][1]
