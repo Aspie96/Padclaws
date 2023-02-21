@@ -235,6 +235,16 @@ a.user-pubkey {
 	text-decoration: none;
 }
 
+.mention {
+	font-family: Programma, monospace;
+	display: inline-flex;
+	padding-left: -1ch;
+	width: 9ch;
+	vertical-align: baseline;
+	overflow: hidden;
+	text-overflow: clip;
+}
+
 a.note-date {
 	color: #AAA;
 	font-size: 0.9em;

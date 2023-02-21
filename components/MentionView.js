@@ -21,7 +21,7 @@ export default {
 	},
 
 	template: `
-	<router-link v-if="valid" :to="'/feed/' + user">{{ user }}</router-link>
+	<router-link v-if="valid" :to="'/feed/' + user" class="mention">@{{ user }}</router-link>
 	<template v-else>{{ mention }}</template>
 	`
 }
