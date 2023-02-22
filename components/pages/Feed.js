@@ -17,9 +17,7 @@ export default {
 	created() {
 		this.$watch(
 			() => this.$route.params,
-			() => {
-			this.fetchData()
-			},
+			this.fetchData,
 			{ immediate: true }
 		);
 	},

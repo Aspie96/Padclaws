@@ -1,6 +1,7 @@
 import AlertView from "./AlertView.js";
 import LinkView from "./LinkView.js";
 import MentionView from "./MentionView.js";
+import UsersCache from "./UsersCache.js";
 
 /*var re_source = re_weburl.source;
 re_source = re_source.slice(1, re_source.length - 1)
@@ -43,18 +44,32 @@ export default {
 		isActive: Boolean
 	},
 
+	data() {
+		return {
+			authorData: { loading: true }
+		};
+	},
+
+	created() {
+		this.$watch(
+			() => this.event,
+			this.fetchData,
+			{ immediate: true }
+		);
+	},
+
 	methods: {
+		fetchData() {
+			if(this.event) {
+				const author = nostrUtils.getAuthor(this.event);
+				UsersCache.fetchData(author);
+				this.authorData = UsersCache.users[author];
+			}
+		},
+
 		*findItems(text) {
 			const mentionRegex = /(#\[[0-9]+\])/g;
 			yield* findByRegex(text, re_link, "url", text => findByRegex(text, mentionRegex, "mention", yieldText));
-		},
-
-		parseMention(mention) {
-			var index = mention.substring(2, mention.length - 1);
-			index = parseInt(index);
-			const pTags = nostrUtils.getTagValues("p");
-			const pubkey = pTags[index][1];
-			return ;
 		}
 	},
 
@@ -89,7 +104,10 @@ export default {
 		<header>
 			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="'/note/' + note.reply">{{ note.reply }}</router-link></div>
 			<div class="note-data">
-				<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
+				<div class="author-data">
+					<p v-if="!authorData.loading" class="username">{{ authorData.data.name }}</p>
+					<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
+				</div>
 				<router-link class="note-date" :to="'/note/' + note.id">
 					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
 				</router-link>

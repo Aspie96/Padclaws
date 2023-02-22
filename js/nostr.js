@@ -431,11 +431,28 @@ const nostrClient = function() {
 	}
 
 	function getEventById(id) {
-		const filters = { ids: [id] };
+		const filters = {
+			ids: [id],
+			limit: 1
+		};
 		return new Promise(resolve => {
 			const subId = createSubscription(filters, event => {
 				cancelSubscription(subId);
 				resolve(event);
+			});
+		});
+	}
+
+	function getUserData(id) {
+		const filters = {
+			authors: [id],
+			kinds: [0]
+		};
+		return new Promise(resolve => {
+			const subId = createSubscription(filters, event => {
+				cancelSubscription(subId);
+				const data = JSON.parse(event.content);
+				resolve(Object.freeze(data));
 			});
 		});
 	}
@@ -489,6 +506,7 @@ const nostrClient = function() {
 		cancelSubscription,
 		removeRelay,
 		getEventById,
+		getUserData,
 		getFeed,
 		postNote,
 		sendEvent

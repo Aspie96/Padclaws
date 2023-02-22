@@ -1,11 +1,9 @@
-const keyRegex = /^[a-f0-9]{64}$/;
-
 var logged = false;
 var userKeys = null;
 
 const storedKey = sessionStorage.getItem("privateKey");
 
-if(keyRegex.test(storedKey)) {
+if(nostrUtils.isHash(storedKey, 32)) {
 	logged = true;
 	const publicKey = nostrUtils.getPublicKey(storedKey);
 	userKeys = {
