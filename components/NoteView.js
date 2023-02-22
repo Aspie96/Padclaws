@@ -37,7 +37,10 @@ function* findByRegex(text, regex, itemName, def) {
 export default {
 	props: {
 		event: Object,
-		loading: Boolean
+		loading: Boolean,
+		replyTo: Boolean,
+		isParent: Boolean,
+		isActive: Boolean
 	},
 
 	methods: {
@@ -60,14 +63,17 @@ export default {
 			if(!this.event) {
 				return null;
 			}
-			const eTags = nostrUtils.parseETags(this.event);
-			return {
+			const note = {
 				id: this.event.id,
 				author: nostrUtils.getAuthor(this.event),
 				content: this.event.content,
 				date: nostrUtils.getDate(this.event),
-				reply: eTags.reply
 			};
+			if(this.replyTo) {
+				const eTags = nostrUtils.parseETags(this.event);
+				note.reply = eTags.reply;
+			}
+			return note;
 		}
 	},
 
@@ -79,9 +85,9 @@ export default {
 
 	template: `
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
-	<article class="note-box" v-if="note">
+	<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive }">
 		<header>
-			<div v-if="note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="'/note/' + note.reply">{{ note.reply }}</router-link></div>
+			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="'/note/' + note.reply">{{ note.reply }}</router-link></div>
 			<div class="note-data">
 				<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
 				<router-link class="note-date" :to="'/note/' + note.id">

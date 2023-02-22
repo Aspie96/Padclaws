@@ -98,7 +98,7 @@ export default {
 
 	template:`
 	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
-	<FeedView v-else :events="events" />
+	<FeedView v-else :events="events" replyTo />
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<AlertView v-if="noEvents" color="blue" icon="mood-empty">
 		<template v-if="events.length == 0">No events found.</template>

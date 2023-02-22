@@ -213,11 +213,19 @@ label {
 	background-color: #111;
 }
 
+.is-parent {
+	border-left: 10px solid #567;
+}
+
 .note-content {
-	margin: 10px 0 5px 0;
+	margin: 10px 0 5px;
 	white-space: pre-wrap;
 	padding: 0 25px 15px 25px;
 	overflow-wrap: break-word;
+}
+
+.is-active .note-content {
+	font-size: 20px;
 }
 
 a.user-pubkey {
