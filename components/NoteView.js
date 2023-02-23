@@ -62,7 +62,7 @@ export default {
 		fetchData() {
 			if(this.event) {
 				const author = nostrUtils.getAuthor(this.event);
-				UsersCache.fetchData(author);
+				UsersCache.fetchMetadata(author);
 				this.authorData = UsersCache.users[author];
 			}
 		},

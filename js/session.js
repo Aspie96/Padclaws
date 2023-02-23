@@ -49,7 +49,7 @@ const session = Vue.reactive({
 	},
 
 	toPublicKey(privateKey) {
-		if(!keyRegex.test(privateKey)) {
+		if(!nostrUtils.isHash(privateKey, 32)) {
 			return null;
 		}
 		return nostrUtils.getPublicKey(privateKey);

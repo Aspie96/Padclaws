@@ -1,15 +1,17 @@
 const users = Vue.reactive({
 	users: {},
 
-	fetchData(user) {
+	fetchMetadata(user) {
 		if(!this.users[user]) {
 			this.users[user] = {
 				loading: true,
 				refs: 1
 			};
-			nostrClient.getUserData(user).then(data => {
-				this.users[user].data = data;
-				this.users[user].loading = false;
+			nostrClient.fetchUserMetadata(user, data => {
+				if(user in this.users) {
+					this.users[user].data = data;
+					this.users[user].loading = false;
+				}
 			});
 		} else {
 			this.users[user].refs++;

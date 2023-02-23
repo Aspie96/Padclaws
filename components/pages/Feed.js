@@ -53,14 +53,18 @@ export default {
 			this.noEvents = false;
 			this.since = await nostrClient.getReasonableTimestamp(authorId);
 			this.loading = false;
-			const subId = nostrClient.getFeed(event => {
+			const filters = {
+				authors: [authorId],
+				since: this.since
+			};
+			const subId = nostrClient.fetchFeed(filters, event => {
 				var index = 0;
 				while(index < this.events.length && this.events[index].created_at > event.created_at) {
 					index++;
 				}
 				this.events.splice(index, 0, event);
 				this.loadMoreBtn = true;
-			}, authorId, this.since);
+			});
 			this.subIds.push(subId);
 		},
 
@@ -77,14 +81,19 @@ export default {
 			const until = this.since;
 			this.since = await nostrClient.getReasonableTimestamp(authorId, until);
 			this.loading = false;
-			const subId = nostrClient.getFeed(event => {
+			const filters = {
+				authors: [authorId],
+				since: this.since,
+				until
+			};
+			const subId = nostrClient.fetchFeed(filters, event => {
 				var index = 0;
 				while(index < this.events.length && this.events[index].created_at > event.created_at) {
 					index++;
 				}
 				this.events.splice(index, 0, event);
 				this.loadMoreBtn = true;
-			}, authorId, this.since, undefined, until);
+			});
 			this.subIds.push(subId);
 		}
 	},

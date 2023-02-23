@@ -414,11 +414,12 @@ const nostrClient = function() {
 		delete subscriptions[id];
 	}
 
-	function createSubscription(filters, callback, subId) {
+	function createSubscription(filters, callback, mode, subId) {
+		mode ||= "read";
 		subId ||= generateSubId();
 		const message = ["REQ", subId, filters];
 		const sockets = [];
-		sendToSockets(message, "read", sockets);
+		sendToSockets(message, mode, sockets);
 		subscriptions[subId] = {
 			callback: event => {
 				if(nostrUtils.testEvent(filters, event)) {
@@ -430,54 +431,45 @@ const nostrClient = function() {
 		return subId;
 	}
 
-	function getEventById(id) {
-		const filters = {
-			ids: [id],
-			limit: 1
-		};
+	function fetchOne(filters, mode) {
+		mode ||= "read";
 		return new Promise(resolve => {
 			const subId = createSubscription(filters, event => {
 				cancelSubscription(subId);
 				resolve(event);
-			});
+			}, mode);
 		});
 	}
 
-	function getUserData(id) {
+	function fetchUserMetadata(pubkey, callback, maxTime) {
+		maxTime ||= 3000;
 		const filters = {
-			authors: [id],
-			kinds: [0]
+			authors: [pubkey],
+			kinds: [nostrEventKinds.set_metadata],
+			limit: 1
 		};
-		return new Promise(resolve => {
-			const subId = createSubscription(filters, event => {
-				cancelSubscription(subId);
-				const data = JSON.parse(event.content);
-				resolve(Object.freeze(data));
-			});
+		console.log(filters);
+		var timestamp;
+		const subId = createSubscription(filters, event => {
+			console.log(event);
+			if(!timestamp || event.created_at > timestamp) {
+				const metadata = JSON.parse(event.content);
+				timestamp = event.created_at;
+				callback(Object.freeze(metadata));
+			}
 		});
+		setTimeout(() => cancelSubscription(subId), maxTime);
 	}
 
-	function getFeed(callback, authors, since, subId, until) {
-		if(typeof authors == "string") {
-			authors = [authors];
-		}
-		const filters = {
-			authors,
-			kinds: [1]
-		};
-		if(Number.isInteger(since)) {
-			filters.since = since;
-		}
-		if(Number.isInteger(until)) {
-			filters.until = until;
-		}
+	function fetchFeed(filters, callback, mode, subId) {
+		mode ||= "read";
 		const collectedIds = [];
 		subId = createSubscription(filters, event => {
 			if(!collectedIds.includes(event.id)) {
 				collectedIds.push(event.id);
 				callback(event);
 			}
-		}, subId);
+		}, mode, subId);
 		return subId;
 	}
 
@@ -487,7 +479,11 @@ const nostrClient = function() {
 		const event = await nostrUtils.createEvent(keys, kind, tags, content);
 		const requests = sendEvent(event);
 		await Promise.any(requests);
-		await getEventById(event.id);
+		const filters = {
+			ids: [event.id],
+			limit: 1
+		};
+		await fetchOne(filters, "write");
 		return event;
 	}
 
@@ -503,13 +499,12 @@ const nostrClient = function() {
 		getRelays,
 		addRelay,
 		setRelay,
-		cancelSubscription,
 		removeRelay,
-		getEventById,
-		getUserData,
-		getFeed,
-		postNote,
-		sendEvent
+		fetchFeed,
+		fetchOne,
+		cancelSubscription,
+		fetchUserMetadata,
+		postNote
 	});
 }();
 

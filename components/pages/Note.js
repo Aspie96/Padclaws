@@ -31,7 +31,11 @@ export default {
 			this.invalid = false;
 			this.loading = true;
 			this.event = null;
-			this.event = await nostrClient.getEventById(this.$route.params.id);
+			const filters = {
+				ids: [this.$route.params.id],
+				limit: 1
+			};
+			this.event = await nostrClient.fetchOne(filters);
 			this.loading = false;
 			var eTags = nostrUtils.parseETags(this.event);
 			this.branch = [];
@@ -41,7 +45,11 @@ export default {
 				var loop = true;
 				while(loop) {
 					if(parent != eventId && !this.branch.some(e => e.id == parent)) {
-						parent = await nostrClient.getEventById(eTags.reply);
+						const filters = {
+							ids: [eTags.reply],
+							limit: 1
+						};
+						parent = await nostrClient.fetchOne(filters);
 						eTags = nostrUtils.parseETags(parent);
 						this.branch.unshift(parent);
 						parent = eTags.reply;
