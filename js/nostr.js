@@ -1,7 +1,7 @@
 "use strict";
 
-function timeout(ms) {
-	return new Promise(resolve => setTimeout(() => resolve(false), ms));
+function timeout(ms, retVal) {
+	return new Promise(resolve => setTimeout(() => resolve(retVal), ms));
 }
 
 if(!window.structuredClone) {
@@ -159,7 +159,7 @@ const nostrUtils = function() {
 					} else if(tag[3] == "mention") {
 						result.mention.push(tag[1]);
 					} else if(tag[3] == "root") {
-						result.mention = tag[1];
+						result.root = tag[1];
 					}
 				}
 			}
@@ -167,7 +167,7 @@ const nostrUtils = function() {
 		}
 		if(tags.length == 1) {
 			return {
-				root: null,
+				root: tags[0][1],
 				mention: [],
 				reply: tags[0][1]
 			};
@@ -209,8 +209,9 @@ const nostrUtils = function() {
 		getPublicKey,
 		generateKeys,
 		getAuthor,
-		parseETags,
 		getDate,
+		getTagValues,
+		parseETags,
 		verifyEvent,
 		createEvent,
 		testEvent
@@ -238,23 +239,18 @@ const nostrClient = function() {
 		}
 	}
 
-	function hasEvents(author, maxTime, until) {
-		maxTime ||= 500;
-		const filters = {
-			authors: [author],
-			kinds: [1],
-			limit: 1
-		};
-		if(Number.isInteger(until)) {
-			filters.until = until;
-		}
+	function checkEventExists(filters, filterFunc, maxTime) {
+		maxTime ||= 3000;
+		var subId;
 		const p1 = new Promise(resolve => {
-			const subId = createSubscription(filters, event => {
+			subId = createSubscription(filters, event => {
 				cancelSubscription(subId);
-				resolve(true);
+				if(!filterFunc || filterFunc(event)) {
+					resolve(true);
+				}
 			});
 		});
-		const p2 = timeout(maxTime);
+		const p2 = timeout(maxTime).then(() => cancelSubscription(subId));
 		return Promise.race([p1, p2]);
 	}
 
@@ -409,9 +405,11 @@ const nostrClient = function() {
 	}
 
 	function cancelSubscription(id) {
-		const message = ["CLOSE", id];
-		sendToChosenSockets(message, subscriptions[id].sockets);
-		delete subscriptions[id];
+		if(id in subscriptions) {
+			const message = ["CLOSE", id];
+			sendToChosenSockets(message, subscriptions[id].sockets);
+			delete subscriptions[id];
+		}
 	}
 
 	function createSubscription(filters, callback, mode, subId) {
@@ -448,17 +446,15 @@ const nostrClient = function() {
 			kinds: [nostrEventKinds.set_metadata],
 			limit: 1
 		};
-		console.log(filters);
 		var timestamp;
 		const subId = createSubscription(filters, event => {
-			console.log(event);
 			if(!timestamp || event.created_at > timestamp) {
 				const metadata = JSON.parse(event.content);
 				timestamp = event.created_at;
 				callback(Object.freeze(metadata));
 			}
 		});
-		setTimeout(() => cancelSubscription(subId), maxTime);
+		timeout(maxTime).then(() => cancelSubscription(subId));
 	}
 
 	function fetchFeed(filters, callback, mode, subId) {
@@ -494,7 +490,7 @@ const nostrClient = function() {
 	}
 
 	return Object.freeze({
-		hasEvents,
+		checkEventExists,
 		getReasonableTimestamp,
 		getRelays,
 		addRelay,

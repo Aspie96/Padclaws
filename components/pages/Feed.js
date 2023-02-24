@@ -1,6 +1,18 @@
 import AlertView from "../AlertView.js"
 import FeedView from "../FeedView.js"
 
+function addInOrder(array, item, comp) {
+	var index = 0;
+	while(index < array.length && comp(item, array[index]) < 0) {
+		index++;
+	}
+	array.splice(index, 0, item);
+}
+
+function dateComp(event1, event2) {
+	return event1.created_at - event2.created_at;
+}
+
 export default {
 	data() {
 		return {
@@ -45,7 +57,13 @@ export default {
 			}
 			this.loading = true;
 			this.invalid = false;
-			if(!await nostrClient.hasEvents(authorId)) {
+			var filters = {
+				authors: [authorId],
+				kinds: [nostrEventKinds.text_note],
+				since: this.since,
+				limit: 1
+			};
+			if(!await nostrClient.checkEventExists(filters)) {
 				this.loading = false;
 				this.noEvents = true;
 				return;
@@ -53,16 +71,13 @@ export default {
 			this.noEvents = false;
 			this.since = await nostrClient.getReasonableTimestamp(authorId);
 			this.loading = false;
-			const filters = {
+			filters = {
 				authors: [authorId],
+				kinds: [nostrEventKinds.text_note],
 				since: this.since
 			};
 			const subId = nostrClient.fetchFeed(filters, event => {
-				var index = 0;
-				while(index < this.events.length && this.events[index].created_at > event.created_at) {
-					index++;
-				}
-				this.events.splice(index, 0, event);
+				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
 			this.subIds.push(subId);
@@ -72,26 +87,28 @@ export default {
 			this.loadMoreBtn = false;
 			this.loading = true;
 			const authorId = this.$route.params.id;
-			if(!await nostrClient.hasEvents(authorId, undefined, this.since)) {
+			var filters = {
+				authors: [authorId],
+				since: this.since,
+				until,
+				limit: 1
+			};
+			if(!await nostrClient.checkEventExists(filters)) {
 				this.loading = false;
 				this.noEvents = true;
 				return;
 			}
 			this.noEvents = false;
-			const until = this.since;
+			const until = this.until;
 			this.since = await nostrClient.getReasonableTimestamp(authorId, until);
 			this.loading = false;
-			const filters = {
+			filters = {
 				authors: [authorId],
 				since: this.since,
 				until
 			};
 			const subId = nostrClient.fetchFeed(filters, event => {
-				var index = 0;
-				while(index < this.events.length && this.events[index].created_at > event.created_at) {
-					index++;
-				}
-				this.events.splice(index, 0, event);
+				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
 			this.subIds.push(subId);
