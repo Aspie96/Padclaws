@@ -28,7 +28,8 @@ export default {
 			loadMoreBtn: false,
 			repliesUntil: null,
 			noReplies: false,
-			loadingReplies: false
+			loadingReplies: false,
+			branchLoaded: false
 		};
 	},
 
@@ -64,34 +65,104 @@ export default {
 			this.noReplies = false;
 			this.loadingReplies = false;
 			this.reply = !!eTags.reply;
-			const trustedRepliers = [nostrUtils.getAuthor(this.event)];
+			this.trustedRepliers = new Set();
+			this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
 			for(const tag of nostrUtils.getTagValues(this.event, "p")) {
-				trustedRepliers.push(tag[1]);
+				this.trustedRepliers.add(tag[1]);
 			}
 			if(eTags.reply) {
+				const ancestorIds = [eTags.root, ...eTags.mention, eTags.reply];
+				const ancestorsCache = {};
 				this.branch = [];
-				var parent = eTags.reply;
-				while(parent) {
-					const filters = {
-						ids: [eTags.reply],
-						limit: 1
-					};
-					parent = await nostrClient.fetchOne(filters);
-					trustedRepliers.push(nostrUtils.getAuthor(parent));
-					for(const tag of nostrUtils.getTagValues(parent, "p")) {
-						trustedRepliers.push(tag[1]);
-					}
-					eTags = nostrUtils.parseETags(parent);
-					this.branch.unshift(parent);
-					parent = eTags.reply;
-				}
+				this.parent = eTags.reply;
+				const filters = {
+					ids: ancestorIds
+				};
+				this.subIds = [];
+				this.fetchedIds = new Set();
+				nostrClient.fetchFeed(filters, event => this.handleAncestors(event, ancestorsCache));
+			} else {
+				this.loadInitialReplies();
 			}
-			filters = {
-				authors: trustedRepliers,
+		},
+
+		handleAncestors(event, ancestorsCache) {
+			var eTags = nostrUtils.parseETags(event);
+			var ancestorIds = eTags.mention;
+			if(eTags.root) {
+				ancestorIds.push(eTags.root);
+			}
+			if(eTags.reply) {
+				ancestorIds.push(eTags.reply);
+			}
+			var filters = {
+				ids: ancestorIds
+			};
+			for(const id of ancestorIds) {
+				this.fetchedIds.add(id);
+			}
+			var subId = nostrClient.fetchFeed(filters, event => this.handleAncestors(event, ancestorsCache));
+			this.subIds.push(subId);
+			if(event.id == this.parent) {
+				this.trustedRepliers.add(nostrUtils.getAuthor(event));
+				for(const tag of nostrUtils.getTagValues(this.event, "p")) {
+					this.trustedRepliers.add(tag[1]);
+				}
+				this.branch.unshift(event);
+				this.parent = eTags.reply;
+				if(this.parent) {
+					while(this.parent && this.parent in ancestorsCache) {
+						const parent = ancestorsCache[this.parent];
+						this.branch.unshift(parent);
+						eTags = nostrUtils.parseETags(parent);
+						this.trustedRepliers.add(nostrUtils.getAuthor(parent));
+						for(const tag of nostrUtils.getTagValues(parent, "p")) {
+							this.trustedRepliers.add(tag[1]);
+						}
+						this.parent = eTags.reply;
+						var ancestorIds = eTags.mention;
+						if(eTags.root) {
+							ancestorIds.push(eTags.root);
+						}
+						if(eTags.reply) {
+							ancestorIds.push(eTags.reply);
+						}
+						ancestorIds = ancestorIds.filter(id => !this.fetchedIds.has(id));
+						filters = {
+							ids: ancestorIds
+						};
+						for(const id of ancestorIds) {
+							this.fetchedIds.add(id);
+						}
+						subId = nostrClient.fetchFeed(filters, event => this.handleAncestors(event, ancestorsCache));
+						this.subIds.push(subId);
+					}
+					if(!this.parent) {
+						for(const subId of this.subIds) {
+							nostrClient.cancelSubscription(subId);
+						}
+						this.loadInitialReplies();
+					}
+				} else {
+					for(const subId of this.subIds) {
+						nostrClient.cancelSubscription(subId);
+					}
+					this.loadInitialReplies();
+				}
+			} else {
+				ancestorsCache[event.id] = event;
+			}
+		},
+
+		loadInitialReplies() {
+			const filters = {
+				authors: [...this.trustedRepliers],
 				kinds: [nostrEventKinds.text_note],
 				"#e": [this.event.id]
 			};
+			console.log("demo1");
 			nostrClient.fetchFeed(filters, reply => {
+				console.log(reply);
 				const eTags = nostrUtils.parseETags(reply);
 				if(eTags.reply == this.event.id) {
 					addInOrder(this.trustedReplies, reply, dateComp);
