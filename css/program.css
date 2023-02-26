@@ -104,11 +104,41 @@ main {
 	padding: 40px;
 }
 
+#logo {
+	width: 20%;
+	height: 60px;
+	padding: 10px;
+	background-color: #111;
+	border-bottom: 1px solid #444;
+	text-align: center;
+}
+
+#logo img {
+	height: 100%;
+}
+
 #menu-toggle {
 	display: none;
 }
 
 @media (max-width: 768px) {
+	#logo {
+		left: 60px;
+		width: auto;
+		right: 0;
+		height: 60px;
+		padding: 10px;
+		background-color: #111;
+		border-bottom-width: 2px;
+		border-left: 1px solid #333;
+		text-align: center;
+		position: fixed;
+	}
+
+	#logo img {
+		height: 100%;
+	}
+
 	#menu-toggle {
 		display: block;
 		position: fixed;
