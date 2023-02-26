@@ -21,7 +21,7 @@ export default {
 			noEvents: false,
 			events: [],
 			loadMoreBtn: false,
-			since: 0,
+			until: null,
 			subIds: []
 		};
 	},
@@ -42,6 +42,13 @@ export default {
 
 	methods: {
 		async fetchData() {
+			if(!nostrUtils.isHashPrefix(this.$route.params.id, 32)) {
+				const decoded = nostrUtils.decodeEntity(this.$route.params.id);
+				if(decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hash, 32)) {
+					this.$router.replace("/feed/" + decoded.hash);
+					return;
+				}
+			}
 			for(const subId of this.subIds) {
 				nostrClient.cancelSubscription(subId);
 			}
@@ -60,27 +67,41 @@ export default {
 			var filters = {
 				authors: [authorId],
 				kinds: [nostrEventKinds.text_note],
-				since: this.since,
 				limit: 1
 			};
-			if(!await nostrClient.checkEventExists(filters)) {
+			const recent = await nostrClient.fetchMostRecent(filters);
+			if(!recent) {
+				this.noEvents = true;
 				this.loading = false;
 				this.noEvents = true;
 				return;
 			}
 			this.noEvents = false;
-			this.since = await nostrClient.getReasonableTimestamp(authorId);
-			this.loading = false;
+			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
 				authors: [authorId],
 				kinds: [nostrEventKinds.text_note],
-				since: this.since
+				since
 			};
+			console.log(filters);
+			this.until = since;
+			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
 				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
 			this.subIds.push(subId);
+		},
+
+		getReasonableTimestamp(timestamp) {
+			const until = (this.until || Math.round(Date.now() / 1000));
+			var timespan = until - timestamp;
+			if(timespan < 60 * 60 * 12) {
+				timespan = 60 * 60 * 24;
+			} else if(timespan < 60 * 60 * 24 * 15) {
+				timespan *= 2;
+			}
+			return until - timespan - 1;
 		},
 
 		async loadMore() {
@@ -89,24 +110,27 @@ export default {
 			const authorId = this.$route.params.id;
 			var filters = {
 				authors: [authorId],
-				since: this.since,
-				until,
+				kinds: [nostrEventKinds.text_note],
+				until: this.until,
 				limit: 1
 			};
-			if(!await nostrClient.checkEventExists(filters)) {
+			const recent = await nostrClient.fetchMostRecent(filters);
+			if(!recent) {
+				this.noEvents = true;
 				this.loading = false;
 				this.noEvents = true;
 				return;
 			}
 			this.noEvents = false;
-			const until = this.until;
-			this.since = await nostrClient.getReasonableTimestamp(authorId, until);
-			this.loading = false;
+			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
 				authors: [authorId],
-				since: this.since,
-				until
+				kinds: [nostrEventKinds.text_note],
+				since,
+				until: this.until
 			};
+			this.until = since;
+			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
 				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;

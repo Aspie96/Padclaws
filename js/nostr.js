@@ -16,6 +16,12 @@ const nostrEventKinds = Object.freeze({
 	recommend_server: 2
 });
 
+const nostrEncEntityPrefixes = {
+	npub: "npub",
+	nsec: "nsec",
+	note: "note"
+};
+
 const nostrUtils = function() {
 	async function hashString(text) {
 		const textAsBuffer = new TextEncoder().encode(text);
@@ -194,12 +200,35 @@ const nostrUtils = function() {
 			if(!filters.kinds.includes(event.kind)) return false;
 		}
 		if("since" in filters) {
-			if(event.created_at <= filters.since) return false;
+			if(event.created_at < filters.since) return false;
 		}
 		if("until" in filters) {
-			if(event.created_at >= filters.until) return false;
+			if(event.created_at > filters.until) return false;
 		}
 		return true;
+	}
+
+	function encodeEntity(prefix, hex) {
+		const data = nobleSecp256k1.utils.hexToBytes(hex);
+		const words = exports.bech32.toWords(data);
+		return exports.bech32.encode(prefix, words);
+	}
+
+	function decodeEntity(entity) {
+		const original = exports.bech32.decodeUnsafe(entity);
+		if(!original) {
+			return null;
+		}
+		const prefix = original.prefix;
+		if(!prefix in nostrEncEntityPrefixes) {
+			return null;
+		}
+		const words = original.words;
+		const data = exports.bech32.fromWords(words);
+		return {
+			prefix,
+			hash: nobleSecp256k1.utils.bytesToHex(data)
+		};
 	}
 
 	return Object.freeze({
@@ -214,7 +243,9 @@ const nostrUtils = function() {
 		parseETags,
 		verifyEvent,
 		createEvent,
-		testEvent
+		testEvent,
+		encodeEntity,
+		decodeEntity
 	});
 }();
 
@@ -244,20 +275,23 @@ const nostrClient = function() {
 		var subId;
 		const p1 = new Promise(resolve => {
 			subId = createSubscription(filters, event => {
-				cancelSubscription(subId);
 				if(!filterFunc || filterFunc(event)) {
+					cancelSubscription(subId);
 					resolve(true);
 				}
 			});
 		});
-		const p2 = timeout(maxTime).then(() => cancelSubscription(subId));
+		const p2 = timeout(maxTime).then(() => {
+			cancelSubscription(subId);
+			return false;
+		});
 		return Promise.race([p1, p2]);
 	}
 
-	function getReasonableTimestamp(author, current, delay, increment) {
+	function getReasonableTimestamp(partialFilters, current, delay, increment) {
 		current ||= Math.round(Date.now() / 1000);
 		delay ||= 100;
-		increment ||= 60 * 60 * 24;
+		increment ||= 60 * 30;
 		return new Promise(async resolve => {
 			var until = current + 1;
 			var since = until - increment;
@@ -265,11 +299,9 @@ const nostrClient = function() {
 			var loop = true;
 			while(loop) {
 				const filters = {
-					authors: [author],
-					kinds: [1],
+					...partialFilters,
 					since,
-					until,
-					limit: 1
+					until
 				};
 				const subId = createSubscription(filters, event => {
 					for(const subId of subIds) {
@@ -439,6 +471,30 @@ const nostrClient = function() {
 		});
 	}
 
+	function fetchMostRecent(filters, mode, delay, maxTime) {
+		mode ||= "read";
+		delay ||= 1000;
+		maxTime = 3000;
+		const p1 = new Promise(resolve => {
+			var recentEvent = null;
+			const subId = createSubscription(filters, event => {
+				if(recentEvent) {					
+					if(event.created_at > recentEvent.created_at) {
+						recentEvent = event;
+					}
+				} else {
+					recentEvent = event;
+					timeout(delay).then(() => {
+						cancelSubscription(subId);
+						resolve(recentEvent);
+					});
+				}
+			}, mode);
+		});
+		const p2 = timeout(maxTime).then(() => cancelSubscription(subId));
+		return Promise.race([p1, p2]);
+	}
+
 	function fetchUserMetadata(pubkey, callback, maxTime) {
 		maxTime ||= 3000;
 		const filters = {
@@ -498,6 +554,7 @@ const nostrClient = function() {
 		removeRelay,
 		fetchFeed,
 		fetchOne,
+		fetchMostRecent,
 		cancelSubscription,
 		fetchUserMetadata,
 		postNote
