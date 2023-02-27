@@ -473,8 +473,8 @@ const nostrClient = function() {
 
 	function fetchMostRecent(filters, mode, delay, maxTime) {
 		mode ||= "read";
-		delay ||= 1000;
-		maxTime = 3000;
+		delay ||= 500;
+		maxTime = 5000;
 		const p1 = new Promise(resolve => {
 			var recentEvent = null;
 			const subId = createSubscription(filters, event => {
@@ -486,6 +486,7 @@ const nostrClient = function() {
 					recentEvent = event;
 					timeout(delay).then(() => {
 						cancelSubscription(subId);
+						console.log("re", recentEvent);
 						resolve(recentEvent);
 					});
 				}

@@ -42,13 +42,15 @@ export default {
 
 	methods: {
 		async fetchData() {
+			console.log("demo1");
 			if(!nostrUtils.isHashPrefix(this.$route.params.id, 32)) {
 				const decoded = nostrUtils.decodeEntity(this.$route.params.id);
 				if(decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hash, 32)) {
-					this.$router.replace("/feed/" + decoded.hash);
+					this.$router.push("/feed/" + decoded.hash);
 					return;
 				}
 			}
+			console.log("demo2");
 			for(const subId of this.subIds) {
 				nostrClient.cancelSubscription(subId);
 			}
@@ -64,12 +66,15 @@ export default {
 			}
 			this.loading = true;
 			this.invalid = false;
+			this.until = null;
 			var filters = {
 				authors: [authorId],
 				kinds: [nostrEventKinds.text_note],
 				limit: 1
 			};
+			console.log("filters", filters);
 			const recent = await nostrClient.fetchMostRecent(filters);
+			console.log("recent", recent);
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;
@@ -83,7 +88,7 @@ export default {
 				kinds: [nostrEventKinds.text_note],
 				since
 			};
-			console.log(filters);
+			console.log("filters", filters);
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
@@ -114,6 +119,7 @@ export default {
 				until: this.until,
 				limit: 1
 			};
+			console.log("filters", filters);
 			const recent = await nostrClient.fetchMostRecent(filters);
 			if(!recent) {
 				this.noEvents = true;
@@ -129,6 +135,7 @@ export default {
 				since,
 				until: this.until
 			};
+			console.log("filters", filters);
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
