@@ -33,6 +33,7 @@ export default {
 	<div id="logo">
 		<img src="img/logo.svg" />
 	</div>
+	<div id="occluder"></div>
 	<nav id="menu" @click="closeMenu">
 		<ul>
 			<li>

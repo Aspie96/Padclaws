@@ -134,7 +134,7 @@ main {
 		border-width: 0;
 		border-bottom: 2px solid #444;
 		color: #EEE;
-		z-index: 1;
+		z-index: 2;
 	}
 
 	#menu-toggle:hover {
@@ -170,7 +170,7 @@ main {
 	.menu-open #menu {
 		width: 100%;
 		text-align: left;
-		z-index: 1;
+		z-index: 2;
 	}
 
 	.menu-open #menu li a .ti, .menu-open #menu li button .ti {
@@ -193,15 +193,20 @@ main {
 		border-left: 1px solid #333;
 		text-align: center;
 		position: fixed;
-		z-index: 1;
+		z-index: 2;
 	}
 
 	.menu-open #logo img {
 		height: 100%;
 	}
 
-	.menu-open main {
+	.menu-open #occluder {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: #000;
 		opacity: 50%;
+		z-index: 1;
 	}
 }
 
