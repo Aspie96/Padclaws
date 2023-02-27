@@ -478,7 +478,7 @@ const nostrClient = function() {
 		const p1 = new Promise(resolve => {
 			var recentEvent = null;
 			const subId = createSubscription(filters, event => {
-				if(recentEvent) {					
+				if(recentEvent) {
 					if(event.created_at > recentEvent.created_at) {
 						recentEvent = event;
 					}
