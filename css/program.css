@@ -62,6 +62,7 @@ button:disabled {
 #menu {
 	width: 20%;
 	position: fixed;
+	top: 60px;
 }
 
 #menu li a, #menu li button {
@@ -98,13 +99,8 @@ button:disabled {
 	color: #9CF;
 }
 
-main {
-	width: 60%;
-	margin: 0 auto;
-	padding: 40px;
-}
-
 #logo {
+	position: fixed;
 	width: 20%;
 	height: 60px;
 	padding: 10px;
@@ -117,28 +113,17 @@ main {
 	height: 100%;
 }
 
+main {
+	width: 60%;
+	margin: 0 auto;
+	padding: 40px;
+}
+
 #menu-toggle {
 	display: none;
 }
 
 @media (max-width: 768px) {
-	#logo {
-		left: 60px;
-		width: auto;
-		right: 0;
-		height: 60px;
-		padding: 10px;
-		background-color: #111;
-		border-bottom-width: 2px;
-		border-left: 1px solid #333;
-		text-align: center;
-		position: fixed;
-	}
-
-	#logo img {
-		height: 100%;
-	}
-
 	#menu-toggle {
 		display: block;
 		position: fixed;
@@ -149,6 +134,7 @@ main {
 		border-width: 0;
 		border-bottom: 2px solid #444;
 		color: #EEE;
+		z-index: 1;
 	}
 
 	#menu-toggle:hover {
@@ -162,26 +148,60 @@ main {
 		text-align: center;
 		top: 60px;
 	}
+
 	#menu li a .ti, #menu li button .ti {
 		margin: 0;
 		margin-left: 5px;
 	}
+
 	#menu .menu-option {
 		display: none;
 	}
+
+	#logo {
+		display: none;
+	}
+
 	main {
 		width: 100%;
 		padding: 80px;
 	}
-	#menu.menuOpen {
+
+	.menu-open #menu {
 		width: 100%;
 		text-align: left;
+		z-index: 1;
 	}
-	#menu.menuOpen li a .ti, #menu.menuOpen li button .ti {
+
+	.menu-open #menu li a .ti, .menu-open #menu li button .ti {
 		margin-right: 20px;
 	}
-	#menu.menuOpen .menu-option {
+
+	.menu-open #menu .menu-option {
 		display: inline;
+	}
+
+	.menu-open #logo {
+		display: block;
+		left: 60px;
+		width: auto;
+		right: 0;
+		height: 60px;
+		padding: 10px;
+		background-color: #111;
+		border-bottom-width: 2px;
+		border-left: 1px solid #333;
+		text-align: center;
+		position: fixed;
+		z-index: 1;
+	}
+
+	.menu-open #logo img {
+		height: 100%;
+	}
+
+	.menu-open main {
+		opacity: 50%;
 	}
 }
 

@@ -3,7 +3,6 @@ import Session from "../js/session.js"
 export default {
 	data() {
 		return {
-			isMenuOpen: false,
 			Session
 		};
 	},
@@ -16,12 +15,25 @@ export default {
 			return this.$route.path;
 		}
 	},
+
+	methods: {
+		toggleMenu() {
+			document.body.classList.toggle("menu-open");
+		},
+
+		closeMenu() {
+			document.body.classList.remove("menu-open");
+		}
+	},
  
 	template: `
-	<button type="button" id="menu-toggle" @click="isMenuOpen = !isMenuOpen">
+	<button type="button" id="menu-toggle" @click="toggleMenu">
 		<span class="ti ti-menu-2"></span>
 	</button>
-	<nav id="menu" :class="{ menuOpen: isMenuOpen }" @click="isMenuOpen=false">
+	<div id="logo">
+		<img src="img/logo.svg" />
+	</div>
+	<nav id="menu" @click="closeMenu">
 		<ul>
 			<li>
 				<router-link to="/">
