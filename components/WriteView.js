@@ -1,4 +1,4 @@
-import AlertView from "./AlertView.js";
+import AlertView from "./AlertView.js"
 
 export default {
 	props: {

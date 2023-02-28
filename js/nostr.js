@@ -209,6 +209,9 @@ const nostrUtils = function() {
 	}
 
 	function encodeEntity(prefix, hex) {
+		if(!nostrUtils.isHash(hex, 32)) {
+			return null;
+		}
 		const data = nobleSecp256k1.utils.hexToBytes(hex);
 		const words = exports.bech32.toWords(data);
 		return exports.bech32.encode(prefix, words);
@@ -471,22 +474,24 @@ const nostrClient = function() {
 		});
 	}
 
-	function fetchMostRecent(filters, mode, delay, maxTime) {
+	function fetchMostRecent(filters, mode, maxTime) {
 		mode ||= "read";
-		delay ||= 500;
 		maxTime = 5000;
+		var beginTime = Date.now();
+		var subId;
 		const p1 = new Promise(resolve => {
 			var recentEvent = null;
-			const subId = createSubscription(filters, event => {
+			subId = createSubscription(filters, event => {
 				if(recentEvent) {
 					if(event.created_at > recentEvent.created_at) {
 						recentEvent = event;
 					}
 				} else {
 					recentEvent = event;
+					var delay = Date.now() - beginTime;
+					delay *= 2;
 					timeout(delay).then(() => {
 						cancelSubscription(subId);
-						console.log("re", recentEvent);
 						resolve(recentEvent);
 					});
 				}
@@ -508,7 +513,7 @@ const nostrClient = function() {
 			if(!timestamp || event.created_at > timestamp) {
 				const metadata = JSON.parse(event.content);
 				timestamp = event.created_at;
-				callback(Object.freeze(metadata));
+				callback(event.pubkey, Object.freeze(metadata));
 			}
 		});
 		timeout(maxTime).then(() => cancelSubscription(subId));

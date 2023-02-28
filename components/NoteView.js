@@ -1,7 +1,7 @@
-import AlertView from "./AlertView.js";
-import LinkView from "./LinkView.js";
-import MentionView from "./MentionView.js";
-import UsersCache from "./UsersCache.js";
+import AlertView from "./AlertView.js"
+import LinkView from "./LinkView.js"
+import MentionView from "./MentionView.js"
+import UsersCache from "./UsersCache.js"
 
 /*var re_source = re_weburl.source;
 re_source = re_source.slice(1, re_source.length - 1)
@@ -106,7 +106,7 @@ export default {
 			<div class="note-data">
 				<div class="author-data">
 					<p v-if="!authorData.loading" class="username">{{ authorData.data.name }}</p>
-					<router-link class="user-pubkey" :title="note.author" :to="'/feed/' + note.author">{{ note.author }}</router-link>
+					<router-link class="user-pubkey" :title="note.author" :to="'/user/' + note.author">{{ note.author }}</router-link>
 				</div>
 				<router-link class="note-date" :to="'/note/' + note.id">
 					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>

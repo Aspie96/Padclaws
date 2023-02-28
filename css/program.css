@@ -647,3 +647,44 @@ details[open] .ti-caret-right {
 	color: #CBB;
 	padding: 2px;
 }
+
+.tabs {
+	border-bottom: 1px solid #CCC;
+	margin: 20px 0;
+}
+
+.tabs li {
+	display: inline;
+}
+
+.tabs li a {
+	display: inline-block;
+	border-radius: 10px 10px 0 0;
+	border: 1px solid #CCC;
+	border-bottom-width: 0;
+	padding: 5px 15px;
+	text-decoration: none;
+	color: #CCC;
+	background-color: #222;
+	width: 100px;
+	text-align: center;
+}
+
+.tabs li a.router-link-exact-active {
+	font-weight: bold;
+}
+
+dl dt {
+	font-weight: bold;
+}
+
+dl dd {
+	margin-bottom: 20px;
+	margin-left: 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+dl dd.user-pubkey {
+	font-family: Programma, monospace;
+}

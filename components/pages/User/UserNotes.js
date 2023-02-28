@@ -1,5 +1,5 @@
-import AlertView from "../AlertView.js"
-import FeedView from "../FeedView.js"
+import AlertView from "../../AlertView.js"
+import FeedView from "../../FeedView.js"
 
 function addInOrder(array, item, comp) {
 	var index = 0;
@@ -20,9 +20,7 @@ export default {
 			loading: false,
 			noEvents: false,
 			events: [],
-			loadMoreBtn: false,
-			until: null,
-			subIds: []
+			loadMoreBtn: false
 		};
 	},
 
@@ -42,39 +40,35 @@ export default {
 
 	methods: {
 		async fetchData() {
-			console.log("demo1");
-			if(!nostrUtils.isHashPrefix(this.$route.params.id, 32)) {
-				const decoded = nostrUtils.decodeEntity(this.$route.params.id);
-				if(decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hash, 32)) {
-					this.$router.push("/feed/" + decoded.hash);
-					return;
+			if(this.subIds) {
+				for(const subId of this.subIds) {
+					nostrClient.cancelSubscription(subId);
 				}
 			}
-			console.log("demo2");
-			for(const subId of this.subIds) {
-				nostrClient.cancelSubscription(subId);
-			}
-			this.subIds = [];
-			this.loadMoreBtn = false;
+			this.invalid = false;
+			this.loading = false;
 			this.noEvents = false;
 			this.events = [];
-			const authorId = this.$route.params.id;
-			if(!nostrUtils.isHashPrefix(authorId, 32)) {
-				this.loading = false;
-				this.invalid = true;
+			this.loadMoreBtn = false;
+			this.until = null;
+			this.subIds = [];
+			this.pubkey = this.$route.params.pubkey;
+			if(!nostrUtils.isHashPrefix(this.pubkey, 32)) {
+				const decoded = nostrUtils.decodeEntity(this.pubkey);
+				if(decoded && decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hash, 32)) {
+					this.$router.push("/user/" + decoded.hash);
+				} else {
+					this.invalid = true;
+				}
 				return;
 			}
 			this.loading = true;
-			this.invalid = false;
-			this.until = null;
 			var filters = {
-				authors: [authorId],
+				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
 				limit: 1
 			};
-			console.log("filters", filters);
 			const recent = await nostrClient.fetchMostRecent(filters);
-			console.log("recent", recent);
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;
@@ -84,14 +78,14 @@ export default {
 			this.noEvents = false;
 			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
-				authors: [authorId],
+				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
 				since
 			};
-			console.log("filters", filters);
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
+				this.pubkey = event.pubkey;
 				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
@@ -112,14 +106,12 @@ export default {
 		async loadMore() {
 			this.loadMoreBtn = false;
 			this.loading = true;
-			const authorId = this.$route.params.id;
 			var filters = {
-				authors: [authorId],
+				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
 				until: this.until,
 				limit: 1
 			};
-			console.log("filters", filters);
 			const recent = await nostrClient.fetchMostRecent(filters);
 			if(!recent) {
 				this.noEvents = true;
@@ -130,12 +122,11 @@ export default {
 			this.noEvents = false;
 			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
-				authors: [authorId],
+				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
 				since,
 				until: this.until
 			};
-			console.log("filters", filters);
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
