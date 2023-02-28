@@ -1,3 +1,4 @@
+
 import AlertView from "../../AlertView.js"
 import FeedView from "../../FeedView.js"
 
@@ -14,6 +15,11 @@ function dateComp(event1, event2) {
 }
 
 export default {
+	props: {
+		pubkey: String,
+		metadata: Object
+	},
+
 	data() {
 		return {
 			invalid: false,
@@ -46,23 +52,12 @@ export default {
 				}
 			}
 			this.invalid = false;
-			this.loading = false;
+			this.loading = true;
 			this.noEvents = false;
 			this.events = [];
 			this.loadMoreBtn = false;
 			this.until = null;
 			this.subIds = [];
-			this.pubkey = this.$route.params.pubkey;
-			if(!nostrUtils.isHashPrefix(this.pubkey, 32)) {
-				const decoded = nostrUtils.decodeEntity(this.pubkey);
-				if(decoded && decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hash, 32)) {
-					this.$router.push("/user/" + decoded.hash);
-				} else {
-					this.invalid = true;
-				}
-				return;
-			}
-			this.loading = true;
 			var filters = {
 				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
@@ -85,7 +80,6 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				this.pubkey = event.pubkey;
 				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});

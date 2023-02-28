@@ -105,7 +105,7 @@ export default {
 			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="'/note/' + note.reply">{{ note.reply }}</router-link></div>
 			<div class="note-data">
 				<div class="author-data">
-					<p v-if="!authorData.loading" class="username">{{ authorData.data.name }}</p>
+					<p v-if="!authorData.loading" class="username">{{ authorData.metadata.name }}</p>
 					<router-link class="user-pubkey" :title="note.author" :to="'/user/' + note.author">{{ note.author }}</router-link>
 				</div>
 				<router-link class="note-date" :to="'/note/' + note.id">

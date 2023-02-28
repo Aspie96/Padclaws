@@ -19,8 +19,8 @@ const routes = [
 		path: "/user/:pubkey",
 		component: User,
 		children: [
-			{ path: "", component: UserNotes },
-			{ path: "info", component: UserInfo }
+			{ path: "", name: "user", component: UserNotes },
+			{ path: "info", name: "user-info", component: UserInfo }
 		]
 	},
 ]

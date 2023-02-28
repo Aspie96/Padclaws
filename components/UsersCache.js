@@ -7,13 +7,14 @@ const users = Vue.reactive({
 				loading: true,
 				refs: 1
 			};
-			nostrClient.fetchUserMetadata(user, (pubkey, data) => {
+			nostrClient.fetchUserMetadata(user, (pubkey, metadata) => {
 				if(user in this.users) {
-					this.users[user].data = data;
+					this.users[user].metadata = metadata;
+					this.users[user].pubkey = pubkey;
 					this.users[user].loading = false;
 				}
-				if(pubkey in this.users) {
-					this.users[pubkey].data = data;
+				if(pubkey != user && pubkey in this.users) {
+					this.users[pubkey].metadata = metadata;
 					this.users[pubkey].loading = false;
 				}
 			});

@@ -230,7 +230,7 @@ const nostrUtils = function() {
 		const data = exports.bech32.fromWords(words);
 		return {
 			prefix,
-			hash: nobleSecp256k1.utils.bytesToHex(data)
+			hex: nobleSecp256k1.utils.bytesToHex(data)
 		};
 	}
 
