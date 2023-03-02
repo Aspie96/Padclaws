@@ -576,46 +576,49 @@ const nostrClient = function() {
 
 const gatherNostrRelays = function() {
 	async function fromRelayRegisry() {
-		const URL = "https://raw.githubusercontent.com/fiatjaf/nostr-relay-registry/master/relays.js";
-		const document = await (await fetch(URL)).text();
+		const resource = "https://raw.githubusercontent.com/fiatjaf/nostr-relay-registry/master/relays.js";
+		const document = await (await fetch(resource)).text();
 		var rx = /export const relays = \[([^\]]+)\]/s;
 		var arr = rx.exec(document);
 		var list = arr[1];
 		var urls = [];
-		rx = /^\s+'(wss:\/\/[a-z0-9\._\-]+\.[a-z]+)'/gm;
+		rx = /^\s+'(wss:\/\/\S+)'/igm;
 		var m;
 		while(m = rx.exec(list)) {
-			urls.push(m[1]);
+			const relay = new URL(m[1]).href;
+			urls.push(relay);
 		}
 		return urls;
 	}
 
 	async function fromNostrInfo() {
-		const URL = "https://raw.githubusercontent.com/Giszmo/nostr.info/master/assets/js/main.js";
-		const document = await (await fetch(URL)).text();
+		const resource = "https://raw.githubusercontent.com/Giszmo/nostr.info/master/assets/js/main.js";
+		const document = await (await fetch(resource)).text();
 		var rx = /window.relays = \[([^\]]+)\]/s;
 		var arr = rx.exec(document);
 		var list = arr[1];
 		var urls = [];
-		rx = /^\s+'(wss:\/\/[a-z0-9\._\-]+\.[a-z]+)'/gm;
+		rx = /^\s+'(wss:\/\/\S+)'/igm;
 		var m;
 		while(m = rx.exec(list)) {
-			urls.push(m[1]);
+			const relay = new URL(m[1]).href;
+			urls.push(relay);
 		}
 		return urls;
 	}
 
 	async function fromNostrWatch() {
-		const URL = "https://raw.githubusercontent.com/dskvr/nostr-watch/develop/relays.yaml";
-		const document = await (await fetch(URL)).text();
+		const resource = "https://raw.githubusercontent.com/dskvr/nostr-watch/develop/relays.yaml";
+		const document = await (await fetch(resource)).text();
 		var rx = /relays:(.*)$/s;
 		var arr = rx.exec(document);
 		var list = arr[1];
 		var urls = [];
-		rx = /^\s+\-\s+(wss:\/\/[a-z0-9\._\-]+\.[a-z]+)/gm;
+		rx = /^.*\-.+(wss:\/\/\S+)\s*$/igm;
 		var m;
 		while(m = rx.exec(list)) {
-			urls.push(m[1]);
+			const relay = new URL(m[1]).href;
+			urls.push(relay);
 		}
 		return urls;
 	}
@@ -662,7 +665,7 @@ const gatherNostrRelays = function() {
 	}
 
 	function testRelayLimited(event, relay, subId) {
-		const promise1 = timeout(10000);
+		const promise1 = timeout(30000);
 		const promise2 = testRelay(event, relay, subId);
 		const result = Promise.race([promise1, promise2]);
 		return result;
