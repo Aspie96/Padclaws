@@ -1,7 +1,8 @@
 
 export default {
 	props: {
-		relays: Array
+		relays: Array,
+		legend: String
 	},
 
 	emits: [
@@ -17,7 +18,7 @@ export default {
 
 	template: `
 	<fieldset class="relays-container">
-		<legend>Used relays ({{ sortedRelays.length }})</legend>
+		<legend>{{legend}} ({{ sortedRelays.length }})</legend>
 		<div class="relay-used-box" v-for="([relay, config], index) in sortedRelays">
 			<div class="relay-used">
 				<button type="button" :id="'used-relay-' + index" @click="this.$emit('remove', relay)">

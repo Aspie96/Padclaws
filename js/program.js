@@ -4,8 +4,9 @@ import MenuView from "../components/MenuView.js"
 import Login from "../components/pages/Login.js"
 import Relays from "../components/pages/Relays.js"
 import User from "../components/pages/User.js"
-import UserNotes from "../components/pages/User/UserNotes.js"
 import UserInfo from "../components/pages/User/UserInfo.js"
+import UserNotes from "../components/pages/User/UserNotes.js"
+import UserRelays from "../components/pages/User/UserRelays.js"
 
 const Home = { template: "<div>Home</div>" }
 
@@ -20,7 +21,8 @@ const routes = [
 		component: User,
 		children: [
 			{ path: "", name: "user", component: UserNotes },
-			{ path: "info", name: "user-info", component: UserInfo }
+			{ path: "info", name: "user-info", component: UserInfo },
+			{ path: "relays", name: "user-relays", component: UserRelays}
 		]
 	},
 ]

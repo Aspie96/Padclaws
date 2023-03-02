@@ -13,7 +13,8 @@ if(!window.structuredClone) {
 const nostrEventKinds = Object.freeze({
 	set_metadata: 0,
 	text_note: 1,
-	recommend_server: 2
+	recommend_server: 2,
+	relay_list_metadata: 10002
 });
 
 const nostrEncEntityPrefixes = {
@@ -260,6 +261,10 @@ const nostrClient = function() {
 
 	function getRelays() {
 		return structuredClone(relays);
+	}
+
+	function hasRelay(relay) {
+		return relay in relays;
 	}
 
 	function* getSockets(mode) {
@@ -555,6 +560,7 @@ const nostrClient = function() {
 		checkEventExists,
 		getReasonableTimestamp,
 		getRelays,
+		hasRelay,
 		addRelay,
 		setRelay,
 		removeRelay,

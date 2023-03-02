@@ -65,6 +65,9 @@ export default {
 				<li>
 					<RouterLink :to="'/user/' + pubkey + '/info'">Info</RouterLink>
 				</li>
+				<li>
+					<RouterLink :to="'/user/' + pubkey + '/relays'">Relays</RouterLink>
+				</li>
 			</ul>
 		</nav>
 		<RouterView :pubkey="pubkeyNormal" :metadata="metadata" />

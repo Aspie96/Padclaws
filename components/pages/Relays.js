@@ -1,7 +1,7 @@
-import Session from "../../js/session.js"
-import KnownRelaysView from "../KnownRelaysView.js"
-import UsedRelaysView from "../UsedRelaysView.js"
 import AlertView from "../AlertView.js"
+import Session from "../../js/session.js"
+import SuggestedRelaysView from "../SuggestedRelaysView.js"
+import UsedRelaysView from "../UsedRelaysView.js"
 
 const ws_regex = /^(?:(?:wss?:)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 
@@ -16,9 +16,9 @@ export default {
 	},
 
 	components: {
-		KnownRelaysView,
-		UsedRelaysView,
-		AlertView
+		AlertView,
+		SuggestedRelaysView,
+		UsedRelaysView
 	},
 
 	methods: {
@@ -65,7 +65,7 @@ export default {
 	},
 
 	template: `
-	<UsedRelaysView :relays="relays.used" @remove="remove" @readWriteChange="readWriteChange" />
+	<UsedRelaysView :relays="relays.used" legend="Used relays" @remove="remove" @readWriteChange="readWriteChange" />
 	<details>
 		<summary><span class="ti ti-caret-right"></span><span class="ti ti-caret-down"></span>Custom relays</summary>
 		<p>You can use custom relay servers. Add them below, one per line, as WebSocket URIs.</p>
@@ -83,7 +83,7 @@ export default {
 			</ul>
 		</AlertView>
 	</details>
-	<KnownRelaysView :relays="relays.unusedKnown" @add="add" @addAll="addAll" />
+	<SuggestedRelaysView :relays="relays.unusedKnown" legend="Known relays" @add="add" @addAll="addAll" />
 	<AlertView v-if="saved" color="blue" icon="check">Preferences saved.</AlertView>
 	`
 }

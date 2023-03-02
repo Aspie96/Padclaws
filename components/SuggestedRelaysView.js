@@ -1,7 +1,8 @@
 
 export default {
 	props: {
-		relays: Array
+		relays: Array,
+		legend: String
 	},
 
 	emits: [
@@ -11,7 +12,7 @@ export default {
 
 	template: `
 	<fieldset class="relays-container">
-		<legend>Known relays ({{ relays.length }})</legend>
+		<legend>{{legend}} ({{ relays.length }})</legend>
 		<div class="relay-known-box" v-for="(relay, index) in relays">
 			<div class="relay-known">
 				<button type="button" :id="'known-relay-' + index" @click="$emit('add', relay)">

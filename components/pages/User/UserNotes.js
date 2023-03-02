@@ -22,7 +22,6 @@ export default {
 
 	data() {
 		return {
-			invalid: false,
 			loading: false,
 			noEvents: false,
 			events: [],
@@ -32,7 +31,7 @@ export default {
 
 	created() {
 		this.$watch(
-			() => this.$route.params,
+			() => this.pubkey,
 			this.fetchData,
 			{ immediate: true }
 		);
@@ -51,7 +50,6 @@ export default {
 					nostrClient.cancelSubscription(subId);
 				}
 			}
-			this.invalid = false;
 			this.loading = true;
 			this.noEvents = false;
 			this.events = [];
@@ -137,10 +135,9 @@ export default {
 	},
 
 	template:`
-	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
-	<FeedView v-else :events="events" replyTo />
+	<FeedView :events="events" replyTo />
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
-	<AlertView v-if="noEvents" color="blue" icon="mood-empty">
+	<AlertView v-else-if="noEvents" color="blue" icon="mood-empty">
 		<template v-if="events.length == 0">No events found.</template>
 		<template v-else>No other events found.</template>
 	</AlertView>
