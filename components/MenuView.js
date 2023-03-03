@@ -44,7 +44,7 @@ export default {
 			</li>
 			<template v-if="Session.logged">
 				<li>
-					<router-link to="/relays">
+					<router-link to="/settings/relays">
 						<span class="ti ti-pencil"></span>
 						<span class="menu-option">Relays</span>
 					</router-link>

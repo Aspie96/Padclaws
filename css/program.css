@@ -676,6 +676,47 @@ details[open] .ti-caret-right {
 	font-weight: bold;
 }
 
+.settings {
+	display: flex;
+	margin-right: -30%;
+}
+
+.side-menu {
+	width: 20%;
+	float: left;
+}
+
+.side-menu li a, .side-menu li button {
+	text-align: left;
+	display: inline-block;
+	font-size: 20px;
+	text-decoration: none;
+	padding: 0 15px;
+	line-height: 50px;
+	vertical-align: middle;
+	border-width: 0;
+	border-bottom: 2px solid #444;
+	width: 100%;
+	color: #AAA;
+	background-color: #000;
+}
+
+.side-menu li a:hover, .side-menu li button:hover {
+	background-color: #222;
+	color: #FFF;
+}
+
+.side-menu li a.router-link-active {
+	border-bottom: 2px solid #07A;
+	background-color: #222;
+	color: #FFF;
+}
+
+.settings-content {
+	float: left;
+	flex-grow: 1;
+}
+
 dl dt {
 	font-weight: bold;
 }

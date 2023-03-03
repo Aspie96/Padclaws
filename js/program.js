@@ -2,7 +2,8 @@ import Note from "../components/pages/Note.js"
 import Write from "../components/pages/Write.js"
 import MenuView from "../components/MenuView.js"
 import Login from "../components/pages/Login.js"
-import Relays from "../components/pages/Relays.js"
+import Settings from "../components/pages/Settings.js"
+import SettingsRelays from "../components/pages/Settings/SettingsRelays.js"
 import User from "../components/pages/User.js"
 import UserInfo from "../components/pages/User/UserInfo.js"
 import UserNotes from "../components/pages/User/UserNotes.js"
@@ -15,7 +16,6 @@ const routes = [
 	{ path: "/note/:id", component: Note },
 	{ path: "/write", component: Write },
 	{ path: "/login", component: Login },
-	{ path: "/relays", component: Relays },
 	{
 		path: "/user/:pubkey",
 		component: User,
@@ -24,7 +24,14 @@ const routes = [
 			{ path: "info", name: "user-info", component: UserInfo },
 			{ path: "relays", name: "user-relays", component: UserRelays}
 		]
-	},
+	},,
+	{
+		path: "/settings",
+		component: Settings,
+		children: [
+			{ path: "relays", name: "user-relays", component: SettingsRelays}
+		]
+	}
 ]
 
 const router = VueRouter.createRouter({
