@@ -310,13 +310,15 @@ label {
 }
 
 .mention {
-	font-family: Programma, monospace;
-	display: inline-flex;
-	padding-left: -1ch;
-	width: 9ch;
-	vertical-align: baseline;
-	overflow: hidden;
-	text-overflow: clip;
+	color: #0CD;
+}
+
+.mention .ti {
+	font-size: 0.95em;
+}
+
+.mention .ti::after {
+	content: '\202f';
 }
 
 .note-data {
