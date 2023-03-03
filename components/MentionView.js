@@ -42,7 +42,7 @@ export default {
 	},
 
 	template: `
-	<router-link v-if="valid" :to="'/user/' + pubkey" class="mention"><span class="ti ti-user-circle"></span>{{ mentionData?.metadata?.name || pubkey }}</router-link>
+	<router-link v-if="valid" :to="'/user/' + pubkey" class="mention"><span class="ti ti-at"></span>{{ mentionData?.metadata?.name || pubkey }}</router-link>
 	<template v-else>{{ mention }}</template>
 	`
 }

@@ -314,11 +314,8 @@ label {
 }
 
 .mention .ti {
-	font-size: 0.95em;
-}
-
-.mention .ti::after {
-	content: '\202f';
+	display: inline-block;
+	margin-right: 2px;
 }
 
 .note-data {
