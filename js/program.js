@@ -31,7 +31,7 @@ const routes = [
 		children: [
 			{
 				path: "relays",
-				name: "user-relays",
+				name: "settings-relays",
 				component: SettingsRelays,
 				meta: {title: "Relays | Settings"}
 			}

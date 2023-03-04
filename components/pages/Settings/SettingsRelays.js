@@ -65,7 +65,7 @@ export default {
 	},
 
 	template: `
-	<h3>Relays</h3>
+	<h2>Relays</h2>
 	<div class="text">
 		<p>Whenever you publish a note or other stuff, you send it to any number of independently-run <em>relays</em> (Nostr servers) at your choice. Likewise, when you fetch notes from other users, you query any number of relays at your choice.</p>
 		<p>On this page you can chose what relays to communicate with. You should use multiple relays to increase decentralization and connectivity with other users.</p>

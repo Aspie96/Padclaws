@@ -1,6 +1,8 @@
 import AlertView from "../AlertView.js"
 import UsersCache from "../UsersCache.js"
 
+const DEFAULT_TITLE = "Padclaws";
+
 export default {
 	data() {
 		return {
@@ -13,6 +15,12 @@ export default {
 		this.$watch(
 			() => this.$route.params,
 			this.fetchData,
+			{ immediate: true }
+		);
+
+		this.$watch(
+			() => this.metadata,
+			this.setTitle,
 			{ immediate: true }
 		);
 	},
@@ -46,6 +54,13 @@ export default {
 				return;
 			}
 			UsersCache.fetchMetadata(this.pubkey);
+		},
+
+		setTitle() {
+			console.log("demo", this.metadata?.name);
+			this.$nextTick(() => {
+				document.title = this.metadata?.name || DEFAULT_TITLE;
+			});
 		}
 	},
 
@@ -56,7 +71,7 @@ export default {
 	template:`
 	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
 	<template v-else>
-		<h2>{{ metadata?.name }}</h2>
+		<h1>{{ metadata?.name }}</h1>
 		<nav class="tabs">
 			<ul>
 				<li>

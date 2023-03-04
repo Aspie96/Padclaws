@@ -4,7 +4,7 @@ import UsersCache from "../UsersCache.js"
 export default {
 	template:`
 	<div class="remove-margin">
-		<h2>Settings</h2>
+		<h1>Settings</h1>
 		<div class="settings">
 			<nav class="side-menu">
 				<ul>
