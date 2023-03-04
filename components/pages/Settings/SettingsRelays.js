@@ -65,10 +65,15 @@ export default {
 	},
 
 	template: `
+	<div class="text">
+		<p>Whenever you publish a note or other stuff, you send it to any number of independently-run <em>relays</em> (Nostr servers) at your choice. Likewise, when you fetch notes from other users, you query any number of relays at your choice.</p>
+		<p>On this page you can chose what relays to communicate with. You should use multiple relays to increase decentralization and connectivity with other users.</p>
+		<p>Please note that the relays you communicate with receive your IP address and other navigation data along with the content of your requests (including your public key when needed).</p>
+	</div>
 	<UsedRelaysView :relays="relays.used" legend="Used relays" @remove="remove" @readWriteChange="readWriteChange" />
 	<details>
 		<summary><span class="ti ti-caret-right"></span><span class="ti ti-caret-down"></span>Custom relays</summary>
-		<p>You can use custom relay servers. Add them below, one per line, as WebSocket URIs.</p>
+		<p>You can use custom relays. Add them below, one per line, as WebSocket URIs.</p>
 		<div class="relays-custom-box">
 			<label for="custom-relays">Custom relays:</label>
 			<textarea v-model="customRelaysStr" name="custom-relays" id="custom-relays" placeholder="wss://relay1.example.com/\nwss://relay2.example.com/"></textarea>
@@ -83,6 +88,10 @@ export default {
 			</ul>
 		</AlertView>
 	</details>
+	<div class="text">
+		<p>A list of known independently-run relays is provided below for your convenience.</p>
+		<p>This list is merely meant to inform you about the existence of these relays, and does not equal endorsement, as the relays are run by third parties.</p>
+	</div>
 	<SuggestedRelaysView :relays="relays.unusedKnown" legend="Known relays" @add="add" @addAll="addAll" />
 	<AlertView v-if="saved" color="blue" icon="check">Preferences saved.</AlertView>
 	`

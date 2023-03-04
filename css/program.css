@@ -692,6 +692,7 @@ details[open] .ti-caret-right {
 .side-menu {
 	width: 20%;
 	float: left;
+	flex-shrink: 0;
 }
 
 .side-menu li a, .side-menu li button {
@@ -723,6 +724,13 @@ details[open] .ti-caret-right {
 .settings-content {
 	float: left;
 	flex-grow: 1;
+	padding-left: 20px;
+	border-left: 1px solid #666;
+}
+
+.text p {
+	margin: 7px 0;
+	text-align: justify;
 }
 
 dl dt {
