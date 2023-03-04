@@ -318,6 +318,17 @@ label {
 	margin-right: 2px;
 }
 
+.mention .mention-pubkey {
+	vertical-align: top;
+	font-family: Programma, monospace;
+	display: inline-block;
+	text-decoration: inherit;
+	max-width: 10ch;
+	overflow: hidden;
+	text-overflow: clip;
+	white-space: nowrap;
+}
+
 .note-data {
 	padding: 10px 25px 0 25px;
 }
