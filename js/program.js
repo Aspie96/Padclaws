@@ -29,8 +29,14 @@ const routes = [
 		path: "/settings",
 		component: Settings,
 		children: [
-			{ path: "relays", name: "user-relays", component: SettingsRelays}
-		]
+			{
+				path: "relays",
+				name: "user-relays",
+				component: SettingsRelays,
+				meta: {title: "Relays | Settings"}
+			}
+		],
+		meta: { title: "Settings" }
 	}
 ]
 
@@ -42,6 +48,14 @@ const router = VueRouter.createRouter({
 const app = Vue.createApp();
 
 app.component("MenuView", MenuView);
+
+const DEFAULT_TITLE = "Padclaws";
+
+router.afterEach((to, from) => {
+    Vue.nextTick(() => {
+        document.title = to.meta.title || DEFAULT_TITLE;
+    });
+});
 
 app.use(router);
 

@@ -32,7 +32,7 @@ html {
 	font-family: 'Atkinson Hyperlegible', 'Noto Color Emoji';
 }
 
-body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+body, h3, h4, h5, h6, p, ol, ul {
 	margin: 0;
 	padding: 0;
 	font-weight: normal;
@@ -684,9 +684,12 @@ details[open] .ti-caret-right {
 	font-weight: bold;
 }
 
+.remove-margin {
+	margin-right: -30%;
+}
+
 .settings {
 	display: flex;
-	margin-right: -30%;
 }
 
 .side-menu {
@@ -731,6 +734,12 @@ details[open] .ti-caret-right {
 .text p {
 	margin: 7px 0;
 	text-align: justify;
+}
+
+h2 {
+	font-weight: normal;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #777;
 }
 
 dl dt {
