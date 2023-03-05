@@ -35,7 +35,6 @@ function createNote(parts) {
 		if(part.type == "text") {
 			content += part.value;
 		} else if(part.type == "mention") {
-			console.log(part);
 			var pubkey = part.value.substring(1);
 			if(pubkey.startsWith("npub")) {
 				const entity = nostrUtils.decodeEntity(pubkey);
@@ -69,7 +68,6 @@ export default {
 		async onSubmit(note) {
 			const parts = parseNote(note);
 			const data = createNote(parts);
-			console.log(data);
 			this.submitting = true;
 			const keys = this.Session.userKeys;
 			const event = await nostrClient.postNote(keys, data.content, data.tags);
