@@ -536,9 +536,9 @@ const nostrClient = function() {
 		return subId;
 	}
 
-	async function postNote(keys, content) {
+	async function postNote(keys, content, tags) {
 		const kind = nostrEventKinds.text_note;
-		const tags = [];
+		tags ||= [];
 		const event = await nostrUtils.createEvent(keys, kind, tags, content);
 		const requests = sendEvent(event);
 		await Promise.any(requests);
