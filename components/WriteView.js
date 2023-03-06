@@ -47,6 +47,6 @@ export default {
 			<button type="submit" class="btn-submit" :disabled="!note.trim() || submitting">Publish</button>
 		</div>
 	</form>
-	<AlertView v-if="noteId && !submitting" color="blue" icon="check">Note published. <router-link :to="'/note/' + noteId">View note</router-link></AlertView>
+	<AlertView v-if="noteId && !submitting" color="blue" icon="check">Note published. <router-link :to="{ name: 'note', id: { noteId } }">View note</router-link></AlertView>
 	`
 }

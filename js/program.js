@@ -13,10 +13,10 @@ import UserRelays from "../components/pages/User/UserRelays.js"
 const Home = { template: "<div>Home</div>" }
 
 const routes = [
-	{ path: "/", component: Home },
-	{ path: "/note/:id", component: Note },
-	{ path: "/write", component: Write },
-	{ path: "/login", component: Login },
+	{ path: "/", name: "home", component: Home },
+	{ path: "/note/:id", name:"note", component: Note },
+	{ path: "/write", name:"write", component: Write },
+	{ path: "/login", name:"login", component: Login },
 	{
 		path: "/user/:pubkey",
 		component: User,
@@ -25,7 +25,7 @@ const routes = [
 			{ path: "info", name: "user-info", component: UserInfo },
 			{ path: "relays", name: "user-relays", component: UserRelays}
 		]
-	},,
+	},
 	{
 		path: "/settings",
 		component: Settings,

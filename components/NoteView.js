@@ -102,13 +102,13 @@ export default {
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive }">
 		<header>
-			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="'/note/' + note.reply">{{ note.reply }}</router-link></div>
+			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <router-link class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</router-link></div>
 			<div class="note-data">
 				<div class="author-data">
 					<p v-if="!authorData.loading" class="username">{{ authorData.metadata.name }}</p>
-					<router-link class="user-pubkey" :title="note.author" :to="'/user/' + note.author">{{ note.author }}</router-link>
+					<router-link class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</router-link>
 				</div>
-				<router-link class="note-date" :to="'/note/' + note.id">
+				<router-link class="note-date" :to="{ name: 'note', params: { id: note.id } }">
 					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
 				</router-link>
 			</div>
