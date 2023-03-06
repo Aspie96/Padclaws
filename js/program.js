@@ -1,3 +1,4 @@
+import Docs from "../components/pages/Docs.js"
 import Note from "../components/pages/Note.js"
 import Write from "../components/pages/Write.js"
 import MenuView from "../components/MenuView.js"
@@ -14,8 +15,8 @@ const Home = { template: "<div>Home</div>" }
 
 const routes = [
 	{ path: "/", name: "home", component: Home },
-	{ path: "/note/:id", name:"note", component: Note },
-	{ path: "/write", name:"write", component: Write },
+	{ path: "/note/:id", name: "note", component: Note },
+	{ path: "/write", name:  "write", component: Write },
 	{ path: "/login", name:"login", component: Login },
 	{
 		path: "/user/:pubkey",
@@ -44,7 +45,8 @@ const routes = [
 			}
 		],
 		meta: { title: "Settings" }
-	}
+	},
+	{ path: "/docs/:page", name: "docs", component: Docs }
 ]
 
 const router = VueRouter.createRouter({

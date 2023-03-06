@@ -9,10 +9,10 @@ export default {
 			<nav class="side-menu">
 				<ul>
 					<li>
-						<RouterLink to="/settings/relays">Relays</RouterLink>
+						<RouterLink :to="{ name='settings-relays' }">Relays</RouterLink>
 					</li>
 					<li>
-						<RouterLink to="/settings/profile">Profile</RouterLink>
+						<RouterLink to="{ name='settings-profile' }">Profile</RouterLink>
 					</li>
 				</ul>
 			</nav>
