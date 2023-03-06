@@ -58,6 +58,9 @@ export default {
 
 	template: `
 	<h2>Profile</h2>
+	<div class="text">
+		<p>In this page you can set the public settings of your profile.</p>
+	</div>
 	<form @submit.prevent="onSubmit">
 		<div class="form-group">
 			<label for="public_key" class="label-output">Hex PubKey</label>
