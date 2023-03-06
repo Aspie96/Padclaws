@@ -550,6 +550,20 @@ const nostrClient = function() {
 		return event;
 	}
 
+	async function setMetadata(keys, metadata) {
+		const kind = nostrEventKinds.set_metadata;
+		const content = JSON.stringify(metadata);
+		const event = await nostrUtils.createEvent(keys, kind, [], content);
+		const requests = sendEvent(event);
+		await Promise.any(requests);
+		const filters = {
+			ids: [event.id],
+			limit: 1
+		};
+		await fetchOne(filters, "write");
+		return event;
+	}
+
 	function sendEvent(event) {
 		const message = ["EVENT", event];
 		const requests = sendToSockets(message, "write");
@@ -569,7 +583,8 @@ const nostrClient = function() {
 		fetchMostRecent,
 		cancelSubscription,
 		fetchUserMetadata,
-		postNote
+		postNote,
+		setMetadata
 	});
 }();
 

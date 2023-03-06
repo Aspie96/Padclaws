@@ -67,7 +67,7 @@ export default {
 	template: `
 	<h2>Relays</h2>
 	<div class="text">
-		<p>Whenever you publish a note or other stuff, you send it to any number of independently-run <em>relays</em> (Nostr servers) at your choice. Likewise, when you fetch notes from other users, you query any number of relays at your choice.</p>
+		<p>Whenever you publish a note or other stuff, you send it to any number of independently-run <i>relays</i> (Nostr servers) at your choice. Likewise, when you fetch notes from other users, you query any number of relays at your choice.</p>
 		<p>On this page you can chose what relays to communicate with. You should use multiple relays to increase decentralization and connectivity with other users.</p>
 		<p>Please note that the relays you communicate with receive your IP address and other navigation data along with the content of your requests (including your public key when needed).</p>
 	</div>

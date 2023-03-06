@@ -11,6 +11,9 @@ export default {
 					<li>
 						<RouterLink to="/settings/relays">Relays</RouterLink>
 					</li>
+					<li>
+						<RouterLink to="/settings/profile">Profile</RouterLink>
+					</li>
 				</ul>
 			</nav>
 			<div class="settings-content">

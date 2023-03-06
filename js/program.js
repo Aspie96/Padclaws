@@ -3,6 +3,7 @@ import Write from "../components/pages/Write.js"
 import MenuView from "../components/MenuView.js"
 import Login from "../components/pages/Login.js"
 import Settings from "../components/pages/Settings.js"
+import SettingsProfile from "../components/pages/Settings/SettingsProfile.js"
 import SettingsRelays from "../components/pages/Settings/SettingsRelays.js"
 import User from "../components/pages/User.js"
 import UserInfo from "../components/pages/User/UserInfo.js"
@@ -34,6 +35,12 @@ const routes = [
 				name: "settings-relays",
 				component: SettingsRelays,
 				meta: {title: "Relays | Settings"}
+			},
+			{
+				path: "profile",
+				name: "settings-profile",
+				component: SettingsProfile,
+				meta: {title: "Profile | Settings"}
 			}
 		],
 		meta: { title: "Settings" }

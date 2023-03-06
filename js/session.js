@@ -1,3 +1,5 @@
+import UsersCache from "../components/UsersCache.js"
+
 var logged = false;
 var userKeys = null;
 
@@ -39,6 +41,7 @@ const session = Vue.reactive({
 			public: publicKey,
 			private: privateKey
 		};
+		UsersCache.fetchMetadata(publicKey);
 		sessionStorage.setItem("privateKey", privateKey);
 	},
 

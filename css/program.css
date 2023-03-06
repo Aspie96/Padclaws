@@ -15,6 +15,12 @@
 }
 
 @font-face {
+	font-family: 'Atkinson Hyperlegible';
+	src: url(../fonts/AtkinsonHyperlegible-Italic.ttf);
+	font-style: italic;
+}
+
+@font-face {
 	font-family: 'Noto Color Emoji';
 	src: url(../fonts/NotoColorEmoji-Regular.ttf);
 }
@@ -368,23 +374,26 @@ label {
 
 .form-group {
 	display: flex;
-	align-items: center;
-}
+	align-items: stretch;
+} 
 
 .form-group label {
 	flex-shrink: 0;
-	display: inline-block;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	width: 25%;
 	min-width: 150px;
 	padding-right: 5%;
 	background-color: #013;
-	height: 40px;
-	line-height: 36px;
+	min-height: 100%;
 	border: 2px solid #126;
 	border-radius: 10px 0 0 10px;
+	padding: auto;
 }
 
 .form-group input, .form-group output {
+	font-size: 1em;
 	flex-grow: 1;
 	height: 40px;
 	border: 2px solid #444;
@@ -410,6 +419,10 @@ label {
 	outline: none;
 	border-color: #05C;
 	color: #FFF;
+}
+
+.form-group textarea {
+	border-radius: 0 10px 10px 0;
 }
 
 .form-buttons {
