@@ -45,11 +45,28 @@ export default {
 		about() {
 			return UsersCache.users[Session.userKeys.public]?.metadata?.about;
 		},
+
+		hexPubKey() {
+			return Session.userKeys.public;
+		},
+
+		nPubKey() {
+			const publicKey = Session.userKeys.public;
+			return nostrUtils.encodeEntity(nostrEncEntityPrefixes.npub, publicKey);
+		}
 	},
 
 	template: `
 	<h2>Profile</h2>
 	<form @submit.prevent="onSubmit">
+		<div class="form-group">
+			<label for="public_key" class="label-output">Hex PubKey</label>
+			<output class="key-output">{{ hexPubKey }}</output>
+		</div>
+		<div class="form-group">
+			<label for="public_key_npub" class="label-output">nPubKey</label>
+			<output class="key-output">{{ nPubKey }}</output>
+		</div>
 		<div class="form-group">
 			<label for="username">Username</label>
 			<input :value="username" @input="usernameInput = $event.target.value" name="username" id="username" title="Username" />
