@@ -38,7 +38,7 @@ export default {
 					</li>
 				</ul>
 			</nav>
-			<div class="settings-content" v-html="html"></div>
+			<div class="settings-content text" v-html="html"></div>
 		</div>
 	</div>
 	`
