@@ -74,6 +74,12 @@ export default {
 						<span class="ti ti-pencil"></span>
 						<span class="menu-option">Write note</span>
 					</router-link>
+					<li>
+						<router-link :to="{ name: 'docs', params: { page: 'privacy' } }">
+							<span class="ti ti-spy"></span>
+							<span class="menu-option">Privacy</span>
+						</router-link>
+					</li>
 				</li>
 			</template>
 			<template v-else>
@@ -89,13 +95,13 @@ export default {
 						<span class="menu-option">Settings</span>
 					</router-link>
 				</li>
+				<li>
+					<router-link :to="{ name: 'docs', params: { page: 'privacy' } }">
+						<span class="ti ti-spy"></span>
+						<span class="menu-option">Privacy</span>
+					</router-link>
+				</li>
 			</template>
-			<li>
-				<router-link to="/note/446e3abdddb3d10b9958ac0f4cdfef92081729994ffa26b35de2bb25bdd4cbd9">
-					<span class="ti ti-info-square-rounded"></span>
-					<span class="menu-option">About</span>
-				</router-link>
-			</li>
 		</ul>
 	</nav>
 	`
