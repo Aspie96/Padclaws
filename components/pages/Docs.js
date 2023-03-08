@@ -18,7 +18,8 @@ export default {
 		async fetchData() {
 			const page = this.$route.params.page;
 			const pages = {
-				"privacy": { title: "Privacy policy" }
+				"privacy": { title: "Privacy policy" },
+				"about": { title: "About" }
 			};
 			if(page in pages) {
 				this.title = pages[page].title;
