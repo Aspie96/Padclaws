@@ -3,6 +3,10 @@ import UsersCache from "../../UsersCache.js"
 import Session from "../../../js/session.js"
 
 export default {
+	props: {
+		logged: Boolean
+	},
+
 	data() {
 		return {
 			usernameInput: "",

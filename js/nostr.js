@@ -270,7 +270,7 @@ const nostrClient = function() {
 	function* getSockets(mode) {
 		for(const relay in relays) {
 			const socket = sockets[relay];
-			var cond = !mode || relays[relay][mode];
+			var cond = mode == "any" || relays[relay][mode];
 			cond &&= (socket.readyState == WebSocket.OPEN || socket.readyState == WebSocket.CONNECTING);
 			if(cond) {
 				yield socket;

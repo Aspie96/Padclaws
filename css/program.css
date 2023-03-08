@@ -245,6 +245,15 @@ label {
 	text-align: right;
 }
 
+.form-buttons {
+	margin-top: 10px;
+	text-align: right;
+}
+
+.form-buttons-left {
+	text-align: left;
+}
+
 .form-buttons button {
 	background-color: #222;
 	color: #FFF;
@@ -265,6 +274,11 @@ label {
 	font-weight: bold;
 	text-decoration: none;
 	border: 3px outset #038;
+}
+
+.form-buttons .btn-red {
+	background-color: #721;
+	border-color: #721;
 }
 
 .form-buttons button:disabled {
@@ -423,11 +437,6 @@ label {
 
 .form-group textarea {
 	border-radius: 0 10px 10px 0;
-}
-
-.form-buttons {
-	margin-top: 10px;
-	text-align: right;
 }
 
 input[type=checkbox] {
