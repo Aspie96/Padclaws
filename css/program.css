@@ -778,3 +778,14 @@ dl dd {
 dl dd.user-pubkey {
 	font-family: Programma, monospace;
 }
+
+.profile-pubkey {
+	vertical-align: top;
+	font-family: Programma, monospace;
+	display: inline-block;
+	text-decoration: inherit;
+	max-width: 10ch;
+	overflow: hidden;
+	text-overflow: clip;
+	white-space: nowrap;
+}

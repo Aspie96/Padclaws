@@ -1,4 +1,5 @@
 import Session from "../js/session.js"
+import UsersCache from "./UsersCache.js"
 
 export default {
 	data() {
@@ -13,6 +14,12 @@ export default {
 				return this.$route.query.page;
 			}
 			return this.$route.path;
+		},
+
+		username() {
+			if(Session.logged) {
+				return UsersCache.users[Session.userKeys.public]?.metadata?.name;
+			}
 		}
 	},
 
@@ -43,6 +50,13 @@ export default {
 				</router-link>
 			</li>
 			<template v-if="Session.logged">
+				<li>
+					<router-link :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
+						<span class="ti ti-user"></span>
+						<span class="menu-option" v-if="username">{{username}}</span>
+						<span class="menu-option profile-pubkey" v-else>{{Session.userKeys.public}}</span>
+					</router-link>
+				</li>
 				<li>
 					<router-link :to="{ name: 'settings-relays' }">
 						<span class="ti ti-settings"></span>
