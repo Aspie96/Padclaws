@@ -9,8 +9,10 @@ export default {
 
 	data() {
 		return {
-			usernameInput: "",
-			aboutInput: ""
+			username: "",
+			about: "",
+			published: false,
+			publishing: false
 		};
 	},
 
@@ -18,6 +20,12 @@ export default {
 		this.$watch(
 			() => Session.userKeys,
 			this.fetchData,
+			{ immediate: true }
+		);
+
+		this.$watch(
+			() => this.cacheData,
+			this.refreshData,
 			{ immediate: true }
 		);
 	},
@@ -29,25 +37,35 @@ export default {
 	methods: {
 		fetchData() {
 			UsersCache.fetchMetadata(Session.userKeys.public);
+			this.username = this.cacheData.username;
+			this.about = this.cacheData.about;
 		},
 
-		onSubmit() {
+		refreshData() {
+			this.username = this.cacheData.username;
+			this.about = this.cacheData.about;
+		},
+		
+		async onSubmit() {
 			const metadata = {
-				name: this.usernameInput,
-				about: this.aboutInput
+				name: this.username,
+				about: this.about
 			};
 			console.log(metadata);
-			nostrClient.setMetadata(Session.userKeys, metadata);
+			this.published = false;
+			this.publishing = true;
+			await nostrClient.setMetadata(Session.userKeys, metadata);
+			this.published = true;
+			this.publishing = false;
 		}
 	},
 
 	computed: {
-		username() {
-			return UsersCache.users[Session.userKeys.public]?.metadata?.name;
-		},
-
-		about() {
-			return UsersCache.users[Session.userKeys.public]?.metadata?.about;
+		cacheData() {
+			return {
+				username: UsersCache.users[Session.userKeys.public]?.metadata?.name,
+				about: UsersCache.users[Session.userKeys.public]?.metadata?.about
+			};
 		},
 
 		hexPubKey() {
@@ -76,16 +94,16 @@ export default {
 		</div>
 		<div class="form-group">
 			<label for="username">Username</label>
-			<input :value="username" @input="usernameInput = $event.target.value" name="username" id="username" title="Username" />
+			<input v-model="username" name="username" id="username" title="Username" />
 		</div>
 		<div class="form-group">
 			<label for="about">About</label>
-			<textarea :value="about" @input="aboutInput" name="about" id="about" title="About youself"></textarea>
+			<textarea v-model="about" name="about" id="about" title="About youself"></textarea>
 		</div>
 		<div class="form-buttons">
-			<button type="submit" class="btn-submit">Publish</button>
+			<button type="submit" class="btn-submit" :disabled="publishing">Publish</button>
 		</div>
 	</form>
-	<AlertView v-if="saved" color="blue" icon="check">Preferences saved.</AlertView>
+	<AlertView v-if="published" color="blue" icon="check">Profile information published.</AlertView>
 	`
 }
