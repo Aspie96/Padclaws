@@ -29,7 +29,8 @@ export default {
 			repliesUntil: null,
 			noReplies: false,
 			loadingReplies: false,
-			branchLoaded: false
+			branchLoaded: false,
+			noRelays: false
 		};
 	},
 
@@ -43,7 +44,7 @@ export default {
 
 	methods: {
 		async fetchData() {
-			this.loading = true;
+			this.loading = false;
 			this.invalid = false;
 			this.event = null;
 			this.reply = false;
@@ -61,6 +62,12 @@ export default {
 			this.fetchedIds = new Set();
 			this.parent = null;
 			this.ancestorsCache = {};
+			this.noRelays = false;
+			if(nostrClient.noRelays()) {
+				this.noRelays = true;
+				return;
+			}
+			this.loading = true;
 			const eventId = this.$route.params.id;
 			if(!nostrUtils.isHashPrefix(eventId, 32)) {
 				this.invalid = true;
@@ -211,7 +218,11 @@ export default {
 	},
 
 	template:`
-	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid event ID. Check the URL.</AlertView>
+	<AlertView v-if="noRelays" color="yellow" icon="alert-triangle">
+		<p>No relays set.</p>
+		<p>Before fetching data, you must add some <RouterLink :to="{ name: 'settings-relays' }">relays</RouterLink>.</p>
+	</AlertView>
+	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid event ID. Check the URL.</AlertView>
 	<template v-else>
 		<FeedView v-if="reply" :events="branch" isParent />
 		<NoteView :loading="loading" :event="event" isActive />

@@ -263,6 +263,10 @@ const nostrClient = function() {
 		return structuredClone(relays);
 	}
 
+	function noRelays() {
+		return Object.keys(relays).length == 0;
+	}
+
 	function hasRelay(relay) {
 		return relay in relays;
 	}
@@ -574,6 +578,7 @@ const nostrClient = function() {
 		checkEventExists,
 		getReasonableTimestamp,
 		getRelays,
+		noRelays,
 		hasRelay,
 		addRelay,
 		setRelay,

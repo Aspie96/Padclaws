@@ -7,7 +7,8 @@ export default {
 	data() {
 		return {
 			invalid: false,
-			pubkey: null
+			pubkey: null,
+			noRelays: false
 		};
 	},
 
@@ -37,8 +38,13 @@ export default {
 
 	methods: {
 		fetchData() {
+			this.noRelays = false;
 			this.invalid = false;
 			this.pubkey = this.$route.params.pubkey;
+			if(nostrClient.noRelays()) {
+				this.noRelays = true;
+				return;
+			}
 			if(!nostrUtils.isHashPrefix(this.pubkey, 32)) {
 				const decoded = nostrUtils.decodeEntity(this.pubkey);
 				if(decoded && decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hex, 32)) {
@@ -68,7 +74,11 @@ export default {
 	},
 
 	template:`
-	<AlertView v-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
+	<AlertView v-if="noRelays" color="yellow" icon="alert-triangle">
+		<p>No relays set.</p>
+		<p>Before fetching data, you must add some <RouterLink :to="{ name: 'settings-relays' }">relays</RouterLink>.</p>
+	</AlertView>
+	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
 	<template v-else>
 		<h1>{{ metadata?.name }}</h1>
 		<nav class="tabs">

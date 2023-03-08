@@ -512,6 +512,11 @@ input[type=checkbox]:checked:before {
 	background-color: #300;
 }
 
+.alert.alert-yellow {
+	border-color: #990;
+	background-color: #330;
+}
+
 .alert a {
 	color: #EEE;
 }
