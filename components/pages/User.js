@@ -57,7 +57,6 @@ export default {
 		},
 
 		setTitle() {
-			console.log("demo", this.metadata?.name);
 			this.$nextTick(() => {
 				document.title = this.metadata?.name || DEFAULT_TITLE;
 			});
