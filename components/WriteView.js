@@ -41,6 +41,7 @@ export default {
 	},
 
 	template: `
+	<h1>New note</h1>
 	<form @submit.prevent="$emit('submit', note)" @change="saveFormDataState">
 		<textarea required v-model="note" name="note" :disabled="submitting" placeholder="Here's the problem with teleportation&hellip;"></textarea>
 		<div class="form-buttons">
