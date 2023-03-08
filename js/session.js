@@ -60,7 +60,7 @@ const session = Vue.reactive({
 
 	async refreshRelays(store) {
 		if(!this.relays.known) {
-			this.relays.known = await (await fetch("../data/relays.json")).json();
+			this.relays.known = await (await fetch("data/relays.json")).json();
 		}
 		const usedRelays = nostrClient.getRelays();
 		this.relays.used = Object.entries(usedRelays);

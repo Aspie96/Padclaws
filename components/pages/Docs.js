@@ -22,7 +22,7 @@ export default {
 			};
 			if(page in pages) {
 				this.title = pages[page].title;
-				this.html = (await (await fetch("/docs/" + page + ".html")).text());
+				this.html = (await (await fetch("docs/" + page + ".html")).text());
 			}
 		}
 	},
