@@ -57,7 +57,6 @@ export default {
 					this.privateKey = null;
 				}
 			} else if(nostrUtils.isHash(privateKey, 32)) {
-				console.log("demo");
 				this.privateKey = privateKey;
 			} else {
 				this.invalid = true;
