@@ -214,12 +214,12 @@ const nostrUtils = function() {
 			return null;
 		}
 		const data = nobleSecp256k1.utils.hexToBytes(hex);
-		const words = exports.bech32.toWords(data);
-		return exports.bech32.encode(prefix, words);
+		const words = scureBase.bech32.toWords(data);
+		return scureBase.bech32.encode(prefix, words);
 	}
 
 	function decodeEntity(entity) {
-		const original = exports.bech32.decodeUnsafe(entity);
+		const original = scureBase.bech32.decodeUnsafe(entity);
 		if(!original) {
 			return null;
 		}
@@ -228,7 +228,7 @@ const nostrUtils = function() {
 			return null;
 		}
 		const words = original.words;
-		const data = exports.bech32.fromWords(words);
+		const data = scureBase.bech32.fromWords(words);
 		return {
 			prefix,
 			hex: nobleSecp256k1.utils.bytesToHex(data)
