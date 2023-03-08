@@ -113,9 +113,9 @@ export default {
 		<p>Your private key can be written in two formats:</p>
 		<dl>
 			<dt>Hex SecKey</dt>
-			<dd>{{ privateKey }}</dd>
+			<dd class="user-pubkey">{{ privateKey }}</dd>
 			<dt>nSecKey</dt>
-			<dd>{{ nSecKey }}</dd>
+			<dd class="user-pubkey">{{ nSecKey }}</dd>
 		</dl>
 	</AlertView>
 	`
