@@ -108,7 +108,7 @@ export default {
 			<button type="submit" class="btn-submit">Log in</button>
 		</div>
 	</form>
-	<AlertView v-if="showPrivateKey" color="blue" icon="check">
+	<AlertView v-if="showPrivateKey" color="blue" icon="key">
 		<p>Your private key has been generated and is shown below. Store it securely.</p>
 		<p>Your private key can be written in two formats:</p>
 		<dl>
