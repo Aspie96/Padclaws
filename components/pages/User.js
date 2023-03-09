@@ -1,4 +1,5 @@
 import AlertView from "../AlertView.js"
+import Session from "../../js/session.js"
 import UsersCache from "../UsersCache.js"
 
 const DEFAULT_TITLE = "Padclaws";
@@ -33,6 +34,10 @@ export default {
 
 		pubkeyNormal() {
 			return UsersCache.users[this.pubkey]?.pubkey || this.pubkey;
+		},
+
+		selfUser() {
+			return Session.logged && Session.userKeys.public.startsWith(this.pubkey);
 		}
 	},
 
@@ -81,6 +86,7 @@ export default {
 	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
 	<template v-else>
 		<h1>{{ metadata?.name }}</h1>
+		<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="edit-profile-link edit-profile-link-right">Edit profile</RouterLink>
 		<p v-if="metadata?.about" class="about-content">{{ metadata.about }}</p>
 		<nav class="tabs">
 			<ul>

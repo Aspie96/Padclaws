@@ -726,6 +726,21 @@ dl dd.user-pubkey {
 	white-space: nowrap;
 }
 
+.edit-profile-link {
+	background-color: #222;
+	color: #FFF;
+	padding: 5px 10px;
+	font-size: 15px;
+	border-radius: 10px;
+	font-weight: bold;
+	text-decoration: none;
+	border: 2px outset #AAA;
+}
+
+.edit-profile-link-right {
+	float: right;
+}
+
 @media (max-width: 768px) {
 	#menu-toggle {
 		display: block;

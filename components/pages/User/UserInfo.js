@@ -1,4 +1,4 @@
-import UsersCache from "../../UsersCache.js"
+import Session from "../../../js/session.js"
 
 export default {
 	props: {
@@ -7,6 +7,10 @@ export default {
 	},
 
 	computed: {
+		selfUser() {
+			return Session.logged && Session.userKeys.public.startsWith(this.pubkey);
+		},
+
 		nPubKey() {
 			if(this.pubkey) {
 				return nostrUtils.encodeEntity(nostrEncEntityPrefixes.npub, this.pubkey);
@@ -33,5 +37,6 @@ export default {
 			<dd class="user-pubkey">{{ nPubKey }}</dd>
 		</template>
 	</dl>
+	<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="edit-profile-link">Edit profile</RouterLink>
 	`
 }
