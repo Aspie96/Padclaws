@@ -200,6 +200,13 @@ label {
 	cursor: default;
 }
 
+.about-content {
+	white-space: pre-wrap;
+	padding: 10px 5px;
+	overflow-wrap: break-word;
+	color: #AAA;
+}
+
 .note-box {
 	border: 1px solid #555;
 	background-color: #111;
@@ -409,6 +416,12 @@ input[type=checkbox]:checked:before {
 
 .load-more-btn .ti:last-child {
 	float: right;
+}
+
+.about-info {
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	color: #AAA;
 }
 
 .alert {
@@ -695,6 +708,7 @@ dl dd {
 	margin-left: 10px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	color: #BBB;
 }
 
 dl dd.user-pubkey {

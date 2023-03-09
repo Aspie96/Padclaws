@@ -20,6 +20,10 @@ export default {
 			<dt>Username</dt>
 			<dd>{{ metadata.name }}</dd>
 		</template>
+		<template v-if="metadata?.about">
+			<dt>About</dt>
+			<dd class="about-info">{{ metadata.about }}</dd>
+		</template>
 		<template v-if="pubkey">
 			<dt>Hex PubKey</dt>
 			<dd class="user-pubkey">{{ pubkey }}</dd>

@@ -81,6 +81,7 @@ export default {
 	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
 	<template v-else>
 		<h1>{{ metadata?.name }}</h1>
+		<p v-if="metadata?.about" class="about-content">{{ metadata.about }}</p>
 		<nav class="tabs">
 			<ul>
 				<li>
