@@ -1,8 +1,17 @@
+function GetPage(page) {
+	return Vue.defineAsyncComponent(async () => {
+		const doc = await (await fetch("docs/" + page + ".html")).text();
+		return {
+			template: doc
+		};
+	});
+}
+
 export default {
 	data() {
 		return {
 			title: "",
-			html: ""
+			page: ""
 		};
 	},
 
@@ -15,17 +24,22 @@ export default {
 	},
 
 	methods: {
-		async fetchData() {
+		fetchData() {
 			const page = this.$route.params.page;
 			const pages = {
-				"privacy": { title: "Privacy policy" },
-				"about": { title: "About" }
+				privacy: { title: "Privacy policy" },
+				about: { title: "About" }
 			};
 			if(page in pages) {
 				this.title = pages[page].title;
-				this.html = (await (await fetch("docs/" + page + ".html")).text());
+				this.page = page;
 			}
 		}
+	},
+
+	components: {
+		privacyPage: GetPage("privacy"),
+		aboutPage: GetPage("about")
 	},
 
 	template:`
@@ -37,14 +51,14 @@ export default {
 					<li>
 						<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">Privacy</RouterLink>
 					</li>
-				</ul>
-				<ul>
 					<li>
 						<RouterLink :to="{ name: 'docs', params: { page: 'about' } }">About</RouterLink>
 					</li>
 				</ul>
 			</nav>
-			<div class="settings-content text" v-html="html"></div>
+			<div class="settings-content text">
+				<Component :is="page + 'Page'" />
+			</div>
 		</div>
 	</div>
 	`
