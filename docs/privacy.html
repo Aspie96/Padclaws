@@ -4,7 +4,7 @@
 	<p>The controller of the Service is Valentino Giudice (<a href="mailto:valentino.giudice96@gmail.com">valentino.giudice96@gmail.com</a>).</p>
 	<p>The Service receives navigation data, such as your IP address, the transmission of which is implied by the use of web communication protocols. Your navigation data is processed for the purpose of fulfilling your requests and is retained for the short time needed for this purpose.</p>
 	<p>The Software stores data which is necessary for its functionalities, including account information and other settings, locally on your device using <a href="https://html.spec.whatwg.org/multipage/#toc-webstorage">Web Storage</a>, either for the duration of a browser session or permanently until manual deletion, depending on the kind of data.</p>
-	<p>If you believe that the processing of your personal data infringes the applicable law, you have the right to lodge a complaint with a competent <a href="https://ec.europa.eu/justice/article-29/structure/data-protection-authorities/">supervisory authority</a>.</p>
+	<p>If you believe that the processing of your personal data infringes the applicable law, you have the right to lodge a complaint with a competent <a href="https://edpb.europa.eu/about-edpb/about-edpb/members">supervisory authority</a>.</p>
 </section>
 <section>
 	<h2>Nostr Relays</h2>
@@ -13,11 +13,11 @@
 	<p>Each Nostr account has a public unique identifier (a <i>Public Key</i>). Information published by a user to Relays (such as text notes) is associated with the user's Public Key.</p>
 	<p>Erasing or rectifying data which has been previously published may be impossible.</p>
 	<p>The Software runs locally on your device and communicates with your selected Relays directly, independently from the Service. Relays receive navigation data (including your IP address) along with the content of your requests (including your Public Key, where applicable).</p>
-	<p>You can configure your selected Relays in the <a href="#">Relays</a> page.</p>
+	<p>You can configure your selected Relays in the <RouterLink :to="{ name: 'settings-relays' }">Relays</RouterLink> page.</p>
 </section>
 <section>
 	<h2>Data management</h2>
-	<p>Your can obtain a copy of the data stored in Web Storage by the Software from the <a href="#">Data</a> page.</p>
+	<p>Your can obtain a copy of the data stored in Web Storage by the Software from the <RouterLink :to="{ name: 'settings-data' }">Data</RouterLink> page.</p>
 	<p>The same page also allows you to delete all data currently stored in Web Storage by the Service.</p>
 	<p>If you are a logged user, the page allows you to fetch from Relays data previously published by you. Because Relays are operated by independent parties, and because they don't all offer the same set of features, the result of this operation cannot be guaranteed to be complete.</p>
 	<p>You will be able to download the data in a structured and machine-readable format.</p>
