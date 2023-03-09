@@ -38,6 +38,11 @@ export default {
 						<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">Privacy</RouterLink>
 					</li>
 				</ul>
+				<ul>
+					<li>
+						<RouterLink :to="{ name: 'docs', params: { page: 'about' } }">About</RouterLink>
+					</li>
+				</ul>
 			</nav>
 			<div class="settings-content text" v-html="html"></div>
 		</div>
