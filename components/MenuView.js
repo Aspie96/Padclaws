@@ -62,24 +62,24 @@ export default {
 	<nav id="menu" @click="closeMenu">
 		<ul>
 			<li>
-				<router-link :to="{ name: 'home' }">
+				<RouterLink :to="{ name: 'home' }">
 					<span class="ti ti-home"></span>
 					<span class="menu-option">Home</span>
-				</router-link>
+				</RouterLink>
 			</li>
 			<template v-if="logged">
 				<li>
-					<router-link :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
+					<RouterLink :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
 						<span class="ti ti-user"></span>
 						<span class="menu-option" v-if="username">{{username}}</span>
 						<span class="menu-option profile-pubkey" v-else>{{Session.userKeys.public}}</span>
-					</router-link>
+					</RouterLink>
 				</li>
 				<li>
-					<router-link :to="{ name: 'settings-relays' }">
+					<RouterLink :to="{ name: 'settings-relays' }">
 						<span class="ti ti-settings"></span>
 						<span class="menu-option">Settings</span>
-					</router-link>
+					</RouterLink>
 				</li>
 				<li>
 					<button type="button" @click="Session.logout()">
@@ -88,36 +88,36 @@ export default {
 					</button>
 				</li>
 				<li>
-					<router-link :to="{ name: 'write' }">
+					<RouterLink :to="{ name: 'write' }">
 						<span class="ti ti-pencil"></span>
 						<span class="menu-option">Write note</span>
-					</router-link>
+					</RouterLink>
 					<li>
-						<router-link :to="{ name: 'docs', params: { page: 'privacy' } }">
+						<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">
 							<span class="ti ti-spy"></span>
 							<span class="menu-option">Privacy</span>
-						</router-link>
+						</RouterLink>
 					</li>
 				</li>
 			</template>
 			<template v-else>
 				<li>
-					<router-link :to="{ name: 'login', query: { page: backPage } }">
+					<RouterLink :to="{ name: 'login', query: { page: backPage } }">
 						<span class="ti ti-login"></span>
 						<span class="menu-option">Log in</span>
-					</router-link>
+					</RouterLink>
 				</li>
 				<li>
-					<router-link :to="{ name: 'settings-relays' }">
+					<RouterLink :to="{ name: 'settings-relays' }">
 						<span class="ti ti-settings"></span>
 						<span class="menu-option">Settings</span>
-					</router-link>
+					</RouterLink>
 				</li>
 				<li>
-					<router-link :to="{ name: 'docs', params: { page: 'privacy' } }">
+					<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">
 						<span class="ti ti-spy"></span>
 						<span class="menu-option">Privacy</span>
-					</router-link>
+					</RouterLink>
 				</li>
 			</template>
 		</ul>

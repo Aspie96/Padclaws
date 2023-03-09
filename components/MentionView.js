@@ -43,8 +43,8 @@ export default {
 
 	template: `
 	<template v-if="valid">
-		<router-link v-if="mentionData?.metadata?.name" :to="{ name: 'user', params: { pubkey } }" class="mention"><span class="ti ti-at"></span>{{ mentionData.metadata.name  }}</router-link>
-		<router-link v-else :to="{ name: 'user', params: { pubkey } }" class="mention"><span class="ti ti-at"></span><span class="mention-pubkey">{{ pubkey }}</span></router-link>
+		<RouterLink v-if="mentionData?.metadata?.name" :to="{ name: 'user', params: { pubkey } }" class="mention"><span class="ti ti-at"></span>{{ mentionData.metadata.name  }}</RouterLink>
+		<RouterLink v-else :to="{ name: 'user', params: { pubkey } }" class="mention"><span class="ti ti-at"></span><span class="mention-pubkey">{{ pubkey }}</span></RouterLink>
 	</template>
 	<template v-else>{{ mention }}</template>
 	`
