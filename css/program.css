@@ -252,6 +252,14 @@ label {
 	color: #0CD;
 }
 
+.mention-self {
+	border: 1px solid #0CE;
+	text-decoration: none;
+	border-radius: 10px;
+	background-color: #033;
+	padding: 1px 10px 1px 7px;
+}
+
 .mention .ti {
 	display: inline-block;
 	margin-right: 2px;
