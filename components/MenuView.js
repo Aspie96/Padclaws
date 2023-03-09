@@ -8,7 +8,19 @@ export default {
 		};
 	},
 
+	created() {
+		this.$watch(
+			() => this.logged,
+			this.fetchData,
+			{ immediate: true }
+		);
+	},
+
 	computed: {
+		logged() {
+			return Session.logged;
+		},
+
 		backPage() {
 			if(this.$route.path == "/login") {
 				return this.$route.query.page;
@@ -17,13 +29,19 @@ export default {
 		},
 
 		username() {
-			if(Session.logged) {
+			if(this.logged) {
 				return UsersCache.users[Session.userKeys.public]?.metadata?.name;
 			}
 		}
 	},
 
 	methods: {
+		fetchData() {
+			if(this.logged) {
+				UsersCache.fetchMetadata(Session.userKeys.public);
+			}
+		},
+
 		toggleMenu() {
 			document.body.classList.toggle("menu-open");
 		},
@@ -49,7 +67,7 @@ export default {
 					<span class="menu-option">Home</span>
 				</router-link>
 			</li>
-			<template v-if="Session.logged">
+			<template v-if="logged">
 				<li>
 					<router-link :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
 						<span class="ti ti-user"></span>
