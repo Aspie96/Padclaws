@@ -329,7 +329,7 @@ label {
 	position: absolute;
 	z-index: 1;
 	right: 15px;
-	top: 40px;
+	top: 55px;
 }
 
 .note-menu li button {
@@ -824,6 +824,10 @@ dl dd.user-pubkey {
 
 	.note-data {
 		padding: 10px 20px 0 20px;
+	}
+
+	.note-menu {
+		right: 10px;
 	}
 
 	main {
