@@ -99,6 +99,12 @@ export default {
 						<span class="menu-option">Privacy</span>
 					</RouterLink>
 				</li>
+				<li>
+					<a href="https://github.com/Aspie96/Padclaws">
+						<span class="ti ti-code"></span>
+						<span class="menu-option">Source code</span>
+					</RouterLink>
+				</li>
 			</template>
 			<template v-else>
 				<li>
