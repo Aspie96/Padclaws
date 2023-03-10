@@ -1,4 +1,5 @@
 import AlertView from "./AlertView.js"
+import DropdownView from "./DropdownView.js"
 import LinkView from "./LinkView.js"
 import MentionView from "./MentionView.js"
 import UsersCache from "./UsersCache.js"
@@ -89,11 +90,53 @@ export default {
 				note.reply = eTags.reply;
 			}
 			return note;
+		},
+
+		menuItems() {
+			return [
+				{
+					text: "Go to note",
+					onClick: () => {
+						this.$router.push({ name: "note", params: { id: this.note.id } });
+					}
+				},
+				{
+					text: "Copy web URL",
+					onClick: () => {
+						const route = this.$router.resolve({ name: "note", params: { id: this.note.id } });
+						const href = route.href;
+						const url = location.origin + location.pathname + href;
+						navigator.clipboard.writeText(url);
+					}
+				},
+				{
+					text: "Copy Hex note ID",
+					onClick: () => {
+						navigator.clipboard.writeText(this.note.id);
+					}
+				},
+				{
+					text: "Copy encoded note ID",
+					onClick: () => {
+						const noteId = nostrUtils.encodeEntity(nostrEncEntityPrefixes.note, this.note.id);
+						navigator.clipboard.writeText(noteId);
+					}
+				},
+				{
+					text: "Copy Nostr URI",
+					onClick: () => {
+						const noteId = nostrUtils.encodeEntity(nostrEncEntityPrefixes.note, this.note.id);
+						const uri = "nostr:" + noteId;
+						navigator.clipboard.writeText(uri);
+					}
+				}
+			];
 		}
 	},
 
 	components: {
 		AlertView,
+		DropdownView,
 		LinkView,
 		MentionView
 	},
@@ -108,6 +151,7 @@ export default {
 					<p v-if="!authorData.loading" class="username">{{ authorData.metadata.name }}</p>
 					<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
 				</div>
+				<DropdownView :items="menuItems" />
 				<RouterLink class="note-date" :to="{ name: 'note', params: { id: note.id } }">
 					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
 				</RouterLink>

@@ -210,6 +210,7 @@ label {
 .note-box {
 	border: 1px solid #555;
 	background-color: #111;
+	position: relative;
 }
 
 .is-parent {
@@ -311,6 +312,36 @@ label {
 	color: #AAA;
 	font-size: 0.9em;
 	float: right;
+}
+
+.note-menu-btn {
+	width: 30px;
+	height: 30px;
+	float: right;
+	margin: 0 -10px 0 15px;
+	background-color: #222;
+	color: #DDD;
+	border: 1px solid #BBB;
+}
+
+.note-menu {
+	width: 200px;
+	position: absolute;
+	z-index: 1;
+	right: 15px;
+	top: 40px;
+}
+
+.note-menu li button {
+	display: block;
+	width: 100%;
+	font-size: 1em;
+	text-align: left;
+	border: 1px solid #888;
+	background-color: #222;
+	color: #DDD;
+	padding: 5px;
+	text-decoration: none;
 }
 
 .form-group {
