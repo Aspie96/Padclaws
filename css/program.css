@@ -785,8 +785,8 @@ dl dd.user-pubkey {
 	#menu-toggle {
 		display: block;
 		position: fixed;
-		width: 60px;
-		height: 60px;
+		width: 50px;
+		height: 50px;
 		font-size: 25px;
 		background-color: #000;
 		border-width: 0;
@@ -802,14 +802,13 @@ dl dd.user-pubkey {
 
 	#menu {
 		display: block;
-		width: 60px;
+		width: 50px;
 		text-align: center;
-		top: 60px;
+		top: 50px;
 	}
 
 	#menu li a .ti, #menu li button .ti {
 		margin: 0;
-		margin-left: 5px;
 	}
 
 	#menu .menu-option {
@@ -822,7 +821,7 @@ dl dd.user-pubkey {
 
 	main {
 		width: 100%;
-		padding: 80px;
+		padding: 0 40px 0 70px;
 	}
 
 	.menu-open #menu {

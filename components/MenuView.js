@@ -92,12 +92,12 @@ export default {
 						<span class="ti ti-pencil"></span>
 						<span class="menu-option">Write note</span>
 					</RouterLink>
-					<li>
-						<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">
-							<span class="ti ti-spy"></span>
-							<span class="menu-option">Privacy</span>
-						</RouterLink>
-					</li>
+				</li>
+				<li>
+					<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">
+						<span class="ti ti-spy"></span>
+						<span class="menu-option">Privacy</span>
+					</RouterLink>
 				</li>
 			</template>
 			<template v-else>
