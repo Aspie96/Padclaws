@@ -495,6 +495,7 @@ input[type=checkbox]:checked:before {
 
 .alert .alert-text {
 	vertical-align: middle;
+	min-width: 0;
 }
 
 .relays-container {
