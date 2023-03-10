@@ -148,7 +148,7 @@ export default {
 			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
 			<div class="note-data">
 				<div class="author-data">
-					<p v-if="!authorData.loading" class="username">{{ authorData.metadata.name }}</p>
+					<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>
 					<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
 				</div>
 				<DropdownView :items="menuItems" />
