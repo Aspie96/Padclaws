@@ -1,6 +1,7 @@
 import AlertView from "../AlertView.js"
 import FeedView from "../FeedView.js"
 import NoteView from "../NoteView.js"
+import Session from "../../js/session.js"
 
 function addInOrder(array, item, comp) {
 	var index = 0;
@@ -82,6 +83,9 @@ export default {
 			var eTags = nostrUtils.parseETags(this.event);
 			this.reply = !!eTags.reply;
 			this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
+			if(Session.logged) {
+				this.trustedRepliers.add(Session.userKeys.public);
+			}
 			for(const tag of nostrUtils.getTagValues(this.event, "p")) {
 				this.trustedRepliers.add(tag[1]);
 			}
