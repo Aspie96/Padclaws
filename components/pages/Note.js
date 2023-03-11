@@ -89,6 +89,9 @@ export default {
 			for(const tag of nostrUtils.getTagValues(this.event, "p")) {
 				this.trustedRepliers.add(tag[1]);
 			}
+			for(const user of Session.followedUsers) {
+				this.trustedRepliers.add(user)
+			}
 			if(eTags.reply) {
 				this.parent = eTags.reply;
 				this.ancestorsCache = {};
