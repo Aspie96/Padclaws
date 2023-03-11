@@ -47,8 +47,12 @@ export default {
 			this.loadMoreBtn = false;
 			this.until = null;
 			this.subIds = [];
+			const authors = [...Session.followedUsers];
+			if(Session.logged && !Session.followedUsers.has(Session.userKeys.public)) {
+				authors.push(Session.userKeys.public)
+			}
 			var filters = {
-				authors: [...Session.followedUsers],
+				authors,
 				kinds: [nostrEventKinds.text_note],
 				limit: 1
 			};
@@ -62,7 +66,7 @@ export default {
 			this.noEvents = false;
 			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
-				authors: [...Session.followedUsers],
+				authors,
 				kinds: [nostrEventKinds.text_note],
 				since
 			};
@@ -89,8 +93,12 @@ export default {
 		async loadMore() {
 			this.loadMoreBtn = false;
 			this.loading = true;
+			const authors = [...Session.followedUsers];
+			if(Session.logged && !Session.followedUsers.has(Session.userKeys.public)) {
+				authors.push(Session.userKeys.public)
+			}
 			var filters = {
-				authors: [...Session.followedUsers],
+				authors,
 				kinds: [nostrEventKinds.text_note],
 				until: this.until,
 				limit: 1
