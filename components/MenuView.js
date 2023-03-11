@@ -100,6 +100,12 @@ export default {
 					</RouterLink>
 				</li>
 				<li>
+					<RouterLink :to="{ name: 'feed' }">
+						<span class="ti ti-code"></span>
+						<span class="menu-option">Feed</span>
+					</RouterLink>
+				</li>
+				<li>
 					<a href="https://github.com/Aspie96/Padclaws">
 						<span class="ti ti-code"></span>
 						<span class="menu-option">Source code</span>
@@ -119,6 +125,10 @@ export default {
 						<span class="menu-option">Settings</span>
 					</RouterLink>
 				</li>
+				<RouterLink :to="{ name: 'feed' }">
+					<span class="ti ti-code"></span>
+					<span class="menu-option">Feed</span>
+				</RouterLink>
 				<li>
 					<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">
 						<span class="ti ti-spy"></span>

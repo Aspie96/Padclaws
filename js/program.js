@@ -1,5 +1,6 @@
 import Docs from "../components/pages/Docs.js"
 import Home from "../components/pages/Home.js"
+import Feed from "../components/pages/Feed.js"
 import Login from "../components/pages/Login.js"
 import MenuView from "../components/MenuView.js"
 import Note from "../components/pages/Note.js"
@@ -52,7 +53,8 @@ const routes = [
 		],
 		meta: { title: "Settings" }
 	},
-	{ path: "/docs/:page", name: "docs", component: Docs }
+	{ path: "/docs/:page", name: "docs", component: Docs },
+	{ path: "/feed", name:  "feed", component: Feed }
 ]
 
 const router = VueRouter.createRouter({

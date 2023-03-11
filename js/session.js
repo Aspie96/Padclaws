@@ -33,6 +33,7 @@ const session = Vue.reactive({
 		used: [],
 		unusedKnown: []
 	},
+	followedUsers: new Set(),
 
 	login(privateKey) {
 		const publicKey = nostrUtils.getPublicKey(privateKey);
@@ -107,6 +108,14 @@ const session = Vue.reactive({
 			nostrClient.addRelay(relay, read, write);
 		}
 		this.refreshRelays(true);
+	},
+
+	followUser(user) {
+		this.followedUsers.add(user);
+	},
+
+	unfollowUser(user) {
+		this.followedUsers.delete(user);
 	}
 });
 

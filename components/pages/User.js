@@ -38,6 +38,10 @@ export default {
 
 		selfUser() {
 			return Session.logged && Session.userKeys.public.startsWith(this.pubkey);
+		},
+
+		followed() {
+			return Session.followedUsers.has(this.pubkey);
 		}
 	},
 
@@ -71,6 +75,14 @@ export default {
 			this.$nextTick(() => {
 				document.title = this.metadata?.name || DEFAULT_TITLE;
 			});
+		},
+
+		follow() {
+			Session.followUser(this.pubkey);
+		},
+
+		unfollow() {
+			Session.unfollowUser(this.pubkey);
 		}
 	},
 
@@ -87,6 +99,8 @@ export default {
 	<template v-else>
 		<h1>{{ metadata?.name }}</h1>
 		<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="edit-profile-link edit-profile-link-right">Edit profile</RouterLink>
+		<button v-if="followed" type="button" @click="unfollow">Unfollow</button>
+		<button v-else type="button" @click="follow">Follow</button>
 		<p v-if="metadata?.about" class="about-content">{{ metadata.about }}</p>
 		<nav class="tabs">
 			<ul>
