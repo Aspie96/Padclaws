@@ -5,17 +5,6 @@ var userKeys = null;
 
 const storedKey = sessionStorage.getItem("privateKey");
 
-if(nostrUtils.isHash(storedKey, 32)) {
-	logged = true;
-	const publicKey = nostrUtils.getPublicKey(storedKey);
-	userKeys = {
-		public: publicKey,
-		private: storedKey
-	};
-} else {
-	sessionStorage.removeItem("privateKey");
-}
-
 var relays = localStorage.getItem("relays");
 if(relays) {
 	relays = JSON.parse(relays);
@@ -24,6 +13,29 @@ if(relays) {
 	}
 }
 
+const followedUsers = new Set();
+if(nostrUtils.isHash(storedKey, 32)) {
+	logged = true;
+	const publicKey = nostrUtils.getPublicKey(storedKey);
+	userKeys = {
+		public: publicKey,
+		private: storedKey
+	};
+	const filters = {
+		authors: [publicKey],
+		kinds: [nostrEventKinds.contact_list]
+	};
+	const event = await nostrClient.fetchMostRecent(filters);
+	if(event) {
+		for(const tag of event.tags) {
+			if(tag[0] == "p") {
+				followedUsers.add(tag[1]);
+			}
+		}
+	}
+} else {
+	sessionStorage.removeItem("privateKey");
+}
 
 const session = Vue.reactive({
 	logged,
@@ -33,7 +45,7 @@ const session = Vue.reactive({
 		used: [],
 		unusedKnown: []
 	},
-	followedUsers: new Set(),
+	followedUsers,
 
 	login(privateKey) {
 		const publicKey = nostrUtils.getPublicKey(privateKey);
@@ -112,21 +124,16 @@ const session = Vue.reactive({
 
 	followUser(user) {
 		this.followedUsers.add(user);
-		localStorage.setItem("followed", JSON.stringify([...this.followedUsers]));
+		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
 	},
 
 	unfollowUser(user) {
 		this.followedUsers.delete(user);
-		localStorage.setItem("followed", JSON.stringify([...this.followedUsers]));
+		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
 	}
 });
 
 session.refreshRelays();
-
-const followed = localStorage.getItem("followed");
-if(followed) {
-	session.followedUsers = new Set(JSON.parse(localStorage.getItem("followed")));
-}
 
 window.addEventListener("storage", e => {
 	if(e.key == "relays") {

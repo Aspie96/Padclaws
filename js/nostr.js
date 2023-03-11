@@ -14,6 +14,7 @@ const nostrEventKinds = Object.freeze({
 	set_metadata: 0,
 	text_note: 1,
 	recommend_server: 2,
+	contact_list: 3,
 	relay_list_metadata: 10002
 });
 
@@ -554,6 +555,24 @@ const nostrClient = function() {
 		return event;
 	}
 
+	async function postContacts(keys, contacts) {
+		const kind = nostrEventKinds.contact_list;
+		const tags = [];
+		for(const contact of contacts){
+			const tag = ["p", contact, "", ""];
+			tags.push(tag);
+		}
+		const event = await nostrUtils.createEvent(keys, kind, tags, "");
+		const requests = sendEvent(event);
+		await Promise.any(requests);
+		const filters = {
+			ids: [event.id],
+			limit: 1
+		};
+		await fetchOne(filters, "write");
+		return event;
+	}
+
 	async function setMetadata(keys, metadata) {
 		const kind = nostrEventKinds.set_metadata;
 		const content = JSON.stringify(metadata);
@@ -589,6 +608,7 @@ const nostrClient = function() {
 		cancelSubscription,
 		fetchUserMetadata,
 		postNote,
+		postContacts,
 		setMetadata
 	});
 }();
