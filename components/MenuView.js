@@ -109,7 +109,7 @@ export default {
 					<a href="https://github.com/Aspie96/Padclaws">
 						<span class="ti ti-code"></span>
 						<span class="menu-option">Source code</span>
-					</RouterLink>
+					</a>
 				</li>
 			</template>
 			<template v-else>
@@ -125,15 +125,23 @@ export default {
 						<span class="menu-option">Settings</span>
 					</RouterLink>
 				</li>
-				<RouterLink :to="{ name: 'feed' }">
-					<span class="ti ti-code"></span>
-					<span class="menu-option">Feed</span>
-				</RouterLink>
+				<li>
+					<RouterLink :to="{ name: 'feed' }">
+						<span class="ti ti-code"></span>
+						<span class="menu-option">Feed</span>
+					</RouterLink>
+				</li>
 				<li>
 					<RouterLink :to="{ name: 'docs', params: { page: 'privacy' } }">
 						<span class="ti ti-spy"></span>
 						<span class="menu-option">Privacy</span>
 					</RouterLink>
+				</li>
+				<li>
+					<a href="https://github.com/Aspie96/Padclaws">
+						<span class="ti ti-code"></span>
+						<span class="menu-option">Source code</span>
+					</a>
 				</li>
 			</template>
 		</ul>
