@@ -112,14 +112,21 @@ const session = Vue.reactive({
 
 	followUser(user) {
 		this.followedUsers.add(user);
+		localStorage.setItem("followed", JSON.stringify([...this.followedUsers]));
 	},
 
 	unfollowUser(user) {
 		this.followedUsers.delete(user);
+		localStorage.setItem("followed", JSON.stringify([...this.followedUsers]));
 	}
 });
 
 session.refreshRelays();
+
+const followed = localStorage.getItem("followed");
+if(followed) {
+	session.followedUsers = new Set(JSON.parse(localStorage.getItem("followed")));
+}
 
 window.addEventListener("storage", e => {
 	if(e.key == "relays") {
