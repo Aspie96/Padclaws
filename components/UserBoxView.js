@@ -31,7 +31,6 @@ export default {
 			if(!Session.logged) {
 				return false;
 			}
-			console.log(Session.followedUsers);
 			return Session.followedUsers.has(this.pubkey);
 		}
 	},
@@ -54,7 +53,6 @@ export default {
 		},
 
 		unfollow() {
-			console.log("unfollow");
 			Session.unfollowUser(this.pubkey);
 		}
 	},

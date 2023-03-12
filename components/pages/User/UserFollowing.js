@@ -33,14 +33,12 @@ export default {
 				limit: 1
 			};
 			const event = await nostrClient.fetchMostRecent(filters);
-			console.log(event);
 			const tags = nostrUtils.getTagValues(event, "p");
 			for(const tag of tags) {
 				if(!this.following.includes(tag)) {
 					this.following.push(tag[1]);
 				}
 			}
-			console.log(this.following);
 			this.loading = false;
 		}
 	},
