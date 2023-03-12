@@ -766,6 +766,51 @@ dl dd.user-pubkey {
 	white-space: nowrap;
 }
 
+.user-box {
+	display: flex;
+	padding: 10px 0;
+	align-items: center;
+	border-bottom: 1px solid #555;
+}
+
+.user-data {
+	margin-right: 20px;
+}
+
+.user-box .username {
+	font-weight: bold;
+	margin-bottom: 3px;
+	color: #DDD;
+	text-decoration: none;
+	font-size: 18px;
+}
+
+.user-box a.user-pubkey {
+	font-family: Programma, monospace;
+	display: block;
+	width: 10ch;
+	overflow: hidden;
+	text-overflow: clip;
+	box-sizing: content-box;
+	background-color: #333;
+	padding: 0.2ex 0 0.2ex 0.5ch;
+	border-right: 0.5ch solid rgba(0, 0, 0, 0);
+	border-radius: 1ex;
+	font-weight: bold;
+	color: #CCC;
+	text-decoration: none;
+}
+
+.user-box .about {
+	flex-grow: 1;
+	white-space: pre-wrap;
+	padding: 0px;
+	overflow-wrap: break-word;
+	color: #AAA;
+	max-height: 63px;
+	overflow: hidden;
+}
+
 .user-page-btn {
 	background-color: #222;
 	color: #FFF;

@@ -111,13 +111,16 @@ export default {
 		<nav class="tabs">
 			<ul>
 				<li>
-					<RouterLink :to="'/user/' + pubkey">Notes</RouterLink>
+					<RouterLink :to="{ name: 'user', params: { pubkey } }">Notes</RouterLink>
 				</li>
 				<li>
-					<RouterLink :to="'/user/' + pubkey + '/info'">Info</RouterLink>
+					<RouterLink :to="{ name: 'user-info', params: { pubkey } }">Info</RouterLink>
 				</li>
 				<li>
-					<RouterLink :to="'/user/' + pubkey + '/relays'">Relays</RouterLink>
+					<RouterLink :to="{ name: 'user-relays', params: { pubkey } }">Relays</RouterLink>
+				</li>
+				<li>
+					<RouterLink :to="{ name: 'user-following', params: { pubkey } }">Following</RouterLink>
 				</li>
 			</ul>
 		</nav>
