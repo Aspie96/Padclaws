@@ -152,9 +152,6 @@ export default {
 					<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
 				</div>
 				<DropdownView :items="menuItems" />
-				<RouterLink class="note-date" :to="{ name: 'note', params: { id: note.id } }">
-					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
-				</RouterLink>
 			</div>
 		</header>
 		<div class="note-content">
@@ -166,6 +163,9 @@ export default {
 				</template>
 			</template>
 		</div>
+		<RouterLink class="note-date" :to="{ name: 'note', params: { id: note.id } }">
+			<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
+		</RouterLink>
 	</article>
 	`
 }
