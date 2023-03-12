@@ -67,13 +67,13 @@ export default {
 					<span class="menu-option">Home</span>
 				</RouterLink>
 			</li>
-			<li>
-				<RouterLink :to="{ name: 'feed' }">
-					<span class="ti ti-antenna"></span>
-					<span class="menu-option">Feed</span>
-				</RouterLink>
-			</li>
 			<template v-if="logged">
+				<li>
+					<RouterLink :to="{ name: 'feed' }">
+						<span class="ti ti-antenna"></span>
+						<span class="menu-option">Feed</span>
+					</RouterLink>
+				</li>
 				<li>
 					<RouterLink :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
 						<span class="ti ti-user"></span>
