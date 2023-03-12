@@ -130,18 +130,13 @@ const session = Vue.reactive({
 	},
 
 	followUser(user) {
-		if(!this.followedUsers.has(user)) {
-			this.followedUsers.add(user);
-			nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
-		}
+		this.followedUsers.add(user);
+		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
 	},
 
 	unfollowUser(user) {
-		const index = this.followedUsers.indexOf(user);
-		if(index != -1) {
-			this.followedUsers.splice(index, 1);
-			nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
-		}
+		this.followedUsers.delete(user);
+		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
 	}
 });
 

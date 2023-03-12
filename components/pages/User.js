@@ -36,6 +36,10 @@ export default {
 			return UsersCache.users[this.pubkey]?.pubkey || this.pubkey;
 		},
 
+		userLogged() {
+			return Session.logged;
+		},
+
 		selfUser() {
 			return Session.logged && Session.userKeys.public.startsWith(this.pubkey);
 		},
@@ -98,9 +102,11 @@ export default {
 	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid public key. Check the URL.</AlertView>
 	<template v-else>
 		<h1>{{ metadata?.name }}</h1>
-		<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="edit-profile-link edit-profile-link-right">Edit profile</RouterLink>
-		<button v-if="followed" type="button" @click="unfollow">Unfollow</button>
-		<button v-else type="button" @click="follow">Follow</button>
+		<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="user-page-btn user-page-btn-right"><span class="ti ti-pencil"></span>Edit profile</RouterLink>
+		<template v-else-if="userLogged">
+			<button v-if="followed" type="button" class="user-page-btn user-page-btn-right" @click="unfollow"><span class="ti ti-social-off"></span>Unfollow</button>
+			<button v-else type="button" class="user-page-btn user-page-btn-right" @click="follow"><span class="ti ti-social"></span>Follow</button>
+		</template>
 		<p v-if="metadata?.about" class="about-content">{{ metadata.about }}</p>
 		<nav class="tabs">
 			<ul>

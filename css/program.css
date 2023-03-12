@@ -766,7 +766,7 @@ dl dd.user-pubkey {
 	white-space: nowrap;
 }
 
-.edit-profile-link {
+.user-page-btn {
 	background-color: #222;
 	color: #FFF;
 	padding: 5px 10px;
@@ -777,7 +777,11 @@ dl dd.user-pubkey {
 	border: 2px outset #AAA;
 }
 
-.edit-profile-link-right {
+.user-page-btn .ti {
+	margin-right: 5px;
+}
+
+.user-page-btn-right {
 	float: right;
 }
 

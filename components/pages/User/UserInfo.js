@@ -37,6 +37,6 @@ export default {
 			<dd class="user-pubkey">{{ nPubKey }}</dd>
 		</template>
 	</dl>
-	<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="edit-profile-link">Edit profile</RouterLink>
+	<RouterLink v-if="selfUser" :to="{ name: 'settings-profile' }" class="user-page-btn">Edit profile</RouterLink>
 	`
 }
