@@ -837,7 +837,7 @@ dl dd.user-pubkey {
 
 	main {
 		width: 100%;
-		padding: 0 40px 0 70px;
+		padding: 0 20px 0 65px;
 	}
 
 	.menu-open #menu {
@@ -889,6 +889,10 @@ dl dd.user-pubkey {
 
 	.settings {
 		display: block;
+	}
+
+	.tabs li a {
+		width: auto;
 	}
 
 	.side-menu {
