@@ -32,6 +32,10 @@ export default {
 				return false;
 			}
 			return Session.followedUsers.has(this.pubkey);
+		},
+
+		logged() {
+			return Session.logged;
 		}
 	},
 
@@ -64,8 +68,10 @@ export default {
 			<RouterLink class="user-pubkey" :title="pubkey" :to="{ name: 'user', params: { pubkey } }">{{ pubkey }}</RouterLink>
 		</div>
 		<p class="about">{{ about }}</p>
-		<button v-if="following" type="button" class="user-page-btn user-page-btn-right" @click="unfollow"><span class="ti ti-social-off"></span>Unfollow</button>
-		<button v-else type="button" class="user-page-btn user-page-btn-right" @click="follow"><span class="ti ti-social"></span>Follow</button>
+		<template v-if="logged">
+			<button v-if="following" type="button" class="user-page-btn user-page-btn-right" @click="unfollow"><span class="ti ti-social-off"></span>Unfollow</button>
+			<button v-else type="button" class="user-page-btn user-page-btn-right" @click="follow"><span class="ti ti-social"></span>Follow</button>
+		</template>
 	</div>
 	`
 }
