@@ -163,9 +163,11 @@ export default {
 				</template>
 			</template>
 		</div>
-		<RouterLink class="note-date" :to="{ name: 'note', params: { id: note.id } }">
-			<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
-		</RouterLink>
+		<p class="note-date">
+			<RouterLink :to="{ name: 'note', params: { id: note.id } }">
+				<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
+			</RouterLink>
+		</p>
 	</article>
 	`
 }

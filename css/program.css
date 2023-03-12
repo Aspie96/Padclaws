@@ -210,7 +210,6 @@ label {
 .note-box {
 	border: 1px solid #555;
 	background-color: #111;
-	overflow: hidden;
 	padding-bottom: 15px;
 	position: relative;
 }
@@ -310,11 +309,14 @@ label {
 	text-decoration: none;
 }
 
-a.note-date {
+.note-date {
+	text-align: right;
+	padding-right: 10px;
+}
+
+.note-date a {
 	color: #AAA;
 	font-size: 0.9em;
-	float: right;
-	margin-right: 10px;
 }
 
 .note-menu-btn {
@@ -332,7 +334,7 @@ a.note-date {
 	position: absolute;
 	z-index: 1;
 	right: 15px;
-	top: 55px;
+	top: 40px;
 }
 
 .note-menu li button {
