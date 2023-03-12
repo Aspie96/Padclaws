@@ -67,6 +67,12 @@ export default {
 					<span class="menu-option">Home</span>
 				</RouterLink>
 			</li>
+			<li>
+				<RouterLink :to="{ name: 'feed' }">
+					<span class="ti ti-antenna"></span>
+					<span class="menu-option">Feed</span>
+				</RouterLink>
+			</li>
 			<template v-if="logged">
 				<li>
 					<RouterLink :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
@@ -100,12 +106,6 @@ export default {
 					</RouterLink>
 				</li>
 				<li>
-					<RouterLink :to="{ name: 'feed' }">
-						<span class="ti ti-antenna"></span>
-						<span class="menu-option">Feed</span>
-					</RouterLink>
-				</li>
-				<li>
 					<a href="https://github.com/Aspie96/Padclaws">
 						<span class="ti ti-code"></span>
 						<span class="menu-option">Source code</span>
@@ -123,12 +123,6 @@ export default {
 					<RouterLink :to="{ name: 'settings-relays' }">
 						<span class="ti ti-settings"></span>
 						<span class="menu-option">Settings</span>
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink :to="{ name: 'feed' }">
-						<span class="ti ti-antenna"></span>
-						<span class="menu-option">Feed</span>
 					</RouterLink>
 				</li>
 				<li>
