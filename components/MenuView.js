@@ -101,7 +101,7 @@ export default {
 				</li>
 				<li>
 					<RouterLink :to="{ name: 'feed' }">
-						<span class="ti ti-code"></span>
+						<span class="ti ti-antenna"></span>
 						<span class="menu-option">Feed</span>
 					</RouterLink>
 				</li>
@@ -127,7 +127,7 @@ export default {
 				</li>
 				<li>
 					<RouterLink :to="{ name: 'feed' }">
-						<span class="ti ti-code"></span>
+						<span class="ti ti-antenna"></span>
 						<span class="menu-option">Feed</span>
 					</RouterLink>
 				</li>
