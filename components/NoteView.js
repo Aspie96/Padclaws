@@ -144,8 +144,8 @@ export default {
 	template: `
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive }">
-		<header>
-			<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
+		<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
+		<div class="note-body">
 			<div class="note-data">
 				<div class="author-data">
 					<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>
@@ -153,21 +153,21 @@ export default {
 				</div>
 				<DropdownView :items="menuItems" />
 			</div>
-		</header>
-		<div class="note-content">
-			<template v-for="item in findItems(note.content)">
-				<template v-if="item.type == 'text'">{{ item.value }}</template>
-				<LinkView v-else-if="item.type == 'url'" :url="item.value" />
-				<template v-else-if="item.type == 'mention'">
-					<MentionView :event="event" :mention="item.value" />
+			<div class="note-content">
+				<template v-for="item in findItems(note.content)">
+					<template v-if="item.type == 'text'">{{ item.value }}</template>
+					<LinkView v-else-if="item.type == 'url'" :url="item.value" />
+					<template v-else-if="item.type == 'mention'">
+						<MentionView :event="event" :mention="item.value" />
+					</template>
 				</template>
-			</template>
+			</div>
+			<p class="note-date">
+				<RouterLink :to="{ name: 'note', params: { id: note.id } }">
+					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
+				</RouterLink>
+			</p>
 		</div>
-		<p class="note-date">
-			<RouterLink :to="{ name: 'note', params: { id: note.id } }">
-				<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
-			</RouterLink>
-		</p>
 	</article>
 	`
 }

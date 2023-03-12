@@ -210,6 +210,9 @@ label {
 .note-box {
 	border: 1px solid #555;
 	background-color: #111;
+}
+
+.note-body {
 	padding-bottom: 15px;
 	position: relative;
 }

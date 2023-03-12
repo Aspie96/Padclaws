@@ -78,4 +78,18 @@ router.afterEach((to, from) => {
 
 app.use(router);
 
+app.directive("click-outside", {
+	mounted(el, binding, vnode) {
+		el.clickOutsideEvent = ev => {
+			if(!(el == ev.target || el.contains(ev.target))) {
+				binding.value(ev);
+			}
+		};
+		document.body.addEventListener("click", el.clickOutsideEvent);
+	},
+	unmounted(el, binding) {
+		document.body.removeEventListener("click", el.clickOutsideEvent);
+	}
+})
+
 app.mount("#app");
