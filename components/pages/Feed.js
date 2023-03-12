@@ -25,7 +25,14 @@ export default {
 	},
 
 	created() {
-		this.fetchData();
+		this.$watch(
+			() => Session.followedUsers,
+			this.fetchData,
+			{
+				immediate: !Session.refreshingFollowedUsers,
+				deep: true
+			}
+		);
 	},
 
 	unmounted() {
@@ -91,6 +98,7 @@ export default {
 		},
 
 		async loadMore() {
+			console.log("demo1");
 			this.loadMoreBtn = false;
 			this.loading = true;
 			const authors = [...Session.followedUsers];
@@ -103,24 +111,32 @@ export default {
 				until: this.until,
 				limit: 1
 			};
+			console.log("demo2");
+			console.log(filters);
 			const recent = await nostrClient.fetchMostRecent(filters);
+			console.log("demo3");
+			console.log(recent);
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;
 				this.noEvents = true;
 				return;
 			}
+			console.log("demo4");
 			this.noEvents = false;
 			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
-				authors: [...Session.followedUsers],
+				authors,
 				kinds: [nostrEventKinds.text_note],
 				since,
 				until: this.until
 			};
+			console.log("demo5");
+			console.log(filters);
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
+				console.log("demo6");
 				addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});

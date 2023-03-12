@@ -13,7 +13,6 @@ if(relays) {
 	}
 }
 
-const followedUsers = new Set();
 if(nostrUtils.isHash(storedKey, 32)) {
 	logged = true;
 	const publicKey = nostrUtils.getPublicKey(storedKey);
@@ -21,18 +20,6 @@ if(nostrUtils.isHash(storedKey, 32)) {
 		public: publicKey,
 		private: storedKey
 	};
-	const filters = {
-		authors: [publicKey],
-		kinds: [nostrEventKinds.contact_list]
-	};
-	const event = await nostrClient.fetchMostRecent(filters);
-	if(event) {
-		for(const tag of event.tags) {
-			if(tag[0] == "p") {
-				followedUsers.add(tag[1]);
-			}
-		}
-	}
 } else {
 	sessionStorage.removeItem("privateKey");
 }
@@ -45,7 +32,8 @@ const session = Vue.reactive({
 		used: [],
 		unusedKnown: []
 	},
-	followedUsers,
+	followedUsers: new Set(),
+	refreshingFollowedUsers: false,
 
 	login(privateKey) {
 		const publicKey = nostrUtils.getPublicKey(privateKey);
@@ -56,12 +44,31 @@ const session = Vue.reactive({
 		};
 		UsersCache.fetchMetadata(publicKey);
 		sessionStorage.setItem("privateKey", privateKey);
+		this.refreshFollowedUsers();
 	},
 
 	logout() {
 		this.logged = false;
 		this.userKeys = null;
 		sessionStorage.removeItem("privateKey");
+		this.followedUsers.clear();
+	},
+
+	async refreshFollowedUsers() {
+		this.refreshingFollowedUsers = true;
+		const filters = {
+			authors: [this.userKeys.public],
+			kinds: [nostrEventKinds.contact_list]
+		};
+		const event = await nostrClient.fetchMostRecent(filters);
+		if(event) {
+			for(const tag of event.tags) {
+				if(tag[0] == "p" && !this.followedUsers.has(tag[1])) {
+					this.followedUsers.add(tag[1]);
+				}
+			}
+		}
+		this.refreshingFollowedUsers = false;
 	},
 
 	toPublicKey(privateKey) {
@@ -123,17 +130,26 @@ const session = Vue.reactive({
 	},
 
 	followUser(user) {
-		this.followedUsers.add(user);
-		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
+		if(!this.followedUsers.has(user)) {
+			this.followedUsers.add(user);
+			nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
+		}
 	},
 
 	unfollowUser(user) {
-		this.followedUsers.delete(user);
-		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
+		const index = this.followedUsers.indexOf(user);
+		if(index != -1) {
+			this.followedUsers.splice(index, 1);
+			nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
+		}
 	}
 });
 
 session.refreshRelays();
+
+if(session.logged) {
+	session.refreshFollowedUsers();
+}
 
 window.addEventListener("storage", e => {
 	if(e.key == "relays") {
