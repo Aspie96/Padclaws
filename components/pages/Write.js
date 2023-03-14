@@ -1,5 +1,5 @@
-import WriteView from "../WriteView.js"
 import Session from "../../js/session.js"
+import WriteView from "../WriteView.js"
 
 const mentionRegex = /(@(?:npub[a-zA-HJ-NP-Z0-9]{59}|[a-f0-9]{8,64}))\b/g;
 
@@ -82,6 +82,7 @@ export default {
 	},
 
 	template: `
+	<h1>New note</h1>
 	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" storageKey="/write" ref="writeView" />
 	`
 }
