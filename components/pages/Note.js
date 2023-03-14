@@ -2,6 +2,62 @@ import AlertView from "../AlertView.js"
 import FeedView from "../FeedView.js"
 import NoteView from "../NoteView.js"
 import Session from "../../js/session.js"
+import WriteView from "../WriteView.js"
+
+const mentionRegex = /(@(?:npub[a-zA-HJ-NP-Z0-9]{59}|[a-f0-9]{8,64}))\b/g;
+
+function* parseNote(text) {
+	var m;
+	var index = 0;
+	do {
+		m = mentionRegex.exec(text);
+		if(m) {
+			const item = m[1];
+			yield {
+				type: "text",
+				value: text.slice(index, m.index)
+			};
+			yield {
+				type: "mention",
+				value: item
+			};
+			index = m.index + item.length;
+		}
+	} while(m);
+	yield {
+		type: "text",
+		value: text.slice(index)
+	};
+}
+
+function createNote(parts) {
+	var content = "";
+	const tags = [];
+	const pMap = {};
+	for(const part of parts) {
+		if(part.type == "text") {
+			content += part.value;
+		} else if(part.type == "mention") {
+			var pubkey = part.value.substring(1);
+			if(pubkey.startsWith("npub")) {
+				const entity = nostrUtils.decodeEntity(pubkey);
+				pubkey = entity.hex;
+			}
+			if(!(pubkey in pMap)) {
+				pMap[pubkey] = tags.length;
+				const tag = ["p", pubkey];
+				tags.push(tag);
+			}
+			content += "#[" + pMap[pubkey] + "]";
+			const tag = ["p", pubkey];
+		}
+	}
+	return {
+		content,
+		pMap,
+		tags
+	}
+}
 
 function addInOrder(array, item, comp) {
 	var index = 0;
@@ -31,7 +87,9 @@ export default {
 			noReplies: false,
 			loadingReplies: false,
 			branchLoaded: false,
-			noRelays: false
+			noRelays: false,
+			submitting: false,
+			replyId: null
 		};
 	},
 
@@ -64,6 +122,8 @@ export default {
 			this.parent = null;
 			this.ancestorsCache = {};
 			this.noRelays = false;
+			this.submitting = false;
+			this.replyId = null;
 			if(nostrClient.noRelays()) {
 				this.noRelays = true;
 				return;
@@ -209,10 +269,54 @@ export default {
 		isDirectReply(reply) {
 			const eTags = nostrUtils.parseETags(reply);
 			return eTags.reply == this.event.id;
+		},
+
+		async onReplySubmit(note) {
+			const parts = parseNote(note);
+			const data = createNote(parts);
+			const tags = data.tags;
+			const addedPTags = new Set();
+			for(const tag of nostrUtils.getTagValues(this.event, "p")) {
+				const pubkey = tag[1];
+				if(pubkey in data.pMap) {
+					tags[data.pMap[pubkey]] = tag;
+				} else if(!addedPTags.has(pubkey)) {
+					addedPTags.add(pubkey);
+					tags.push(tag);
+				}
+			}
+			const pubkey = nostrUtils.getAuthor(this.event);
+			if(!(pubkey in data.pMap) && !addedPTags.has(pubkey)) {
+				const tag = ["p", pubkey, ""];
+				tags.push(tag);
+			}
+			if(this.branch.length == 0) {
+				const tag = ["e", this.event.id, "", "root"];
+				tags.push(tag);
+			} else {
+				var tag = ["e", this.branch[0].id, "", "root"];
+				tags.push(tag);
+				tag = ["e", this.event.id, "", "reply"];
+				tags.push(tag);
+			}
+			this.submitting = true;
+			const keys = Session.userKeys;
+			const event = await nostrClient.postNote(keys, data.content, tags);
+			this.submitting = false;
+			this.replyId = event.id;
+			this.$refs.writeView.clear();
 		}
 	},
 
 	computed: {
+		logged() {
+			return Session.logged;
+		},
+
+		noteId() {
+			return this.event?.id || this.$route.params;
+		},
+
 		replies() {
 			return this.trustedReplies.concat(this.otherReplies);
 		}
@@ -221,7 +325,8 @@ export default {
 	components: {
 		AlertView,
 		FeedView,
-		NoteView
+		NoteView,
+		WriteView
 	},
 
 	template:`
@@ -233,8 +338,9 @@ export default {
 	<template v-else>
 		<FeedView v-if="reply" :events="branch" isParent />
 		<NoteView :loading="loading" :event="event" isActive />
+		<h2>Replies</h2>
+		<write-view v-if="logged" :submitting="submitting" @submit="onReplySubmit" :noteId="replyId" :storageKey="'/note/' + noteId" ref="writeView" />
 		<template v-if="!loading">
-			<h2>Replies</h2>
 			<FeedView :events="replies" />
 			<button v-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore">
 				<span class="ti ti-chevrons-down"></span>
