@@ -155,7 +155,7 @@ export default {
 			if(eTags.reply) {
 				this.parent = eTags.reply;
 				this.ancestorsCache = {};
-				this.ancestorIds = new Set([...eTags.mention, eTags.reply]);
+				this.ancestorIds = new Set([eTags.reply]);
 				if(eTags.root) {
 					this.ancestorIds.add(eTags.root);
 				}
@@ -207,9 +207,6 @@ export default {
 		},
 
 		fetchAncestors(eTags) {
-			for(const id of eTags.mention) {
-				this.ancestorIds.add(id);
-			}
 			if(eTags.root) {
 				this.ancestorIds.add(eTags.root);
 			}
