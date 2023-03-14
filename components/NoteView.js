@@ -37,6 +37,8 @@ function* findByRegex(text, regex, itemName, def) {
 }
 
 export default {
+	name: "NoteView",
+
 	props: {
 		event: Object,
 		loading: Boolean,
@@ -47,7 +49,8 @@ export default {
 
 	data() {
 		return {
-			authorData: { loading: true }
+			authorData: { loading: true },
+			mention: null
 		};
 	},
 
@@ -57,14 +60,31 @@ export default {
 			this.fetchData,
 			{ immediate: true }
 		);
+
+		this.$watch(
+			() => this.note,
+			this.fetchMention,
+			{ immediate: true }
+		);
 	},
 
 	methods: {
-		fetchData() {
+		async fetchData() {
 			if(this.event) {
 				const author = nostrUtils.getAuthor(this.event);
 				UsersCache.fetchMetadata(author);
 				this.authorData = UsersCache.users[author];
+			}
+		},
+
+		async fetchMention() {
+			if(this.note?.mention?.length == 1) {
+				const filters = {
+					ids: [this.note.mention[0]],
+					limit: 1
+				};
+				const event = await nostrClient.fetchMostRecent(filters);
+				this.mention = event;
 			}
 		},
 
@@ -85,10 +105,11 @@ export default {
 				content: this.event.content,
 				date: nostrUtils.getDate(this.event),
 			};
+			const eTags = nostrUtils.parseETags(this.event);
 			if(this.replyTo) {
-				const eTags = nostrUtils.parseETags(this.event);
 				note.reply = eTags.reply;
 			}
+			note.mention = eTags.mention;
 			return note;
 		},
 
@@ -161,6 +182,7 @@ export default {
 						<MentionView :event="event" :mention="item.value" />
 					</template>
 				</template>
+				<NoteView v-if="mention" :event="mention" />
 			</div>
 			<p class="note-date">
 				<RouterLink :to="{ name: 'note', params: { id: note.id } }">
