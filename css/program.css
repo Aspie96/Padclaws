@@ -252,6 +252,12 @@ label {
 	text-decoration-style: dotted;
 }
 
+.note-box.is-mention {
+	margin-top: 10px;
+	font-size: 17px;
+	width: 90%;
+}
+
 .mention {
 	color: #0CD;
 }
@@ -300,6 +306,7 @@ label {
 	font-family: Programma, monospace;
 	display: block;
 	width: 10ch;
+	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: clip;
 	box-sizing: content-box;

@@ -44,7 +44,8 @@ export default {
 		loading: Boolean,
 		replyTo: Boolean,
 		isParent: Boolean,
-		isActive: Boolean
+		isActive: Boolean,
+		isMention: Boolean
 	},
 
 	data() {
@@ -164,7 +165,7 @@ export default {
 
 	template: `
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
-	<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive }">
+	<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive, 'is-mention': isMention }">
 		<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
 		<div class="note-body">
 			<div class="note-data">
@@ -182,7 +183,7 @@ export default {
 						<MentionView :event="event" :mention="item.value" />
 					</template>
 				</template>
-				<NoteView v-if="mention" :event="mention" />
+				<NoteView v-if="mention" :event="mention" isMention />
 			</div>
 			<p class="note-date">
 				<RouterLink :to="{ name: 'note', params: { id: note.id } }">
