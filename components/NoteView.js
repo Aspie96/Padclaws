@@ -2,6 +2,7 @@ import AlertView from "./AlertView.js"
 import DropdownView from "./DropdownView.js"
 import LinkView from "./LinkView.js"
 import MentionView from "./MentionView.js"
+import Session from "../js/session.js"
 import UsersCache from "./UsersCache.js"
 
 /*var re_source = re_weburl.source;
@@ -45,7 +46,8 @@ export default {
 		replyTo: Boolean,
 		isParent: Boolean,
 		isActive: Boolean,
-		isMention: Boolean
+		isMention: Boolean,
+		repostedBy: String
 	},
 
 	data() {
@@ -115,7 +117,7 @@ export default {
 		},
 
 		menuItems() {
-			return [
+			const menu = [
 				{
 					text: "Go to note",
 					onClick: () => {
@@ -153,6 +155,21 @@ export default {
 					}
 				}
 			];
+			if(Session.logged) {
+				menu.push({
+					text: "Repost",
+					onClick: () => {
+						const tags = [];
+						tags.push(["e", this.note.id, "", "mention"]);
+						nostrClient.postNote(Session.userKeys, "", tags);
+					}
+				});
+			}
+			return menu;
+		},
+
+		isRepost() {
+			return this.note.content == "" && this.mention;
 		}
 	},
 
@@ -165,32 +182,38 @@ export default {
 
 	template: `
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
-	<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive, 'is-mention': isMention }">
-		<div v-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
-		<div class="note-body">
-			<div class="note-data">
-				<div class="author-data">
-					<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>
-					<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
+	<template v-else-if="isRepost">
+		<NoteView :event="mention" :repostedBy="note.author" />
+	</template>
+	<template v-else>
+		<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive, 'is-mention': isMention }">
+				<div v-if="repostedBy" class="in-reply-to"><span class="ti ti-message"></span>Reposted by @ {{repostedBy}}</div>
+				<div v-else-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
+				<div class="note-body">
+					<div class="note-data">
+						<div class="author-data">
+							<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>
+							<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
+						</div>
+						<DropdownView :items="menuItems" />
+					</div>
+					<div class="note-content">
+						<template v-for="item in findItems(note.content)">
+							<template v-if="item.type == 'text'">{{ item.value }}</template>
+							<LinkView v-else-if="item.type == 'url'" :url="item.value" />
+							<template v-else-if="item.type == 'mention'">
+								<MentionView :event="event" :mention="item.value" />
+							</template>
+						</template>
+						<NoteView v-if="mention" :event="mention" isMention />
+					</div>
+					<p class="note-date">
+						<RouterLink :to="{ name: 'note', params: { id: note.id } }">
+							<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
+						</RouterLink>
+					</p>
 				</div>
-				<DropdownView :items="menuItems" />
-			</div>
-			<div class="note-content">
-				<template v-for="item in findItems(note.content)">
-					<template v-if="item.type == 'text'">{{ item.value }}</template>
-					<LinkView v-else-if="item.type == 'url'" :url="item.value" />
-					<template v-else-if="item.type == 'mention'">
-						<MentionView :event="event" :mention="item.value" />
-					</template>
-				</template>
-				<NoteView v-if="mention" :event="mention" isMention />
-			</div>
-			<p class="note-date">
-				<RouterLink :to="{ name: 'note', params: { id: note.id } }">
-					<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
-				</RouterLink>
-			</p>
-		</div>
-	</article>
+		</article>
+	</template>
 	`
 }
