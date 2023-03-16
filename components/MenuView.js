@@ -75,6 +75,12 @@ export default {
 					</RouterLink>
 				</li>
 				<li>
+					<RouterLink :to="{ name: 'notifications' }">
+						<span class="ti ti-bell"></span>
+						<span class="menu-option">Notifications</span>
+					</RouterLink>
+				</li>
+				<li>
 					<RouterLink :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
 						<span class="ti ti-user"></span>
 						<span class="menu-option" v-if="username">{{username}}</span>

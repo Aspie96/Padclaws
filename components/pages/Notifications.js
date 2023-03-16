@@ -25,14 +25,7 @@ export default {
 	},
 
 	created() {
-		this.$watch(
-			() => Session.followedUsers,
-			this.fetchData,
-			{
-				immediate: !Session.refreshingFollowedUsers,
-				deep: true
-			}
-		);
+		this.fetchData();
 	},
 
 	unmounted() {
@@ -54,13 +47,9 @@ export default {
 			this.loadMoreBtn = false;
 			this.until = null;
 			this.subIds = [];
-			const authors = [...Session.followedUsers];
-			if(Session.logged && !Session.followedUsers.has(Session.userKeys.public)) {
-				authors.push(Session.userKeys.public)
-			}
 			var filters = {
-				authors,
 				kinds: [nostrEventKinds.text_note],
+				"#p": [Session.userKeys.public],
 				limit: 1
 			};
 			const recent = await nostrClient.fetchMostRecent(filters);
@@ -73,8 +62,8 @@ export default {
 			this.noEvents = false;
 			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
-				authors,
 				kinds: [nostrEventKinds.text_note],
+				"#p": [Session.userKeys.public],
 				since
 			};
 			this.until = since;
@@ -100,13 +89,9 @@ export default {
 		async loadMore() {
 			this.loadMoreBtn = false;
 			this.loading = true;
-			const authors = [...Session.followedUsers];
-			if(Session.logged && !Session.followedUsers.has(Session.userKeys.public)) {
-				authors.push(Session.userKeys.public)
-			}
 			var filters = {
-				authors,
 				kinds: [nostrEventKinds.text_note],
+				"#p": [Session.userKeys.public],
 				until: this.until,
 				limit: 1
 			};
@@ -120,8 +105,8 @@ export default {
 			this.noEvents = false;
 			const since = this.getReasonableTimestamp(recent.created_at);
 			filters = {
-				authors,
 				kinds: [nostrEventKinds.text_note],
+				"#p": [Session.userKeys.public],
 				since,
 				until: this.until
 			};
@@ -144,8 +129,8 @@ export default {
 	<FeedView :events="events" replyTo />
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<AlertView v-else-if="noEvents" color="blue" icon="mood-empty">
-		<template v-if="events.length == 0">No events found.</template>
-		<template v-else>No other events found.</template>
+		<template v-if="events.length == 0">No notifications found.</template>
+		<template v-else>No other notifications found.</template>
 	</AlertView>
 	<button v-else-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore"><span class="ti ti-chevrons-down"></span>Load more&hellip;<span class="ti ti-chevrons-down"></span></button>
 	`

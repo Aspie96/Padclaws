@@ -4,6 +4,7 @@ import Feed from "../components/pages/Feed.js"
 import Login from "../components/pages/Login.js"
 import MenuView from "../components/MenuView.js"
 import Note from "../components/pages/Note.js"
+import Notifications from "../components/pages/Notifications.js"
 import Settings from "../components/pages/Settings.js"
 import SettingsData from "../components/pages/Settings/SettingsData.js"
 import SettingsProfile from "../components/pages/Settings/SettingsProfile.js"
@@ -56,7 +57,8 @@ const routes = [
 		meta: { title: "Settings" }
 	},
 	{ path: "/docs/:page", name: "docs", component: Docs },
-	{ path: "/feed", name:  "feed", component: Feed }
+	{ path: "/feed", name:  "feed", component: Feed },
+	{ path: "/notifications", name:  "notifications", component: Notifications }
 ]
 
 const router = VueRouter.createRouter({
