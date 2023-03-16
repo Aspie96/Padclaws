@@ -23,7 +23,7 @@ export default {
  
 	template: `
 	<button type="button" class="note-menu-btn" @click="toggleMenu" ref="button">
-		<span class="ti ti-menu-2"></span>
+		<span class="ti ti-dots"></span>
 	</button>
 	<nav v-if="showMenu" class="note-menu" @click="closeMenu" v-click-outside="closeMenu">
 		<ul>
