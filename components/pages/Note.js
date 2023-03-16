@@ -4,7 +4,7 @@ import NoteView from "../NoteView.js"
 import Session from "../../js/session.js"
 import WriteView from "../WriteView.js"
 
-const mentionRegex = /(@(?:npub[a-zA-HJ-NP-Z0-9]{59}|[a-f0-9]{8,64}))\b/g;
+const mentionRegex = /(@(?:note[a-zA-HJ-NP-Z0-9]{59}|[a-f0-9]{8,64}))\b/g;
 
 function* parseNote(text) {
 	var m;
@@ -39,7 +39,7 @@ function createNote(parts) {
 			content += part.value;
 		} else if(part.type == "mention") {
 			var pubkey = part.value.substring(1);
-			if(pubkey.startsWith("npub")) {
+			if(pubkey.startsWith("note")) {
 				const entity = nostrUtils.decodeEntity(pubkey);
 				pubkey = entity.hex;
 			}
@@ -131,7 +131,17 @@ export default {
 			this.loading = true;
 			const eventId = this.$route.params.id;
 			if(!nostrUtils.isHashPrefix(eventId, 32)) {
-				this.invalid = true;
+				const decoded = nostrUtils.decodeEntity(eventId);
+				if(decoded && decoded.prefix == nostrEncEntityPrefixes.note && nostrUtils.isHash(decoded.hex, 32)) {
+					this.$router.replace({
+						name: this.$route.matched[this.$route.matched.length - 1].name,
+						params: {
+							id: decoded.hex
+						}
+					});
+				} else {
+					this.invalid = true;
+				}
 				return;
 			}
 			var filters = {
