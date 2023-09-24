@@ -284,7 +284,7 @@ const nostrClient = function() {
 	}
 
 	function checkEventExists(filters, filterFunc, maxTime) {
-		maxTime ||= 3000;
+		maxTime ||= 100000;
 		var subId;
 		const p1 = new Promise(resolve => {
 			subId = createSubscription(filters, event => {
@@ -615,35 +615,21 @@ const nostrClient = function() {
 
 
 const gatherNostrRelays = function() {
-	async function fromRelayRegisry() {
-		const resource = "https://raw.githubusercontent.com/fiatjaf/nostr-relay-registry/master/relays.js";
-		const document = await (await fetch(resource)).text();
-		var rx = /export const relays = \[([^\]]+)\]/s;
-		var arr = rx.exec(document);
-		var list = arr[1];
-		var urls = [];
-		rx = /^\s+'(wss:\/\/\S+)'/igm;
-		var m;
-		while(m = rx.exec(list)) {
-			const relay = new URL(m[1]).href;
-			urls.push(relay);
-		}
-		return urls;
-	}
-
 	async function fromNostrInfo() {
-		const resource = "https://raw.githubusercontent.com/Giszmo/nostr.info/master/assets/js/main.js";
+		const resource = "https://raw.githubusercontent.com/Giszmo/nostr.info/a549f24d1961c4f6e8fdaec3b4b159ad6d9e50a1/_data/relays.yml";
 		const document = await (await fetch(resource)).text();
-		var rx = /window.relays = \[([^\]]+)\]/s;
+		var rx = /wss:(.*)$/s;
 		var arr = rx.exec(document);
 		var list = arr[1];
 		var urls = [];
-		rx = /^\s+'(wss:\/\/\S+)'/igm;
+		rx = /^.*\-\s+(\S+)\s*$/igm;
 		var m;
 		while(m = rx.exec(list)) {
-			const relay = new URL(m[1]).href;
+			const url = "wss://" + m[1] + "/";
+			const relay = new URL(url).href;
 			urls.push(relay);
 		}
+		console.log("urls:" + urls.length);
 		return urls;
 	}
 
@@ -660,6 +646,7 @@ const gatherNostrRelays = function() {
 			const relay = new URL(m[1]).href;
 			urls.push(relay);
 		}
+		console.log("urls:" + urls.length);
 		return urls;
 	}
 
@@ -718,11 +705,9 @@ const gatherNostrRelays = function() {
 	}
 
 	return async function() {
-		const relays1 = await fromRelayRegisry();
-		const relays2 = await fromNostrInfo();
-		const relays3 = await fromNostrWatch();
-		var relays = relays1.filter(relay => relays2.includes(relay))
-		relays = relays.filter(relay => relays3.includes(relay));
+		const relays1 = await fromNostrInfo();
+		const relays2 = await fromNostrWatch();
+		var relays = relays1.filter(relay => relays2.includes(relay));
 		const keys = nostrUtils.generateKeys();
 		const event = await nostrUtils.createEvent(keys, 1, [], "Demo.");
 		const subId = crypto.randomUUID();
