@@ -90,10 +90,12 @@ export default {
 				this.mention = event;
 			}
 		},
-
 		*findItems(text) {
+			const neventRegex = /(nostr\:note1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
+			const findNoteURIs = text => findByRegex(text, neventRegex, "noteURI", yieldText);
 			const mentionRegex = /(#\[[0-9]+\])/g;
-			yield* findByRegex(text, re_link, "url", text => findByRegex(text, mentionRegex, "mention", yieldText));
+			const findMentions = text => findByRegex(text, mentionRegex, "mention", findNoteURIs);
+			yield* findByRegex(text, re_link, "url", findMentions);
 		}
 	},
 
@@ -204,6 +206,7 @@ export default {
 							<template v-else-if="item.type == 'mention'">
 								<MentionView :event="event" :mention="item.value" />
 							</template>
+							<template v-else-if="item.type == 'noteURI'">noteURI</template>
 						</template>
 						<NoteView v-if="mention" :event="mention" isMention />
 					</div>
