@@ -50,13 +50,13 @@ const nostrUtils = function() {
 	function generatePrivateKey() {
 		var privateKey = new Uint8Array(32);
 		crypto.getRandomValues(privateKey);
-		privateKey = secp.etc.bytesToHex(privateKey);
+		privateKey = nobleCurves.utils.bytesToHex(privateKey);
 		return privateKey;
 	}
 
 	function getPublicKey(privateKey) {
-		var publicKey = secp.getPublicKey(privateKey, false);
-		publicKey = secp.etc.bytesToHex(publicKey);
+		var publicKey = nobleCurves.secp256k1_schnorr.getPublicKey(privateKey);
+		publicKey = nobleCurves.utils.bytesToHex(publicKey);
 		return publicKey;
 	}
 
@@ -68,9 +68,10 @@ const nostrUtils = function() {
 		}
 		return Object.freeze(keys);;
 	}
-	async function signEvent(eventHash, privateKey) {
-		var signature = await secp.schnorr.sign(eventHash, privateKey)
-		signature = secp.etc.bytesToHex(signature);
+
+	function signEvent(eventHash, privateKey) {
+		var signature = nobleCurves.secp256k1_schnorr.sign(eventHash, privateKey);
+		signature = nobleCurves.utils.bytesToHex(signature);
 		return signature;
 	}
 
@@ -107,9 +108,7 @@ const nostrUtils = function() {
 		}
 		const hash = await hashEvent(event);
 		if(event.id != hash) return false;
-		const sigVer = !secp.verify(event.sig, event.id, event.pubkey);
-		if(!sigVer) return false;
-		return true;
+		return nobleCurves.secp256k1_schnorr.verify(event.sig, event.id, event.pubkey);
 	}
 
 	async function createEvent(keys, kind, tags, content) {
@@ -126,7 +125,7 @@ const nostrUtils = function() {
 			content
 		};
 		event.id = await hashEvent(event);
-		event.sig = await signEvent(event.id, keys.private);
+		event.sig = signEvent(event.id, keys.private);
 		return Object.freeze(event);
 	}
 
@@ -214,7 +213,7 @@ const nostrUtils = function() {
 		if(!nostrUtils.isHash(hex, 32)) {
 			return null;
 		}
-		const data = secp.etc.hexToBytes(hex);
+		const data = nobleCurves.utils.hexToBytes(hex);
 		const words = scureBase.bech32.toWords(data);
 		return scureBase.bech32.encode(prefix, words);
 	}
@@ -232,7 +231,7 @@ const nostrUtils = function() {
 		const data = scureBase.bech32.fromWords(words);
 		return {
 			prefix,
-			hex: secp.etc.bytesToHex(data)
+			hex: nobleCurves.utils.bytesToHex(data)
 		};
 	}
 
@@ -338,14 +337,14 @@ const nostrClient = function() {
 
 	function createSocket(relay) {
 		const socket = new WebSocket(relay);
-		socket.addEventListener("message", e => {
+		socket.addEventListener("message", async e => {
 			const message = JSON.parse(e.data);
 			const type = message[0];
 			if(type == "EVENT") {
 				const subId = message[1];
 				if(!(subId in subscriptions)) return;
 				const event = Object.freeze(message[2]);
-				if(!nostrUtils.verifyEvent(event)) return;
+				if(!await nostrUtils.verifyEvent(event)) return;
 				subscriptions[subId].callback(event);
 			}
 		});
@@ -659,12 +658,12 @@ const gatherNostrRelays = function() {
 
 	function receiveEvent(socket, subId) {
 		return new Promise(resolve => {
-			socket.addEventListener("message", e => {
+			socket.addEventListener("message", async e => {
 				const message = JSON.parse(e.data);
 				const type = message[0];
 				if(type == "EVENT" && message[1] == subId) {
 					const event = Object.freeze(message[2]);
-					if(nostrUtils.verifyEvent(event)) {
+					if(await nostrUtils.verifyEvent(event)) {
 						resolve(event);
 					}
 				}
