@@ -50,13 +50,13 @@ const nostrUtils = function() {
 	function generatePrivateKey() {
 		var privateKey = new Uint8Array(32);
 		crypto.getRandomValues(privateKey);
-		privateKey = nobleSecp256k1.utils.bytesToHex(privateKey);
+		privateKey = secp.etc.bytesToHex(privateKey);
 		return privateKey;
 	}
 
 	function getPublicKey(privateKey) {
-		var publicKey = nobleSecp256k1.schnorr.getPublicKey(privateKey);
-		publicKey = nobleSecp256k1.utils.bytesToHex(publicKey);
+		var publicKey = secp.getPublicKey(privateKey, false);
+		publicKey = secp.etc.bytesToHex(publicKey);
 		return publicKey;
 	}
 
@@ -69,8 +69,8 @@ const nostrUtils = function() {
 		return Object.freeze(keys);;
 	}
 	async function signEvent(eventHash, privateKey) {
-		var signature = await nobleSecp256k1.schnorr.sign(eventHash, privateKey)
-		signature = nobleSecp256k1.utils.bytesToHex(signature);
+		var signature = await secp.schnorr.sign(eventHash, privateKey)
+		signature = secp.etc.bytesToHex(signature);
 		return signature;
 	}
 
@@ -107,7 +107,7 @@ const nostrUtils = function() {
 		}
 		const hash = await hashEvent(event);
 		if(event.id != hash) return false;
-		const sigVer = !nobleSecp256k1.verify(event.sig, event.id, event.pubkey);
+		const sigVer = !secp.verify(event.sig, event.id, event.pubkey);
 		if(!sigVer) return false;
 		return true;
 	}
@@ -214,7 +214,7 @@ const nostrUtils = function() {
 		if(!nostrUtils.isHash(hex, 32)) {
 			return null;
 		}
-		const data = nobleSecp256k1.utils.hexToBytes(hex);
+		const data = secp.etc.hexToBytes(hex);
 		const words = scureBase.bech32.toWords(data);
 		return scureBase.bech32.encode(prefix, words);
 	}
@@ -232,7 +232,7 @@ const nostrUtils = function() {
 		const data = scureBase.bech32.fromWords(words);
 		return {
 			prefix,
-			hex: nobleSecp256k1.utils.bytesToHex(data)
+			hex: secp.etc.bytesToHex(data)
 		};
 	}
 

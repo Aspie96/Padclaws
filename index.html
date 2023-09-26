@@ -7,7 +7,10 @@
 		<title>Nostr Client</title>
 		<link rel="stylesheet" href="./css/program.css" />
 		<link rel="stylesheet" href="./tabler-icons/tabler-icons.css" />
-		<script type="text/javascript" src="./js/noble-secp256k1.js"></script>
+		<script type="module">
+			import * as secp from "./js/noble-secp256k1.js";
+			window.secp = secp;
+		</script>
 		<script src="./js/scure-base.js"></script>
 		<script type="text/javascript" src="./js/regex-weburl.js"></script>
 		<script type="text/javascript" src="./js/nostr.js"></script>
