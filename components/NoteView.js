@@ -2,6 +2,7 @@ import AlertView from "./AlertView.js"
 import DropdownView from "./DropdownView.js"
 import LinkView from "./LinkView.js"
 import MentionView from "./MentionView.js"
+import ReferenceView from "./ReferenceView.js"
 import Session from "../js/session.js"
 import UsersCache from "./UsersCache.js"
 
@@ -31,7 +32,7 @@ function* findByRegex(text, regex, itemName, def) {
 				type: itemName,
 				value: item
 			};
-			index = m.index + item.length;
+			index = m.index + m[0].length;
 		}
 	} while(m);
 	yield* def(text.slice(index));
@@ -53,7 +54,8 @@ export default {
 	data() {
 		return {
 			authorData: { loading: true },
-			mention: null
+			mention: null,
+			repostedData: null
 		};
 	},
 
@@ -67,6 +69,12 @@ export default {
 		this.$watch(
 			() => this.note,
 			this.fetchMention,
+			{ immediate: true }
+		);
+
+		this.$watch(
+			() => this.repostedBy,
+			this.fetchReposted,
 			{ immediate: true }
 		);
 	},
@@ -90,10 +98,18 @@ export default {
 				this.mention = event;
 			}
 		},
+
+		fetchReposted() {
+			if(this.repostedBy) {
+				UsersCache.fetchMetadata(this.repostedBy);
+				this.repostedData = UsersCache.users[this.repostedBy];
+			}
+		},
+
 		*findItems(text) {
 			const neventRegex = /(nostr\:note1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findNoteURIs = text => findByRegex(text, neventRegex, "noteURI", yieldText);
-			const mentionRegex = /(#\[[0-9]+\])/g;
+			const mentionRegex = /(nostr\:npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findMentions = text => findByRegex(text, mentionRegex, "mention", findNoteURIs);
 			yield* findByRegex(text, re_link, "url", findMentions);
 		}
@@ -172,6 +188,10 @@ export default {
 
 		isRepost() {
 			return this.note.content == "" && this.mention;
+		},
+
+		repostedSelfUser() {
+			return Session.logged && Session.userKeys.public == this.repostedBy;
 		}
 	},
 
@@ -179,7 +199,8 @@ export default {
 		AlertView,
 		DropdownView,
 		LinkView,
-		MentionView
+		MentionView,
+		ReferenceView
 	},
 
 	template: `
@@ -189,7 +210,12 @@ export default {
 	</template>
 	<template v-else>
 		<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive, 'is-mention': isMention }">
-				<div v-if="repostedBy" class="in-reply-to"><span class="ti ti-message"></span>Reposted by @ {{repostedBy}}</div>
+				<div v-if="repostedBy" class="in-reply-to"><span class="ti ti-message"></span>Reposted by
+				
+				<RouterLink v-if="repostedData?.metadata?.name" :to="{ name: 'user', params: { repostedBy } }" class="mention" :class="{ 'mention-self': repostedSelfUser }"><span class="ti ti-at"></span>{{ repostedData.metadata.name  }}</RouterLink>
+				<RouterLink v-else :to="{ name: 'user', params: { repostedBy } }" class="mention" :class="{ 'mention-self': repostedSelfUser }"><span class="ti ti-at"></span><span class="mention-repostedBy">{{ repostedBy }}</span></RouterLink>
+				
+				</div>
 				<div v-else-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
 				<div class="note-body">
 					<div class="note-data">
@@ -203,10 +229,8 @@ export default {
 						<template v-for="item in findItems(note.content)">
 							<template v-if="item.type == 'text'">{{ item.value }}</template>
 							<LinkView v-else-if="item.type == 'url'" :url="item.value" />
-							<template v-else-if="item.type == 'mention'">
-								<MentionView :event="event" :mention="item.value" />
-							</template>
-							<template v-else-if="item.type == 'noteURI'">noteURI</template>
+							<MentionView v-else-if="item.type == 'mention'" :event="event" :text="item.value" />
+							<ReferenceView v-else-if="item.type == 'noteURI'" :event="event" :text="item.value" />
 						</template>
 						<NoteView v-if="mention" :event="mention" isMention />
 					</div>
