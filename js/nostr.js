@@ -218,17 +218,51 @@ const nostrUtils = function() {
 		return scureBase.bech32.encode(prefix, words);
 	}
 
+
+	function parseTLV(data) {
+		const result = {};
+		var rest = data;
+		while(rest.length > 0) {
+			const t = rest[0];
+			const l = rest[1];
+			if(!l) {
+				return null;
+			}
+			const v = rest.slice(2, 2 + l);
+			rest = rest.slice(2 + l);
+			if(v.length < l) {
+				return null;
+			}
+			result[t] = result[t] || [];
+			result[t].push(v);
+		}
+		return result;
+	}
+
+	const utf8Decoder = new TextDecoder("utf-8");
+
 	function decodeEntity(entity) {
-		const original = scureBase.bech32.decodeUnsafe(entity);
+		const original = scureBase.bech32.decodeUnsafe(entity, 5000);
 		if(!original) {
 			return null;
 		}
 		const prefix = original.prefix;
-		if(!prefix in nostrEncEntityPrefixes) {
-			return null;
-		}
 		const words = original.words;
 		const data = scureBase.bech32.fromWords(words);
+		var hex;
+		if(prefix == nostrEncEntityPrefixes.nprofile) {
+			const tlv = parseTLV(data);
+			if(!tlv[0]?.[0] || tlv[0][0].length !== 32) {
+				return null;
+			}
+			const pubkey = nobleCurves.utils.bytesToHex(tlv[0][0]);
+			const relays = tlv[1] ? tlv[1].map(d => utf8Decoder.decode(d)) : [];
+			return {
+				prefix,
+				hex: pubkey,
+				relays
+			};
+		}
 		return {
 			prefix,
 			hex: nobleCurves.utils.bytesToHex(data)
@@ -342,9 +376,9 @@ const nostrClient = function() {
 			const type = message[0];
 			if(type == "EVENT") {
 				const subId = message[1];
-				if(!(subId in subscriptions)) return;
 				const event = Object.freeze(message[2]);
 				if(!await nostrUtils.verifyEvent(event)) return;
+				if(!(subId in subscriptions)) return;
 				subscriptions[subId].callback(event);
 			}
 		});

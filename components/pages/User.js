@@ -15,7 +15,7 @@ export default {
 
 	created() {
 		this.$watch(
-			() => this.$route.params,
+			() => this.$route.params.pubkey,
 			this.fetchData,
 			{ immediate: true }
 		);
@@ -46,11 +46,16 @@ export default {
 
 		followed() {
 			return Session.followedUsers.has(this.pubkey);
+		},
+
+		pubkeyValid() {
+			return nostrUtils.isHashPrefix(this.pubkey, 32);
 		}
 	},
 
 	methods: {
 		fetchData() {
+			console.log("fetchData");
 			this.noRelays = false;
 			this.invalid = false;
 			this.pubkey = this.$route.params.pubkey;
@@ -58,7 +63,7 @@ export default {
 				this.noRelays = true;
 				return;
 			}
-			if(!nostrUtils.isHashPrefix(this.pubkey, 32)) {
+			if(!this.pubkeyValid) {
 				const decoded = nostrUtils.decodeEntity(this.pubkey);
 				if(decoded && decoded.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(decoded.hex, 32)) {
 					this.$router.replace({
@@ -124,7 +129,7 @@ export default {
 				</li>
 			</ul>
 		</nav>
-		<RouterView :pubkey="pubkeyNormal" :metadata="metadata" />
+		<RouterView v-if="pubkeyValid" :pubkey="pubkeyNormal" :metadata="metadata" />
 	</template>
 	`
 }
