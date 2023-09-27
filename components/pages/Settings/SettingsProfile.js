@@ -11,6 +11,7 @@ export default {
 		return {
 			username: "",
 			about: "",
+			website: "",
 			published: false,
 			publishing: false
 		};
@@ -38,17 +39,20 @@ export default {
 		fetchData() {
 			UsersCache.fetchMetadata(Session.userKeys.public);
 			this.username = this.cacheData.username;
+			this.website = this.cacheData.website;
 			this.about = this.cacheData.about;
 		},
 
 		refreshData() {
 			this.username = this.cacheData.username;
+			this.website = this.cacheData.website;
 			this.about = this.cacheData.about;
 		},
 		
 		async onSubmit() {
 			const metadata = {
 				name: this.username,
+				website: this.website,
 				about: this.about
 			};
 			console.log(metadata);
@@ -64,6 +68,7 @@ export default {
 		cacheData() {
 			return {
 				username: UsersCache.users[Session.userKeys.public]?.metadata?.name,
+				website: UsersCache.users[Session.userKeys.public]?.metadata?.website,
 				about: UsersCache.users[Session.userKeys.public]?.metadata?.about
 			};
 		},
@@ -94,7 +99,11 @@ export default {
 		</div>
 		<div class="form-group">
 			<label for="username">Username</label>
-			<input v-model="username" name="username" id="username" title="Username" />
+			<input type="text" v-model="username" name="username" id="username" title="Username" />
+		</div>
+		<div class="form-group">
+			<label for="website">Website</label>
+			<input type="url" v-model="website" name="website" id="website" title="Website" />
 		</div>
 		<div class="form-group">
 			<label for="about">About</label>

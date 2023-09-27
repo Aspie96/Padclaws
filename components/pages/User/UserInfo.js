@@ -1,3 +1,4 @@
+import LinkView from "../../LinkView.js"
 import Session from "../../../js/session.js"
 
 export default {
@@ -18,11 +19,19 @@ export default {
 		}
 	},
 
+	components: { LinkView },
+
 	template:`
 	<dl>
 		<template v-if="metadata?.name">
 			<dt>Username</dt>
 			<dd>{{ metadata.name }}</dd>
+		</template>
+		<template v-if="metadata?.website">
+			<dt>Website</dt>
+			<dd>
+				<LinkView :url="metadata.website" />
+			</dd>
 		</template>
 		<template v-if="metadata?.about">
 			<dt>About</dt>
