@@ -44,7 +44,6 @@ export default {
 
 	methods: {
 		async fetchData() {
-			console.log("fetchNotes");
 			if(this.subIds) {
 				for(const subId of this.subIds) {
 					nostrClient.cancelSubscription(subId);
@@ -62,7 +61,6 @@ export default {
 				limit: 1
 			};
 			const recent = await nostrClient.fetchMostRecent(filters);
-			console.log(recent);
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;

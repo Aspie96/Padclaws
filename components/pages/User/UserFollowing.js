@@ -1,5 +1,5 @@
 import AlertView from "../../AlertView.js"
-import Session from "../../../js/session.js"
+import UsersCache from "../../UsersCache.js"
 import UserBoxView from "../../UserBoxView.js"
 
 export default {
@@ -39,6 +39,7 @@ export default {
 					this.following.push(tag[1]);
 				}
 			}
+			UsersCache.fetchMultipleMetadata(this.following);
 			this.loading = false;
 		}
 	},

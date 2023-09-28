@@ -20,6 +20,7 @@
     base58xrp: () => base58xrp,
     base64: () => base64,
     base64url: () => base64url,
+    base64urlnopad: () => base64urlnopad,
     bech32: () => bech32,
     bech32m: () => bech32m,
     bytes: () => bytes,
@@ -149,12 +150,13 @@
           throw new Error("convertRadix: carry overflow");
         }
         carry = digitBase % to;
-        digits[i] = Math.floor(digitBase / to);
-        if (!Number.isSafeInteger(digits[i]) || digits[i] * to + carry !== digitBase)
+        const rounded = Math.floor(digitBase / to);
+        digits[i] = rounded;
+        if (!Number.isSafeInteger(rounded) || rounded * to + carry !== digitBase)
           throw new Error("convertRadix: carry overflow");
         if (!done)
           continue;
-        else if (!digits[i])
+        else if (!rounded)
           pos = i;
         else
           done = false;
@@ -167,8 +169,14 @@
       res.push(0);
     return res.reverse();
   }
-  var gcd = (a, b) => !b ? a : gcd(b, a % b);
-  var radix2carry = (from, to) => from + (to - gcd(from, to));
+  var gcd = (
+    /* @__NO_SIDE_EFFECTS__ */
+    (a, b) => !b ? a : gcd(b, a % b)
+  );
+  var radix2carry = (
+    /*@__NO_SIDE_EFFECTS__ */
+    (from, to) => from + (to - gcd(from, to))
+  );
   function convertRadix2(data, from, to, padding2) {
     if (!Array.isArray(data))
       throw new Error("convertRadix2: data should be array");
@@ -276,16 +284,17 @@
     };
   }
   var utils = { alphabet, chain, checksum, radix, radix2, join, padding };
-  var base16 = chain(radix2(4), alphabet("0123456789ABCDEF"), join(""));
-  var base32 = chain(radix2(5), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"), padding(5), join(""));
-  var base32hex = chain(radix2(5), alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"), padding(5), join(""));
-  var base32crockford = chain(radix2(5), alphabet("0123456789ABCDEFGHJKMNPQRSTVWXYZ"), join(""), normalize((s) => s.toUpperCase().replace(/O/g, "0").replace(/[IL]/g, "1")));
-  var base64 = chain(radix2(6), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"), padding(6), join(""));
-  var base64url = chain(radix2(6), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"), padding(6), join(""));
+  var base16 = /* @__PURE__ */ chain(radix2(4), alphabet("0123456789ABCDEF"), join(""));
+  var base32 = /* @__PURE__ */ chain(radix2(5), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"), padding(5), join(""));
+  var base32hex = /* @__PURE__ */ chain(radix2(5), alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"), padding(5), join(""));
+  var base32crockford = /* @__PURE__ */ chain(radix2(5), alphabet("0123456789ABCDEFGHJKMNPQRSTVWXYZ"), join(""), normalize((s) => s.toUpperCase().replace(/O/g, "0").replace(/[IL]/g, "1")));
+  var base64 = /* @__PURE__ */ chain(radix2(6), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"), padding(6), join(""));
+  var base64url = /* @__PURE__ */ chain(radix2(6), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"), padding(6), join(""));
+  var base64urlnopad = /* @__PURE__ */ chain(radix2(6), alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"), join(""));
   var genBase58 = (abc) => chain(radix(58), alphabet(abc), join(""));
-  var base58 = genBase58("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
-  var base58flickr = genBase58("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
-  var base58xrp = genBase58("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
+  var base58 = /* @__PURE__ */ genBase58("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
+  var base58flickr = /* @__PURE__ */ genBase58("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
+  var base58xrp = /* @__PURE__ */ genBase58("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
   var XMR_BLOCK_LEN = [0, 2, 3, 5, 6, 7, 9, 10, 11];
   var base58xmr = {
     encode(data) {
@@ -312,7 +321,7 @@
     }
   };
   var base58check = (sha256) => chain(checksum(4, (data) => sha256(sha256(data))), base58);
-  var BECH_ALPHABET = chain(alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"), join(""));
+  var BECH_ALPHABET = /* @__PURE__ */ chain(alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"), join(""));
   var POLYMOD_GENERATORS = [996825010, 642813549, 513874426, 1027748829, 705979059];
   function bech32Polymod(pre) {
     const b = pre >> 25;
@@ -356,8 +365,9 @@
       const actualLength = prefix.length + 7 + words.length;
       if (limit !== false && actualLength > limit)
         throw new TypeError(`Length ${actualLength} exceeds limit ${limit}`);
-      prefix = prefix.toLowerCase();
-      return `${prefix}1${BECH_ALPHABET.encode(words)}${bechChecksum(prefix, words, ENCODING_CONST)}`;
+      const lowered = prefix.toLowerCase();
+      const sum = bechChecksum(lowered, words, ENCODING_CONST);
+      return `${lowered}1${BECH_ALPHABET.encode(words)}${sum}`;
     }
     function decode(str2, limit = 90) {
       if (typeof str2 !== "string")
@@ -388,13 +398,13 @@
     }
     return { encode, decode, decodeToBytes, decodeUnsafe, fromWords, fromWordsUnsafe, toWords };
   }
-  var bech32 = genBech32("bech32");
-  var bech32m = genBech32("bech32m");
+  var bech32 = /* @__PURE__ */ genBech32("bech32");
+  var bech32m = /* @__PURE__ */ genBech32("bech32m");
   var utf8 = {
     encode: (data) => new TextDecoder().decode(data),
     decode: (str2) => new TextEncoder().encode(str2)
   };
-  var hex = chain(radix2(4), alphabet("0123456789abcdef"), join(""), normalize((s) => {
+  var hex = /* @__PURE__ */ chain(radix2(4), alphabet("0123456789abcdef"), join(""), normalize((s) => {
     if (typeof s !== "string" || s.length % 2)
       throw new TypeError(`hex.decode: expected string, got ${typeof s} with length ${s.length}`);
     return s.toLowerCase();
@@ -409,7 +419,7 @@
     base58,
     base58xmr
   };
-  var coderTypeError = `Invalid encoding type. Available types: ${Object.keys(CODERS).join(", ")}`;
+  var coderTypeError = "Invalid encoding type. Available types: utf8, hex, base16, base32, base64, base64url, base58, base58xmr";
   var bytesToString = (type, bytes2) => {
     if (typeof type !== "string" || !CODERS.hasOwnProperty(type))
       throw new TypeError(coderTypeError);

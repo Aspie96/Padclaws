@@ -20,8 +20,10 @@ const nostrEventKinds = Object.freeze({
 
 const nostrEncEntityPrefixes = {
 	npub: "npub",
+	nprofile: "nprofile",
 	nsec: "nsec",
-	note: "note"
+	note: "note",
+	nevent: "nevent"
 };
 
 const nostrUtils = function() {
@@ -239,6 +241,10 @@ const nostrUtils = function() {
 		return result;
 	}
 
+	function toIntBigEndian(bytes) {
+		return bytes[3] + (bytes[2] << 8) + (bytes[1] << 16) + (bytes[0] << 24);
+	}
+
 	const utf8Decoder = new TextDecoder("utf-8");
 
 	function decodeEntity(entity) {
@@ -262,6 +268,25 @@ const nostrUtils = function() {
 				hex: pubkey,
 				relays
 			};
+		} else if(prefix == nostrEncEntityPrefixes.nevent) {
+			const tlv = parseTLV(data);
+			if(!tlv[0]?.[0] || tlv[0][0].length !== 32) {
+				return null;
+			}
+			const id = nobleCurves.utils.bytesToHex(tlv[0][0]);
+			const relays = tlv[1] ? tlv[1].map(d => utf8Decoder.decode(d)) : [];
+			const result = {
+				prefix,
+				hex: id,
+				relays
+			};
+			if(tlv[2]) {
+				result.author = nobleCurves.utils.bytesToHex(tlv[2][0]);
+			}
+			if(tlv[3]) {
+				result.kind = toIntBigEndian(tlv[3][0]);
+			}
+			return result;
 		}
 		return {
 			prefix,
@@ -562,6 +587,24 @@ const nostrClient = function() {
 		timeout(maxTime).then(() => cancelSubscription(subId));
 	}
 
+	function fetchUsersMetadata(pubkeys, callback, maxTime) {
+		maxTime ||= 10000;
+		const filters = {
+			authors: pubkeys,
+			kinds: [nostrEventKinds.set_metadata]
+		};
+		const timestamps = {};
+		const subId = createSubscription(filters, event => {
+			if(!timestamps[event.pubkey] || event.created_at > timestamps[event.pubkey]) {
+				const metadata = JSON.parse(event.content);
+				timestamps[event.pubkey] = event.created_at;
+				const user = pubkeys.find(pubkey => event.pubkey.startsWith(pubkey));
+				callback(user, event.pubkey, Object.freeze(metadata));
+			}
+		});
+		timeout(maxTime).then(() => cancelSubscription(subId));
+	}
+
 	function fetchFeed(filters, callback, mode, subId) {
 		mode ||= "read";
 		const collectedIds = [];
@@ -640,6 +683,7 @@ const nostrClient = function() {
 		fetchMostRecent,
 		cancelSubscription,
 		fetchUserMetadata,
+		fetchUsersMetadata,
 		postNote,
 		postContacts,
 		setMetadata

@@ -1,16 +1,14 @@
 import MentionView from "./MentionView.js"
 
 export default {
-	props: {
-		event: Object,
-		text: String
-	},
+	props: { text: String },
 
 	data() {
 		const body = this.text.substr("nostr:".length);
 		const entity = nostrUtils.decodeEntity(body);
 		switch(entity.prefix) {
 			case nostrEncEntityPrefixes.npub:
+			case nostrEncEntityPrefixes.nprofile:
 				if(!nostrUtils.isHash(entity.hex, 32)) {
 					return { valid: false };
 				}
@@ -20,6 +18,7 @@ export default {
 					pubkey: entity.hex
 				};
 			case nostrEncEntityPrefixes.note:
+			case nostrEncEntityPrefixes.nevent:
 				if(!nostrUtils.isHash(entity.hex, 32)) {
 					return { valid: false };
 				}
@@ -28,13 +27,6 @@ export default {
 					type: "reference",
 					referencedId: entity.hex
 				};
-		}
-		if(entity.prefix == nostrEncEntityPrefixes.npub && nostrUtils.isHash(entity.hex, 32)) {
-			return {
-				valid: true,
-				pubkey: entity.hex,
-				mentionData: null
-			};
 		}
 		return {
 			valid: false,

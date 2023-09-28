@@ -1,5 +1,6 @@
 import LinkView from "../../LinkView.js"
 import Session from "../../../js/session.js"
+import TextView from "../../TextView.js"
 
 export default {
 	props: {
@@ -19,7 +20,10 @@ export default {
 		}
 	},
 
-	components: { LinkView },
+	components: {
+		LinkView,
+		TextView
+	},
 
 	template:`
 	<dl>
@@ -35,7 +39,9 @@ export default {
 		</template>
 		<template v-if="metadata?.about">
 			<dt>About</dt>
-			<dd class="about-info">{{ metadata.about }}</dd>
+			<dd class="about-info">
+				<TextView :text="metadata.about" />
+			</dd>
 		</template>
 		<template v-if="pubkey">
 			<dt>Hex PubKey</dt>

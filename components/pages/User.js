@@ -1,5 +1,6 @@
 import AlertView from "../AlertView.js"
 import Session from "../../js/session.js"
+import TextView from "../TextView.js"
 import UsersCache from "../UsersCache.js"
 
 const DEFAULT_TITLE = "Padclaws";
@@ -55,7 +56,6 @@ export default {
 
 	methods: {
 		fetchData() {
-			console.log("fetchData");
 			this.noRelays = false;
 			this.invalid = false;
 			this.pubkey = this.$route.params.pubkey;
@@ -96,7 +96,8 @@ export default {
 	},
 
 	components: {
-		AlertView
+		AlertView,
+		TextView
 	},
 
 	template:`
@@ -112,7 +113,9 @@ export default {
 			<button v-if="followed" type="button" class="user-page-btn user-page-btn-right" @click="unfollow"><span class="ti ti-social-off"></span>Unfollow</button>
 			<button v-else type="button" class="user-page-btn user-page-btn-right" @click="follow"><span class="ti ti-social"></span>Follow</button>
 		</template>
-		<p v-if="metadata?.about" class="about-content">{{ metadata.about }}</p>
+		<p v-if="metadata?.about" class="about-content">
+			<TextView :text="metadata.about" />
+		</p>
 		<nav class="tabs">
 			<ul>
 				<li>
