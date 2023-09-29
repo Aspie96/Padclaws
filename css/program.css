@@ -249,7 +249,9 @@ label {
 	overflow: hidden;
 	text-overflow: clip;
 	color: #CCC;
+	text-decoration: underline;
 	text-decoration-style: dotted;
+	border-width: 0;
 }
 
 .note-box.is-mention {
@@ -284,6 +286,16 @@ label {
 	overflow: hidden;
 	text-overflow: clip;
 	white-space: nowrap;
+}
+
+.note-id {
+	font-family: Programma, monospace;
+	display: inline-flex;
+	width: 12ch;
+	overflow: hidden;
+	text-overflow: clip;
+	text-decoration: none;
+	border-bottom: 1px dotted #1B4;
 }
 
 .note-data {

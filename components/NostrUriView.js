@@ -40,6 +40,6 @@ export default {
 	template: `
 	<template v-if="!valid">{{ text }}</template>
 	<MentionView v-else-if="type == 'mention'" :pubkey="pubkey" />
-	<RouterLink v-else-if="type == 'reference'" class="note-id" :to="{ name: 'note', params: { id: referencedId } }">{{ referencedId }}</RouterLink>
+	<RouterLink v-else-if="type == 'reference'" class="note-id" :to="{ name: 'note', params: { id: referencedId } }" :title="referencedId"><span class="ti ti-notes"></span>{{ referencedId }}</RouterLink>
 	`
 }

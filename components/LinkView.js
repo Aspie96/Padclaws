@@ -41,12 +41,19 @@ export default {
 	},
 
 	computed: {
+		fullUrl() {
+			if(!this.url.match(/^[a-zA-Z]+:\/\//)) {
+				return new URL("http://" + this.url).href;
+			}
+			return this.url;
+		},
+
 		short() {
-			return shortUrl(this.url);
+			return shortUrl(this.fullUrl);
 		}
 	},
 
 	template: `
-	<a :href="url" rel="ugc" :title="short != url ? url : null">{{ short }}</a>
+	<a :href="fullUrl" rel="ugc" :title="short != url ? url : null">{{ fullUrl }}</a>
 	`
 }
