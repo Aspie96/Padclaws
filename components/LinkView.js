@@ -35,10 +35,7 @@ function shortUrl(url) {
 }
 
 export default {
-	props: {
-		event: Object,
-		url: String
-	},
+	props: { url: String },
 
 	computed: {
 		fullUrl() {

@@ -1,4 +1,5 @@
 import LinkView from "./LinkView.js"
+import MagnetLinkView from "./MagnetLinkView.js";
 import NostrUriView from "./NostrUriView.js"
 
 /*var re_source = re_weburl.source;
@@ -46,12 +47,15 @@ export default {
 			const findNoteURIs = text => findByRegex(text, noteRegex, "nostrURI", findEventURIs);
 			const mentionRegex = /(nostr\:npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findMentions = text => findByRegex(text, mentionRegex, "nostrURI", findNoteURIs);
-			yield* findByRegex(text, re_link, "url", findMentions);
+			const magnetRegex = /(magnet:\?\S+)\b/g;
+			const findMagnets = text => findByRegex(text, magnetRegex, "magnetURI", findMentions);
+			yield* findByRegex(text, re_link, "url", findMagnets);
 		}
 	},
 
 	components: {
 		LinkView,
+		MagnetLinkView,
 		NostrUriView
 	},
 
@@ -60,6 +64,7 @@ export default {
 		<template v-if="item.type == 'text'">{{ item.value }}</template>
 		<LinkView v-else-if="item.type == 'url'" :url="item.value" />
 		<NostrUriView v-else-if="item.type == 'nostrURI'" :text="item.value" />
+		<MagnetLinkView v-else-if="item.type == 'magnetURI'" :uri="item.value" />
 	</template>
 	`
 }

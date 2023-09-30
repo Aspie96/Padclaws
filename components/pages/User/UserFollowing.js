@@ -35,8 +35,9 @@ export default {
 			const event = await nostrClient.fetchMostRecent(filters);
 			const tags = nostrUtils.getTagValues(event, "p");
 			for(const tag of tags) {
-				if(!this.following.includes(tag)) {
-					this.following.push(tag[1]);
+				const contactPubkey = tag[1];
+				if(!this.following.includes(contactPubkey) && contactPubkey != this.pubkey) {
+					this.following.push(contactPubkey);
 				}
 			}
 			UsersCache.fetchMultipleMetadata(this.following);
@@ -51,6 +52,9 @@ export default {
 
 	template:`
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
-	<UserBoxView v-for="pubkey in following" :pubkey="pubkey" />
+	<template v-else>
+		<p>Following: {{ following.length }}</p>
+		<UserBoxView v-for="pubkey in following" :pubkey="pubkey" />
+	</template>
 	`
 }

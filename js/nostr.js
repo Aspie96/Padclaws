@@ -405,6 +405,12 @@ const nostrClient = function() {
 				if(!await nostrUtils.verifyEvent(event)) return;
 				if(!(subId in subscriptions)) return;
 				subscriptions[subId].callback(event);
+			} else if(type == "EOSE") {
+				const subId = message[1];
+				if(!(subId in subscriptions)) return;
+				const index = subscriptions[subId].sockets.indexOf(socket);
+				if(index < 0) return;
+				subscriptions[subId].sockets.splice(index, 1);
 			}
 		});
 		return socket;
@@ -587,22 +593,48 @@ const nostrClient = function() {
 		timeout(maxTime).then(() => cancelSubscription(subId));
 	}
 
-	function fetchUsersMetadata(pubkeys, callback, maxTime) {
-		maxTime ||= 10000;
+	async function fetchUserMetadataSubarray(subarray, callback, maxTime) {
 		const filters = {
-			authors: pubkeys,
+			authors: subarray,
 			kinds: [nostrEventKinds.set_metadata]
 		};
 		const timestamps = {};
+		var nextStep;
+		const p1 = new Promise(resolve => nextStep = resolve);
 		const subId = createSubscription(filters, event => {
+			if(nextStep) {
+				nextStep();
+				nextStep = null;
+			}
 			if(!timestamps[event.pubkey] || event.created_at > timestamps[event.pubkey]) {
 				const metadata = JSON.parse(event.content);
 				timestamps[event.pubkey] = event.created_at;
-				const user = pubkeys.find(pubkey => event.pubkey.startsWith(pubkey));
+				const user = subarray.find(pubkey => event.pubkey.startsWith(pubkey));
 				callback(user, event.pubkey, Object.freeze(metadata));
 			}
 		});
-		timeout(maxTime).then(() => cancelSubscription(subId));
+		timeout(maxTime).then(() => {
+			if(nextStep) {
+				nextStep();
+			}
+			cancelSubscription(subId);
+		});
+		await p1;
+	}
+
+	async function fetchUsersMetadata(pubkeys, callback, maxTime) {
+		maxTime ||= 10000;
+		if(pubkeys.length > 32) {
+			for(var i = 0; i < pubkeys.length; i += 64) {
+				const subarray = pubkeys.slice(i, i + 64);
+				await fetchUserMetadataSubarray(subarray, callback, maxTime);
+				if(i + 64 < pubkeys.length) {
+					await timeout(1500);
+				}
+			}
+		} else {
+			await fetchUserMetadataSubarray(pubkeys, callback, maxTime);
+		}
 	}
 
 	function fetchFeed(filters, callback, mode, subId) {
