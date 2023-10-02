@@ -69,8 +69,10 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				addInOrder(this.events, event, dateComp);
-				this.loadMoreBtn = true;
+				if(nostrUtils.getAuthor(event) != Session.userKeys.public) {
+					addInOrder(this.events, event, dateComp);
+					this.loadMoreBtn = true;
+				}
 			});
 			this.subIds.push(subId);
 		},
@@ -97,7 +99,6 @@ export default {
 			};
 			const recent = await nostrClient.fetchMostRecent(filters);
 			if(!recent) {
-				this.noEvents = true;
 				this.loading = false;
 				this.noEvents = true;
 				return;
@@ -113,8 +114,10 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				addInOrder(this.events, event, dateComp);
-				this.loadMoreBtn = true;
+				if(nostrUtils.getAuthor(event) != Session.userKeys.public) {
+					addInOrder(this.events, event, dateComp);
+					this.loadMoreBtn = true;
+				}
 			});
 			this.subIds.push(subId);
 		}
