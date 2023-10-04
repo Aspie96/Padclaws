@@ -132,7 +132,7 @@ export default {
 			const eventId = this.$route.params.id;
 			if(!nostrUtils.isHashPrefix(eventId, 32)) {
 				const decoded = nostrUtils.decodeEntity(eventId);
-				if(decoded && decoded.prefix == nostrEncEntityPrefixes.note && nostrUtils.isHash(decoded.hex, 32)) {
+				if(decoded && (decoded.prefix == nostrEncEntityPrefixes.note || decoded.prefix == nostrEncEntityPrefixes.nevent) && nostrUtils.isHash(decoded.hex, 32)) {
 					this.$router.replace({
 						name: this.$route.matched[this.$route.matched.length - 1].name,
 						params: {
