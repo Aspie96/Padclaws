@@ -41,13 +41,13 @@ export default {
 
 	methods: {
 		*findItems(text) {
-			const neventRegex = /(nostr\:nevent1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
+			const neventRegex = /\b(nostr\:nevent1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
 			const findEventURIs = text => findByRegex(text, neventRegex, "nostrURI", yieldText);
-			const noteRegex = /(nostr\:note1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
+			const noteRegex = /\b(nostr\:note1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findNoteURIs = text => findByRegex(text, noteRegex, "nostrURI", findEventURIs);
-			const mentionRegex = /(nostr\:npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
+			const mentionRegex = /\b(nostr\:npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findMentions = text => findByRegex(text, mentionRegex, "nostrURI", findNoteURIs);
-			const magnetRegex = /(magnet:\?\S+)\b/g;
+			const magnetRegex = /\b(magnet:\?\S+)\b/g;
 			const findMagnets = text => findByRegex(text, magnetRegex, "magnetURI", findMentions);
 			yield* findByRegex(text, re_link, "url", findMagnets);
 		}
