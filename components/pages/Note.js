@@ -105,9 +105,7 @@ export default {
 		async fetchData() {
 			this.loading = false;
 			this.invalid = false;
-			this.event = null;
 			this.reply = false;
-			this.branch = [];
 			this.showReplies = false;
 			this.trustedReplies = [];
 			this.otherReplies = [];
@@ -124,12 +122,47 @@ export default {
 			this.noRelays = false;
 			this.submitting = false;
 			this.replyId = null;
+			const eventId = this.$route.params.id;
+			const index = this.branch.findIndex(e => e.id == eventId);
+			if(index != -1) {
+				this.event = this.branch[index];
+				this.branch.length = index;
+				var eTags = nostrUtils.parseETags(this.event);
+				this.reply = !!eTags.reply;
+				this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
+				if(Session.logged) {
+					this.trustedRepliers.add(Session.userKeys.public);
+				}
+				for(const tag of nostrUtils.getTagValues(this.event, "p")) {
+					this.trustedRepliers.add(tag[1]);
+				}
+				for(const user of Session.followedUsers) {
+					this.trustedRepliers.add(user);
+				}
+				if(eTags.reply) {
+					this.parent = eTags.reply;
+					this.ancestorsCache = {};
+					this.ancestorIds = new Set([eTags.reply]);
+					if(eTags.root) {
+						this.ancestorIds.add(eTags.root);
+					}
+					for(const event of this.branch) {
+						this.trustedRepliers.add(nostrUtils.getAuthor(event));
+						for(const tag of nostrUtils.getTagValues(event, "p")) {
+							this.trustedRepliers.add(tag[1]);
+						}
+					}
+				}
+				this.loadInitialReplies();
+				return;
+			}
+			this.event = null;
+			this.branch = [];
 			if(nostrClient.noRelays()) {
 				this.noRelays = true;
 				return;
 			}
 			this.loading = true;
-			const eventId = this.$route.params.id;
 			if(!nostrUtils.isHashPrefix(eventId, 32)) {
 				const decoded = nostrUtils.decodeEntity(eventId);
 				if(decoded && (decoded.prefix == nostrEncEntityPrefixes.note || decoded.prefix == nostrEncEntityPrefixes.nevent) && nostrUtils.isHash(decoded.hex, 32)) {
@@ -234,7 +267,7 @@ export default {
 
 		loadInitialReplies() {
 			if(this.subId) {
-				nostrClient.cancelSubscription();
+				nostrClient.cancelSubscription(this.subId);
 			}
 			const filters = {
 				authors: [...this.trustedRepliers],
