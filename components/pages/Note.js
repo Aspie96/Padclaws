@@ -107,8 +107,6 @@ export default {
 			this.invalid = false;
 			this.reply = false;
 			this.showReplies = false;
-			this.trustedReplies = [];
-			this.otherReplies = [];
 			this.loadMoreBtn = false;
 			this.repliesUntil = null;
 			this.noReplies = false;
@@ -123,39 +121,24 @@ export default {
 			this.submitting = false;
 			this.replyId = null;
 			const eventId = this.$route.params.id;
-			const index = this.branch.findIndex(e => e.id == eventId);
-			if(index != -1) {
-				this.event = this.branch[index];
-				this.branch.length = index;
-				var eTags = nostrUtils.parseETags(this.event);
-				this.reply = !!eTags.reply;
-				this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
-				if(Session.logged) {
-					this.trustedRepliers.add(Session.userKeys.public);
-				}
-				for(const tag of nostrUtils.getTagValues(this.event, "p")) {
-					this.trustedRepliers.add(tag[1]);
-				}
-				for(const user of Session.followedUsers) {
-					this.trustedRepliers.add(user);
-				}
-				if(eTags.reply) {
-					this.parent = eTags.reply;
-					this.ancestorsCache = {};
-					this.ancestorIds = new Set([eTags.reply]);
-					if(eTags.root) {
-						this.ancestorIds.add(eTags.root);
-					}
-					for(const event of this.branch) {
-						this.trustedRepliers.add(nostrUtils.getAuthor(event));
-						for(const tag of nostrUtils.getTagValues(event, "p")) {
-							this.trustedRepliers.add(tag[1]);
-						}
-					}
-				}
-				this.loadInitialReplies();
+			const branchIndex = this.branch.findIndex(e => e.id == eventId);
+			if(branchIndex != -1) {
+				this.trustedReplies = [];
+				this.otherReplies = [];
+				this.event = this.branch[branchIndex];
+				this.branch.length = branchIndex;
+				this.eventSet();
 				return;
 			}
+			const replyIndex = this.replies.findIndex(e => e.id == eventId);
+			if(replyIndex != -1) {
+				this.branch.push(this.event);
+				this.event = this.replies[replyIndex];
+				this.eventSet();
+				return;
+			}
+			this.trustedReplies = [];
+			this.otherReplies = [];
 			this.event = null;
 			this.branch = [];
 			if(nostrClient.noRelays()) {
@@ -209,6 +192,38 @@ export default {
 			} else {
 				this.loadInitialReplies();
 			}
+		},
+
+		eventSet() {
+			this.trustedReplies = [];
+			this.otherReplies = [];
+			var eTags = nostrUtils.parseETags(this.event);
+			this.reply = !!eTags.reply;
+			this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
+			if(Session.logged) {
+				this.trustedRepliers.add(Session.userKeys.public);
+			}
+			for(const tag of nostrUtils.getTagValues(this.event, "p")) {
+				this.trustedRepliers.add(tag[1]);
+			}
+			for(const user of Session.followedUsers) {
+				this.trustedRepliers.add(user);
+			}
+			if(eTags.reply) {
+				this.parent = eTags.reply;
+				this.ancestorsCache = {};
+				this.ancestorIds = new Set([eTags.reply]);
+				if(eTags.root) {
+					this.ancestorIds.add(eTags.root);
+				}
+				for(const event of this.branch) {
+					this.trustedRepliers.add(nostrUtils.getAuthor(event));
+					for(const tag of nostrUtils.getTagValues(event, "p")) {
+						this.trustedRepliers.add(tag[1]);
+					}
+				}
+			}
+			this.loadInitialReplies();
 		},
 
 		handleAncestor(event) {
