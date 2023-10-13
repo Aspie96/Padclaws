@@ -111,7 +111,7 @@ export default {
 	<h2>Data</h2>
 	<h3>Local data</h3>
 	<div class="text">
-		<p>Padclaws uses <a href="https://html.spec.whatwg.org/multipage/#toc-webstorage">Web Storage</a> to store local settings and access information and other data. This includes data stored in <i>sessionStorage</i> (which is erased after each browser session) and in <i>sessionStorage</i> (which is permanent).</p>
+		<p>Padclaws uses <a href="https://html.spec.whatwg.org/multipage/#toc-webstorage">Web Storage</a> to store local settings and access information and other data. This includes data stored in <i>sessionStorage</i> (which is erased after each browser session) and in <i>localStorage</i> (which is permanent).</p>
 		<p>You can download all data stored in Web Storage, or specifically only the data stored in localStorage or sessionStorage.</p>
 	</div>
 	<div class="form-buttons form-buttons-left">
@@ -121,7 +121,7 @@ export default {
 	</div>
 	<div class="text">
 		<p>You can also clear your Web Storage. This will result in the loss of such data.</p>
-		<p>If you clear your localStorage (which also happens when you clear your whole Web Storage), you are logged out of this session.</p>
+		<p>If you clear your sessionStorage (which also happens when you clear your whole Web Storage), you are logged out of this session.</p>
 	</div>
 	<div class="form-buttons form-buttons-left">
 		<button type="button" @click="clearWeb" class="btn-red">Clear Web Storage</button>

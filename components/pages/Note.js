@@ -105,7 +105,7 @@ export default {
 		async fetchData() {
 			this.loading = false;
 			this.invalid = false;
-			this.reply = false;
+			this.isReply = false;
 			this.showReplies = false;
 			this.loadMoreBtn = false;
 			this.repliesUntil = null;
@@ -167,7 +167,7 @@ export default {
 			this.event = await nostrClient.fetchOne(filters);
 			this.loading = false;
 			var eTags = nostrUtils.parseETags(this.event);
-			this.reply = !!eTags.reply;
+			this.isReply = !!eTags.reply;
 			this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
 			if(Session.logged) {
 				this.trustedRepliers.add(Session.userKeys.public);
@@ -198,7 +198,7 @@ export default {
 			this.trustedReplies = [];
 			this.otherReplies = [];
 			var eTags = nostrUtils.parseETags(this.event);
-			this.reply = !!eTags.reply;
+			this.isReply = !!eTags.reply;
 			this.trustedRepliers.add(nostrUtils.getAuthor(this.event));
 			if(Session.logged) {
 				this.trustedRepliers.add(Session.userKeys.public);
@@ -391,10 +391,10 @@ export default {
 	</AlertView>
 	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid event ID. Check the URL.</AlertView>
 	<template v-else>
-		<FeedView v-if="reply" :events="branch" isParent />
+		<FeedView v-if="isReply" :events="branch" isParent />
 		<NoteView :loading="loading" :event="event" isActive />
 		<h2>Replies</h2>
-		<write-view v-if="logged" :submitting="submitting" @submit="onReplySubmit" :noteId="replyId" :storageKey="'/note/' + noteId" ref="writeView" />
+		<WriteView v-if="logged" :submitting="submitting" @submit="onReplySubmit" :noteId="replyId" :storageKey="'/note/' + noteId" ref="writeView" />
 		<template v-if="!loading">
 			<FeedView :events="replies" />
 			<button v-if="loadMoreBtn" type="button" class="load-more-btn" @click="loadMore">
