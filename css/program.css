@@ -38,13 +38,13 @@ html {
 	font-family: 'Atkinson Hyperlegible', 'Noto Color Emoji';
 }
 
-body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+body, h1, h2, h3, h4, h5, h6, p, ol, ul, menu {
 	margin: 0;
 	padding: 0;
 	font-weight: normal;
 }
 
-ol, ul {
+ol, ul, menu {
 	list-style: none;
 }
 

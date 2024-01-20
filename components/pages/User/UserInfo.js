@@ -31,6 +31,10 @@ export default {
 			<dt>Username</dt>
 			<dd>{{ metadata.name }}</dd>
 		</template>
+		<template v-if="metadata?.display_name">
+			<dt>Display name</dt>
+			<dd>{{ metadata.display_name }}</dd>
+		</template>
 		<template v-if="metadata?.website">
 			<dt>Website</dt>
 			<dd>
