@@ -130,6 +130,9 @@ export default {
 				<li>
 					<RouterLink :to="{ name: 'user-following', params: { pubkey } }">Following</RouterLink>
 				</li>
+				<li>
+					<RouterLink :to="{ name: 'user-followers', params: { pubkey } }">Followers</RouterLink>
+				</li>
 			</ul>
 		</nav>
 		<RouterView v-if="pubkeyValid" :pubkey="pubkeyNormal" :metadata="metadata" />
