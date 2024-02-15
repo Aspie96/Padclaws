@@ -27,7 +27,7 @@ export default {
 		async fetchData() {
 			this.loading = true;
 			const following = [];
-			const filters = {
+			var filters = {
 				authors: [this.pubkey],
 				kinds: [nostrEventKinds.contact_list],
 				limit: 1
@@ -42,6 +42,12 @@ export default {
 			}
 			UsersCache.fetchMultipleMetadata(following);
 			this.loading = false;
+
+			filters = {
+				kinds: [nostrEventKinds.contact_list],
+				"#p": [this.pubkey]
+			};
+
 			// Fetch followers too
 			for(const user of following) {
 				this.trustedUsers.add(user)
