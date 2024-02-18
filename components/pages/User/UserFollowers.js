@@ -1,4 +1,5 @@
 import AlertView from "../../AlertView.js"
+import Session from "../../../js/session.js"
 import UsersCache from "../../UsersCache.js"
 import UserBoxView from "../../UserBoxView.js"
 
@@ -23,10 +24,17 @@ export default {
 		);
 	},
 
+	unmounted() {
+		if(this.subId) {
+			nostrClient.cancelSubscription(this.subId);
+		}
+	},
+
 	methods: {
 		async fetchData() {
+			this.subId = null;
 			this.loading = true;
-			const following = [];
+			var trustedFollowers = new Set();
 			var filters = {
 				authors: [this.pubkey],
 				kinds: [nostrEventKinds.contact_list],
@@ -36,25 +44,36 @@ export default {
 			const tags = nostrUtils.getTagValues(event, "p");
 			for(const tag of tags) {
 				const contactPubkey = tag[1];
-				if(!following.includes(contactPubkey) && contactPubkey != this.pubkey) {
-					following.push(contactPubkey);
-				}
+				trustedFollowers.add(contactPubkey);
 			}
-			UsersCache.fetchMultipleMetadata(following);
+			for(const user of Session.followedUsers) {
+				trustedFollowers.add(user);
+			}
+			//UsersCache.fetchMultipleMetadata(following);
 			this.loading = false;
 
 			filters = {
+				authors: [...trustedFollowers],
 				kinds: [nostrEventKinds.contact_list],
 				"#p": [this.pubkey]
 			};
+			this.subId = nostrClient.fetchFeed(filters, event => {
+				const follower = nostrUtils.getAuthor(event);
+				console.log(follower);
+				if(follower != this.pubkey) {
+					if(!this.followers.includes(follower)) {
+						this.followers.push(follower);
+					}
+				}
+			});
 
 			// Fetch followers too
-			for(const user of following) {
-				this.trustedUsers.add(user)
-			}
-			for(const user of Session.followedUsers) {
-				this.trustedUsers.add(user)
-			}
+			//for(const user of following) {
+			//	this.trustedUsers.add(user)
+			//}
+			//for(const user of Session.followedUsers) {
+			//	this.trustedUsers.add(user)
+			//}
 		}
 	},
 
@@ -66,8 +85,7 @@ export default {
 	template:`
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<template v-else>
-		<p>Following: {{ following.length }}</p>
-		<UserBoxView v-for="pubkey in following" :pubkey="pubkey" />
+		<UserBoxView v-for="pubkey in followers" :pubkey="pubkey" />
 	</template>
 	`
 }

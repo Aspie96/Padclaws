@@ -10,6 +10,7 @@ import SettingsData from "../components/pages/Settings/SettingsData.js"
 import SettingsProfile from "../components/pages/Settings/SettingsProfile.js"
 import SettingsRelays from "../components/pages/Settings/SettingsRelays.js"
 import User from "../components/pages/User.js"
+import UserFollowers from "../components/pages/User/UserFollowers.js"
 import UserFollowing from "../components/pages/User/UserFollowing.js"
 import UserInfo from "../components/pages/User/UserInfo.js"
 import UserNotes from "../components/pages/User/UserNotes.js"
@@ -26,6 +27,7 @@ const routes = [
 		component: User,
 		children: [
 			{ path: "", name: "user", component: UserNotes },
+			{ path: "following", name: "user-followers", component: UserFollowers },
 			{ path: "following", name: "user-following", component: UserFollowing },
 			{ path: "info", name: "user-info", component: UserInfo },
 			{ path: "relays", name: "user-relays", component: UserRelays}
