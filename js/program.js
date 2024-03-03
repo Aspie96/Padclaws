@@ -27,7 +27,7 @@ const routes = [
 		component: User,
 		children: [
 			{ path: "", name: "user", component: UserNotes },
-			{ path: "following", name: "user-followers", component: UserFollowers },
+			{ path: "followers", name: "user-followers", component: UserFollowers },
 			{ path: "following", name: "user-following", component: UserFollowing },
 			{ path: "info", name: "user-info", component: UserInfo },
 			{ path: "relays", name: "user-relays", component: UserRelays}

@@ -27,12 +27,16 @@ export default {
 	unmounted() {
 		if(this.subId) {
 			nostrClient.cancelSubscription(this.subId);
+			this.subId = null;
+		}
+		if(this.interval) {
+			clearInterval(this.interval);
+			this.interval = null;
 		}
 	},
 
 	methods: {
 		async fetchData() {
-			this.subId = null;
 			this.loading = true;
 			var trustedFollowers = new Set();
 			var filters = {
@@ -57,15 +61,23 @@ export default {
 				kinds: [nostrEventKinds.contact_list],
 				"#p": [this.pubkey]
 			};
+			const newFollowers = [];
 			this.subId = nostrClient.fetchFeed(filters, event => {
 				const follower = nostrUtils.getAuthor(event);
-				console.log(follower);
 				if(follower != this.pubkey) {
-					if(!this.followers.includes(follower)) {
-						this.followers.push(follower);
+					if(!this.followers.includes(follower) && !newFollowers.includes(follower)) {
+						newFollowers.push(follower);
 					}
 				}
 			});
+			this.interval = setInterval(() => {
+				if(newFollowers) {
+					console.log(newFollowers.length);
+					this.followers.push(...newFollowers);
+					UsersCache.fetchMultipleMetadata(newFollowers);
+					newFollowers.length = 0;
+				}
+			}, 1000);
 
 			// Fetch followers too
 			//for(const user of following) {
