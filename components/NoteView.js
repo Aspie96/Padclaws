@@ -45,11 +45,13 @@ export default {
 				const author = nostrUtils.getAuthor(this.event);
 				UsersCache.fetchMetadata(author);
 				this.authorData = UsersCache.users[author];
+				this.mention = null;
 			}
 		},
 
 		async fetchMention() {
 			if(this.note?.mention?.length == 1) {
+				console.log(this.note);
 				const filters = {
 					ids: [this.note.mention[0]],
 					limit: 1
@@ -150,26 +152,26 @@ export default {
 	</template>
 	<template v-else>
 		<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive, 'is-mention': isMention }">
-				<div v-if="repostedBy" class="in-reply-to"><span class="ti ti-message"></span>Reposted by <MentionView :pubkey="repostedBy" /></div>
-				<div v-else-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
-				<div class="note-body">
-					<div class="note-data">
-						<div class="author-data">
-							<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>
-							<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
-						</div>
-						<DropdownView :items="menuItems" />
+			<div v-if="repostedBy" class="in-reply-to"><span class="ti ti-message"></span>Reposted by <MentionView :pubkey="repostedBy" /></div>
+			<div v-else-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
+			<div class="note-body">
+				<div class="note-data">
+					<div class="author-data">
+						<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>
+						<RouterLink class="user-pubkey" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ note.author }}</RouterLink>
 					</div>
-					<div class="note-content">
-						<TextView :text="note.content" />
-						<NoteView v-if="mention" :event="mention" isMention />
-					</div>
-					<p class="note-date">
-						<RouterLink :to="{ name: 'note', params: { id: note.id } }">
-							<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
-						</RouterLink>
-					</p>
+					<DropdownView :items="menuItems" />
 				</div>
+				<div class="note-content">
+					<TextView :text="note.content" />
+					<NoteView v-if="mention" :event="mention" isMention />
+				</div>
+				<p class="note-date">
+					<RouterLink :to="{ name: 'note', params: { id: note.id } }">
+						<time :datetime="note.date.toISOString()">{{ note.date.toLocaleString() }}</time>
+					</RouterLink>
+				</p>
+			</div>
 		</article>
 	</template>
 	`

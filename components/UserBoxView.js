@@ -19,6 +19,10 @@ export default {
 			return Session.logged && Session.userKeys.public == this.pubkey;
 		},
 
+		myKey() {
+			return Session.logged && Session.userKeys.public;
+		},
+
 		username() {
 			return UsersCache.users[this.pubkey]?.metadata?.name;
 		},
@@ -31,7 +35,7 @@ export default {
 			if(!Session.logged) {
 				return false;
 			}
-			return Session.followedUsers.has(this.pubkey);
+			return Session.following.has(this.pubkey);
 		},
 
 		logged() {
@@ -68,7 +72,7 @@ export default {
 			<RouterLink class="user-pubkey" :title="pubkey" :to="{ name: 'user', params: { pubkey } }">{{ pubkey }}</RouterLink>
 		</div>
 		<p class="about">{{ about }}</p>
-		<template v-if="logged">
+		<template v-if="logged && pubkey != myKey">
 			<button v-if="following" type="button" class="user-page-btn user-page-btn-right" @click="unfollow"><span class="ti ti-social-off"></span>Unfollow</button>
 			<button v-else type="button" class="user-page-btn user-page-btn-right" @click="follow"><span class="ti ti-social"></span>Follow</button>
 		</template>

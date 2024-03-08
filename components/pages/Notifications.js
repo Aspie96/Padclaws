@@ -56,7 +56,6 @@ export default {
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;
-				this.noEvents = true;
 				return;
 			}
 			this.noEvents = false;

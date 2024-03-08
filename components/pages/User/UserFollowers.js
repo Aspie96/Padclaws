@@ -50,12 +50,15 @@ export default {
 				const contactPubkey = tag[1];
 				trustedFollowers.add(contactPubkey);
 			}
-			for(const user of Session.followedUsers) {
+			for(const user of Session.following) {
 				trustedFollowers.add(user);
 			}
-			//UsersCache.fetchMultipleMetadata(following);
 			this.loading = false;
 
+			console.log(Session.following);
+			if(Session.following.has(this.pubkey)) {
+				this.followers.push(Session.userKeys.public);
+			}
 			filters = {
 				authors: [...trustedFollowers],
 				kinds: [nostrEventKinds.contact_list],
@@ -70,22 +73,19 @@ export default {
 					}
 				}
 			});
+			var noNewFollower = false;
 			this.interval = setInterval(() => {
-				if(newFollowers) {
-					console.log(newFollowers.length);
+				if(newFollowers.length > 0) {
 					this.followers.push(...newFollowers);
 					UsersCache.fetchMultipleMetadata(newFollowers);
 					newFollowers.length = 0;
+				} else if(noNewFollower) {
+					clearInterval(this.interval);
+					this.interval = null;
+				} else {
+					noNewFollower = true;
 				}
-			}, 1000);
-
-			// Fetch followers too
-			//for(const user of following) {
-			//	this.trustedUsers.add(user)
-			//}
-			//for(const user of Session.followedUsers) {
-			//	this.trustedUsers.add(user)
-			//}
+			}, 500);
 		}
 	},
 

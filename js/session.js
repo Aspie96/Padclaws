@@ -32,8 +32,8 @@ const session = Vue.reactive({
 		used: [],
 		unusedKnown: []
 	},
-	followedUsers: new Set(),
-	refreshingFollowedUsers: false,
+	following: new Set(),
+	refreshingFollowing: false,
 
 	login(privateKey) {
 		const publicKey = nostrUtils.getPublicKey(privateKey);
@@ -44,18 +44,18 @@ const session = Vue.reactive({
 		};
 		UsersCache.fetchMetadata(publicKey);
 		sessionStorage.setItem("privateKey", privateKey);
-		this.refreshFollowedUsers();
+		this.refreshFollowing();
 	},
 
 	logout() {
 		this.logged = false;
 		this.userKeys = null;
 		sessionStorage.removeItem("privateKey");
-		this.followedUsers.clear();
+		this.following.clear();
 	},
 
-	async refreshFollowedUsers() {
-		this.refreshingFollowedUsers = true;
+	async refreshFollowing() {
+		this.refreshingFollowing = true;
 		const filters = {
 			authors: [this.userKeys.public],
 			kinds: [nostrEventKinds.contact_list]
@@ -63,12 +63,12 @@ const session = Vue.reactive({
 		const event = await nostrClient.fetchMostRecent(filters);
 		if(event) {
 			for(const tag of event.tags) {
-				if(tag[0] == "p" && !this.followedUsers.has(tag[1])) {
-					this.followedUsers.add(tag[1]);
+				if(tag[0] == "p" && !this.following.has(tag[1])) {
+					this.following.add(tag[1]);
 				}
 			}
 		}
-		this.refreshingFollowedUsers = false;
+		this.refreshingFollowing = false;
 	},
 
 	toPublicKey(privateKey) {
@@ -130,20 +130,20 @@ const session = Vue.reactive({
 	},
 
 	followUser(user) {
-		this.followedUsers.add(user);
-		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
+		this.following.add(user);
+		nostrClient.postContacts(this.userKeys, [...this.following]);
 	},
 
 	unfollowUser(user) {
-		this.followedUsers.delete(user);
-		nostrClient.postContacts(this.userKeys, [...this.followedUsers]);
+		this.following.delete(user);
+		nostrClient.postContacts(this.userKeys, [...this.following]);
 	}
 });
 
 session.refreshRelays();
 
 if(session.logged) {
-	session.refreshFollowedUsers();
+	session.refreshFollowing();
 }
 
 window.addEventListener("storage", e => {

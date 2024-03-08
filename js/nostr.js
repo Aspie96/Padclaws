@@ -162,16 +162,16 @@ const nostrUtils = function() {
 				reply: null
 			};
 			for(const tag of tags) {
-				if(tag.length >= 4) {
-					if(tag[3] == "reply") {
-						result.reply = tag[1];
-					} else if(tag[3] == "mention") {
-						result.mention.push(tag[1]);
-					} else if(tag[3] == "root") {
-						result.root = tag[1];
-					}
+				if(tag[3] == "reply") {
+					result.reply = tag[1];
+				} else if(tag[3] == "mention") {
+					result.mention.push(tag[1]);
+				} else if(tag[3] == "root") {
+					result.root = tag[1];
 				}
 			}
+			console.log(event);
+			console.log(result);
 			return result;
 		}
 		if(tags.length == 1) {
@@ -181,11 +181,13 @@ const nostrUtils = function() {
 				reply: tags[0][1]
 			};
 		}
-		return {
+		console.log(event);
+		/*return {
 			root: tags[0][1],
 			mention: tags.slice(1, tags.length - 1).map(tag => tag[1]),
 			reply: tags[tags.length - 1][1]
-		};
+		};*/
+		
 	}
 
 	function getDate(event) {

@@ -26,10 +26,10 @@ export default {
 
 	created() {
 		this.$watch(
-			() => Session.followedUsers,
+			() => Session.following,
 			this.fetchData,
 			{
-				immediate: !Session.refreshingFollowedUsers,
+				immediate: !Session.refreshingFollowing,
 				deep: true
 			}
 		);
@@ -54,8 +54,8 @@ export default {
 			this.loadMoreBtn = false;
 			this.until = null;
 			this.subIds = [];
-			const authors = [...Session.followedUsers];
-			if(Session.logged && !Session.followedUsers.has(Session.userKeys.public)) {
+			const authors = [...Session.following];
+			if(Session.logged && !Session.following.has(Session.userKeys.public)) {
 				authors.push(Session.userKeys.public)
 			}
 			var filters = {
@@ -100,8 +100,8 @@ export default {
 		async loadMore() {
 			this.loadMoreBtn = false;
 			this.loading = true;
-			const authors = [...Session.followedUsers];
-			if(Session.logged && !Session.followedUsers.has(Session.userKeys.public)) {
+			const authors = [...Session.following];
+			if(Session.logged && !Session.following.has(Session.userKeys.public)) {
 				authors.push(Session.userKeys.public)
 			}
 			var filters = {
@@ -114,7 +114,6 @@ export default {
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;
-				this.noEvents = true;
 				return;
 			}
 			this.noEvents = false;

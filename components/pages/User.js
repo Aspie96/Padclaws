@@ -46,7 +46,7 @@ export default {
 		},
 
 		followed() {
-			return Session.followedUsers.has(this.pubkey);
+			return Session.following.has(this.pubkey);
 		},
 
 		pubkeyValid() {
