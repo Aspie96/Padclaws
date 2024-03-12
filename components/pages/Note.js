@@ -393,7 +393,7 @@ export default {
 	<AlertView v-else-if="invalid" color="red" icon="alert-triangle">Invalid event ID. Check the URL.</AlertView>
 	<template v-else>
 		<FeedView v-if="isReply" :events="branch" isParent />
-		<NoteView :key="event.id" :loading="loading" :event="event" isActive />
+		<NoteView :key="event?.id" :loading="loading" :event="event" isActive />
 		<h2>Replies</h2>
 		<WriteView v-if="logged" :submitting="submitting" @submit="onReplySubmit" :noteId="replyId" :storageKey="'/note/' + noteId" ref="writeView" />
 		<template v-if="!loading">

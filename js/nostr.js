@@ -148,12 +148,13 @@ const nostrUtils = function() {
 				reply: null
 			};
 		}
-		if(tags.every(tag => tag.length >= 4)) {
-			if(tags.length == 1 && tags[0][3] == "root") {
+		if(tags.some(tag => tag.length >= 4)) {
+			const selTags = tags.filter(tag => tag.length >= 4);
+			if(selTags.length == 1 && selTags[0][3] == "root") {
 				return {
-					root: tags[0][1],
+					root: selTags[0][1],
 					mention: [],
-					reply: tags[0][1]
+					reply: selTags[0][1]
 				};
 			}
 			const result = {
@@ -161,7 +162,7 @@ const nostrUtils = function() {
 				mention: [],
 				reply: null
 			};
-			for(const tag of tags) {
+			for(const tag of selTags) {
 				if(tag[3] == "reply") {
 					result.reply = tag[1];
 				} else if(tag[3] == "mention") {
@@ -181,13 +182,11 @@ const nostrUtils = function() {
 				reply: tags[0][1]
 			};
 		}
-		console.log(event);
-		/*return {
+		return {
 			root: tags[0][1],
-			mention: tags.slice(1, tags.length - 1).map(tag => tag[1]),
+			mention: [],
 			reply: tags[tags.length - 1][1]
-		};*/
-		
+		};
 	}
 
 	function getDate(event) {
