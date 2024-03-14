@@ -47,8 +47,10 @@ export default {
 			const findNoteURIs = text => findByRegex(text, noteRegex, "nostrURI", findEventURIs);
 			const mentionRegex = /\b(nostr\:npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findMentions = text => findByRegex(text, mentionRegex, "nostrURI", findNoteURIs);
+			const nprofileRegex = /\b(nostr\:nprofile1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
+			const findProfileURIs = text => findByRegex(text, nprofileRegex, "nostrURI", findMentions);
 			const magnetRegex = /\b(magnet:\?\S+)\b/g;
-			const findMagnets = text => findByRegex(text, magnetRegex, "magnetURI", findMentions);
+			const findMagnets = text => findByRegex(text, magnetRegex, "magnetURI", findProfileURIs);
 			yield* findByRegex(text, re_link, "url", findMagnets);
 		}
 	},
