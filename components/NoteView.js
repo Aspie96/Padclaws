@@ -78,9 +78,6 @@ export default {
 				note.reply = eTags.reply;
 			}
 			note.mention = eTags.mention;
-			console.log(this.event);
-			console.log({ id: this.event.id, eTags: eTags });
-			console.log(note);
 			return note;
 		},
 
