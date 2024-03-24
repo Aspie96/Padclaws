@@ -41,13 +41,13 @@ export default {
 
 	methods: {
 		*findItems(text) {
-			const neventRegex = /\b(nostr\:nevent1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
+			const neventRegex = /\b((nostr\:)?nevent1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
 			const findEventURIs = text => findByRegex(text, neventRegex, "nostrURI", yieldText);
-			const noteRegex = /\b(nostr\:note1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
+			const noteRegex = /\b((nostr\:)?note1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findNoteURIs = text => findByRegex(text, noteRegex, "nostrURI", findEventURIs);
-			const mentionRegex = /\b(nostr\:npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
+			const mentionRegex = /\b((nostr\:)?npub1[a-zA-HJ-NP-Z0-9]{58}\b)/g;
 			const findMentions = text => findByRegex(text, mentionRegex, "nostrURI", findNoteURIs);
-			const nprofileRegex = /\b(nostr\:nprofile1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
+			const nprofileRegex = /\b((nostr\:)?nprofile1[a-zA-HJ-NP-Z0-9]{58,}\b)/g;
 			const findProfileURIs = text => findByRegex(text, nprofileRegex, "nostrURI", findMentions);
 			const magnetRegex = /\b(magnet:\?\S+)\b/g;
 			const findMagnets = text => findByRegex(text, magnetRegex, "magnetURI", findProfileURIs);

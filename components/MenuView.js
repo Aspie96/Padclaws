@@ -83,7 +83,9 @@ export default {
 				<li>
 					<RouterLink :to="{ name: 'user', params: { pubkey: Session.userKeys.public } }">
 						<span class="ti ti-user"></span>
-						<span class="menu-option" v-if="username">{{username}}</span>
+						<span class="menu-option" v-if="username">
+							<b>{{username}}</b>
+						</span>
 						<span class="menu-option profile-pubkey" v-else>{{Session.userKeys.public}}</span>
 					</RouterLink>
 				</li>

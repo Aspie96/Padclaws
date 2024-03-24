@@ -22,10 +22,10 @@ export default {
 	},
  
 	template: `
-	<button type="button" class="note-menu-btn" @click="toggleMenu" ref="button">
+	<button type="button" class="note-menu-btn" @click.stop="toggleMenu" ref="button">
 		<span class="ti ti-dots"></span>
 	</button>
-	<menu v-if="showMenu" class="note-menu" @click="closeMenu" v-click-outside="closeMenu">
+	<menu v-if="showMenu" class="note-menu" @click.stop="closeMenu" v-click-outside="closeMenu">
 		<li v-for="item in items">
 			<button type="button" @click="item.onClick"><span v-if="item.icon" class="ti" :class="'ti-' + item.icon"></span>{{ item.text }}</button>
 		</li>

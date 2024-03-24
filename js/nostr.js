@@ -171,8 +171,6 @@ const nostrUtils = function() {
 					result.root = tag[1];
 				}
 			}
-			console.log(event);
-			console.log(result);
 			return result;
 		}
 		if(tags.length == 1) {

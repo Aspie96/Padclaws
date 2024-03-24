@@ -214,6 +214,7 @@ label {
 .note-box {
 	border: 1px solid #555;
 	background-color: #111;
+	border-radius: 5px;
 }
 
 .note-body {
@@ -221,8 +222,14 @@ label {
 	position: relative;
 }
 
+.note-box:not(.is-active) .note-body:hover:not(:has(.note-body:hover)) {
+	background-color: #222;
+	color: #DDD;
+}
+
 .is-parent {
 	border-left: 10px solid #567;
+	border-radius: 0;
 }
 
 .note-content {
@@ -232,14 +239,21 @@ label {
 	overflow-wrap: break-word;
 }
 
+.is-active {
+	border-radius: 0;
+}
+
 .is-active .note-content {
 	font-size: 20px;
 }
 
 .in-reply-to {
+	position: relative;
 	padding: 0 15px;
 	background-color: #333;
 	margin-bottom: -5px;
+	z-index: 1;
+	border-radius: 5px 0;
 }
 
 .in-reply-to .ti {
@@ -261,7 +275,7 @@ label {
 .note-box.is-mention {
 	margin-top: 10px;
 	font-size: 17px;
-	width: 90%;
+	width: 95%;
 }
 
 .mention {

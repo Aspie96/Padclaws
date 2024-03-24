@@ -51,13 +51,21 @@ export default {
 
 		async fetchMention() {
 			if(this.note?.mention?.length == 1) {
-				console.log(this.note);
 				const filters = {
 					ids: [this.note.mention[0]],
 					limit: 1
 				};
 				const event = await nostrClient.fetchMostRecent(filters);
 				this.mention = event;
+			}
+		},
+
+		noteClicked(evt) {
+			if(!this.isActive && document.getSelection().type != "Range") {
+				const noteBody = this.$refs.noteBody;
+				if(evt.srcElement == noteBody || evt.srcElement.parentNode == noteBody) {
+					this.$router.push({ name: "note", params: { id: this.event.id } });
+				}
 			}
 		}
 	},
@@ -154,7 +162,7 @@ export default {
 		<article v-if="note" class="note-box" :class="{ 'is-parent': isParent, 'is-active': isActive, 'is-mention': isMention }">
 			<div v-if="repostedBy" class="in-reply-to"><span class="ti ti-message"></span>Reposted by <MentionView :pubkey="repostedBy" /></div>
 			<div v-else-if="replyTo && note.reply" class="in-reply-to"><span class="ti ti-message"></span>In reply to note <RouterLink class="note-id" :to="{ name: 'note', params: { id: note.reply } }">{{ note.reply }}</RouterLink></div>
-			<div class="note-body">
+			<div class="note-body" @click="noteClicked" ref="noteBody">
 				<div class="note-data">
 					<div class="author-data">
 						<RouterLink v-if="!authorData.loading" class="username" :title="note.author" :to="{ name: 'user', params: { pubkey: note.author } }">{{ authorData.metadata.name }}</RouterLink>

@@ -4,7 +4,12 @@ export default {
 	props: { text: String },
 
 	data() {
-		const body = this.text.substr("nostr:".length);
+		var body;
+		if(this.text.startsWith("nostr:")) {
+			body = this.text.substr("nostr:".length);
+		} else {
+			body = this.text;
+		}
 		const entity = nostrUtils.decodeEntity(body);
 		switch(entity.prefix) {
 			case nostrEncEntityPrefixes.npub:

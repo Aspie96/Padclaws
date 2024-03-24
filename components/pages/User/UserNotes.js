@@ -68,7 +68,16 @@ export default {
 				return;
 			}
 			this.noEvents = false;
-			const since = this.getReasonableTimestamp(recent.created_at);
+			filters.until = recent.created_at - 1;
+			const previous = await nostrClient.fetchMostRecent(filters);
+			var timestamp;
+			if(previous) {
+				this.until = recent.created_at;
+				timestamp = previous.created_at;
+			} else {
+				timestamp = recent.created_at;
+			}
+			const since = this.getReasonableTimestamp(timestamp);
 			filters = {
 				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
@@ -86,12 +95,7 @@ export default {
 		getReasonableTimestamp(timestamp) {
 			const until = (this.until || Math.round(Date.now() / 1000));
 			var timespan = until - timestamp;
-			if(timespan < 60 * 60 * 12) {
-				timespan = 60 * 60 * 24;
-			} else if(timespan < 60 * 60 * 24 * 15) {
-				timespan *= 2;
-			}
-			return until - timespan - 1;
+			return until - timespan * 2 - 1;
 		},
 
 		async loadMore() {

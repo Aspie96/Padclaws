@@ -56,7 +56,7 @@ export default {
 			this.loading = false;
 
 			console.log(Session.following);
-			if(Session.following.has(this.pubkey)) {
+			if(Session.following.has(this.pubkey) && Session.userKeys.public != this.pubkey) {
 				this.followers.push(Session.userKeys.public);
 			}
 			filters = {
