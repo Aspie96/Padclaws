@@ -57,6 +57,10 @@ a {
 	color: #1B4;
 }
 
+a:hover {
+	color: #0F0;
+}
+
 button {
 	cursor: pointer;
 }
@@ -220,6 +224,7 @@ label {
 .note-body {
 	padding-bottom: 15px;
 	position: relative;
+	border-radius: 4px;
 }
 
 .note-box:not(.is-active) .note-body:hover:not(:has(.note-body:hover)) {
@@ -229,7 +234,6 @@ label {
 
 .is-parent {
 	border-left: 10px solid #567;
-	border-radius: 0;
 }
 
 .note-content {
@@ -239,12 +243,12 @@ label {
 	overflow-wrap: break-word;
 }
 
-.is-active {
-	border-radius: 0;
-}
-
 .is-active .note-content {
 	font-size: 20px;
+}
+
+.is-active, .is-parent, .is-active .note-body, .is-parent .note-body {
+	border-radius: 0;
 }
 
 .in-reply-to {
@@ -253,7 +257,7 @@ label {
 	background-color: #333;
 	margin-bottom: -5px;
 	z-index: 1;
-	border-radius: 5px 0;
+	border-radius: 4px 4px 0 0;
 }
 
 .in-reply-to .ti {
@@ -372,7 +376,7 @@ label {
 .note-menu {
 	width: 200px;
 	position: absolute;
-	z-index: 1;
+	z-index: 2;
 	right: 15px;
 	top: 40px;
 }
@@ -387,6 +391,11 @@ label {
 	color: #DDD;
 	padding: 5px;
 	text-decoration: none;
+}
+
+.note-menu li button:hover {
+	background-color: #333;
+	color: #EEE;
 }
 
 .form-group {
