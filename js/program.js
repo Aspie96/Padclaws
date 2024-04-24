@@ -1,6 +1,6 @@
 import Docs from "../components/pages/Docs.js"
-import Home from "../components/pages/Home.js"
 import Feed from "../components/pages/Feed.js"
+import Home from "../components/pages/Home.js"
 import Login from "../components/pages/Login.js"
 import MenuView from "../components/MenuView.js"
 import Note from "../components/pages/Note.js"
@@ -9,6 +9,7 @@ import Settings from "../components/pages/Settings.js"
 import SettingsData from "../components/pages/Settings/SettingsData.js"
 import SettingsProfile from "../components/pages/Settings/SettingsProfile.js"
 import SettingsRelays from "../components/pages/Settings/SettingsRelays.js"
+import Tag from "../components/pages/Tag.js"
 import User from "../components/pages/User.js"
 import UserFollowers from "../components/pages/User/UserFollowers.js"
 import UserFollowing from "../components/pages/User/UserFollowing.js"
@@ -60,6 +61,7 @@ const routes = [
 	},
 	{ path: "/docs/:page", name: "docs", component: Docs },
 	{ path: "/feed", name:  "feed", component: Feed },
+	{ path: "/tag", name:  "tag", component: Tag },
 	{ path: "/notifications", name:  "notifications", component: Notifications }
 ]
 
