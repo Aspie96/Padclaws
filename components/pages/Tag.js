@@ -1,14 +1,7 @@
 import AlertView from "../AlertView.js"
 import FeedView from "../FeedView.js"
 import Session from "../../js/session.js"
-
-function addInOrder(array, item, comp) {
-	var index = 0;
-	while(index < array.length && comp(item, array[index]) < 0) {
-		index++;
-	}
-	array.splice(index, 0, item);
-}
+import Utils from "../../js/utils.js"
 
 function dateComp(event1, event2) {
 	return event1.created_at - event2.created_at;
@@ -67,7 +60,6 @@ export default {
 			if(!recent) {
 				this.noEvents = true;
 				this.loading = false;
-				this.noEvents = true;
 				return;
 			}
 			this.noEvents = false;
@@ -80,7 +72,7 @@ export default {
 			} else {
 				timestamp = recent.created_at;
 			}
-			const since = this.getReasonableTimestamp(timestamp);
+			const since = Utils.getReasonableTimestamp(this.until, timestamp);
 			filters = {
 				kinds: [nostrEventKinds.text_note],
 				since,
@@ -89,16 +81,10 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				addInOrder(this.events, event, dateComp);
+				Utils.addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
 			this.subIds.push(subId);
-		},
-
-		getReasonableTimestamp(timestamp) {
-			const until = (this.until || Math.round(Date.now() / 1000));
-			var timespan = until - timestamp;
-			return until - timespan * 2 - 1;
 		},
 
 		async loadMore() {
@@ -121,7 +107,7 @@ export default {
 				return;
 			}
 			this.noEvents = false;
-			const since = this.getReasonableTimestamp(recent.created_at);
+			const since = Utils.getReasonableTimestamp(this.until, recent.created_at);
 			filters = {
 				kinds: [nostrEventKinds.text_note],
 				since,
@@ -131,7 +117,7 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				addInOrder(this.events, event, dateComp);
+				Utils.addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
 			this.subIds.push(subId);
