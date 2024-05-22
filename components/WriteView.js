@@ -3,7 +3,6 @@ import AlertView from "./AlertView.js"
 export default {
 	props: {
 		submitting: Boolean,
-		noteId: null,
 		storageKey: null
 	},
 
@@ -47,6 +46,5 @@ export default {
 			<button type="submit" class="btn-submit" :disabled="!note.trim() || submitting">Publish</button>
 		</div>
 	</form>
-	<AlertView v-if="noteId && !submitting" color="blue" icon="check">Note published. <RouterLink :to="{ name: 'note', params: { id: noteId } }">View note</RouterLink></AlertView>
 	`
 }

@@ -59,7 +59,6 @@ export default {
 	data() {
 		return {
 			submitting: false,
-			noteId: null,
 			Session
 		};
 	},
@@ -72,8 +71,8 @@ export default {
 			const keys = this.Session.userKeys;
 			const event = await nostrClient.postNote(keys, data.content, data.tags);
 			this.submitting = false;
-			this.noteId = event.id;
 			this.$refs.writeView.clear();
+			this.$router.push({ name: "note", params: { id: event.id } });
 		}
 	},
 
@@ -82,6 +81,6 @@ export default {
 	},
 
 	template: `
-	<write-view :submitting="submitting" @submit="onSubmit" :noteId="noteId" storageKey="/write" ref="writeView" />
+	<write-view :submitting="submitting" @submit="onSubmit" storageKey="/write" ref="writeView" />
 	`
 }
