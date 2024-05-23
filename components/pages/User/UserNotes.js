@@ -1,13 +1,6 @@
 import AlertView from "../../AlertView.js"
 import FeedView from "../../FeedView.js"
-
-function addInOrder(array, item, comp) {
-	var index = 0;
-	while(index < array.length && comp(item, array[index]) < 0) {
-		index++;
-	}
-	array.splice(index, 0, item);
-}
+import utils from "../../../js/utils.js"
 
 function dateComp(event1, event2) {
 	return event1.created_at - event2.created_at;
@@ -24,7 +17,8 @@ export default {
 			loading: false,
 			noEvents: false,
 			events: [],
-			loadMoreBtn: false
+			loadMoreBtn: false,
+			newEventsBtn: false
 		};
 	},
 
@@ -52,7 +46,9 @@ export default {
 			this.loading = true;
 			this.noEvents = false;
 			this.events = [];
+			this.newEvents = [];
 			this.loadMoreBtn = false;
+			this.newEventsBtn = false;
 			this.until = null;
 			this.subIds = [];
 			var filters = {
@@ -62,7 +58,6 @@ export default {
 			};
 			const recent = await nostrClient.fetchMostRecent(filters);
 			if(!recent) {
-				this.noEvents = true;
 				this.loading = false;
 				this.noEvents = true;
 				return;
@@ -77,7 +72,7 @@ export default {
 			} else {
 				timestamp = recent.created_at;
 			}
-			const since = this.getReasonableTimestamp(timestamp);
+			const since = utils.getReasonableTimestamp(this.until, timestamp);
 			filters = {
 				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
@@ -86,16 +81,19 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				addInOrder(this.events, event, dateComp);
-				this.loadMoreBtn = true;
+				const time = Date.now();
+				if(this.events.length == 0) {
+					this.timeFirstEvent = time;
+					this.loadMoreBtn = true;
+				}
+				if(time > this.timeFirstEvent + 10 * 1000) {
+					this.newEvents.push(event);
+					this.newEventsBtn = true;
+				} else {
+					utils.addInOrder(this.events, event, dateComp);
+				}
 			});
 			this.subIds.push(subId);
-		},
-
-		getReasonableTimestamp(timestamp) {
-			const until = (this.until || Math.round(Date.now() / 1000));
-			var timespan = until - timestamp;
-			return until - timespan * 2 - 1;
 		},
 
 		async loadMore() {
@@ -115,7 +113,7 @@ export default {
 				return;
 			}
 			this.noEvents = false;
-			const since = this.getReasonableTimestamp(recent.created_at);
+			const since = utils.getReasonableTimestamp(this.until, recent.created_at);
 			filters = {
 				authors: [this.pubkey],
 				kinds: [nostrEventKinds.text_note],
@@ -125,10 +123,19 @@ export default {
 			this.until = since;
 			this.loading = false;
 			const subId = nostrClient.fetchFeed(filters, event => {
-				addInOrder(this.events, event, dateComp);
+				utils.addInOrder(this.events, event, dateComp);
 				this.loadMoreBtn = true;
 			});
 			this.subIds.push(subId);
+		},
+
+		loadNew() {
+			for(const event of this.newEvents) {
+				utils.addInOrder(this.events, event, dateComp);
+			}
+			this.newEvents.length = 0;
+			this.newEventsBtn = false;
+			this.timeFirstEvent = Date.now();
 		}
 	},
 
@@ -138,6 +145,7 @@ export default {
 	},
 
 	template:`
+	<button v-if="newEventsBtn" type="button" class="load-more-btn" @click="loadNew">Load new&hellip;</button>
 	<FeedView :events="events" replyTo />
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<AlertView v-else-if="noEvents" color="blue" icon="mood-empty">
