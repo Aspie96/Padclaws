@@ -2,6 +2,7 @@ import AlertView from "../AlertView.js"
 import FeedView from "../FeedView.js"
 import NoteView from "../NoteView.js"
 import Session from "../../js/session.js"
+import UsersCache from "../UsersCache.js"
 import WriteView from "../WriteView.js"
 
 const mentionRegex = /(@(?:note[a-zA-HJ-NP-Z0-9]{59}|[a-f0-9]{8,64}))\b/g;
@@ -311,6 +312,24 @@ export default {
 				nostrClient.fetchFeed(filters, reply => {
 					if(this.isDirectReply(reply)) {
 						if(!this.replies.some(event => event.id == reply.id)) {
+							if(this.otherReplies.length > 5) {
+								const author = nostrUtils.getAuthor(reply);
+								if(!this.toResolve) {
+									this.toResolve = new Promise(async resolve => {
+										await timeout(500);
+										const users = new Set();
+										for(const event of this.otherReplies) {
+											const user = nostrUtils.getAuthor(event);
+											users.add(user);
+										}
+										console.log(users);
+										UsersCache.fetchMultipleMetadata(users);
+										this.toResolve = null;
+										resolve();
+									});
+								}
+								UsersCache.locked[author] = this.toResolve;
+							}
 							addInOrder(this.otherReplies, reply, dateComp);
 							this.loadingReplies = false;
 						}
