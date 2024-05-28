@@ -17,6 +17,7 @@ export default {
 			loading: false,
 			noEvents: false,
 			events: [],
+			newEvents: [],
 			loadMoreBtn: false,
 			newEventsBtn: false
 		};
@@ -24,12 +25,9 @@ export default {
 
 	created() {
 		this.$watch(
-			() => Session.following,
+			() => this.filters,
 			this.fetchData,
-			{
-				immediate: !Session.refreshingFollowing,
-				deep: true
-			}
+			{ immediate: true }
 		);
 	},
 
@@ -143,7 +141,7 @@ export default {
 	},
 
 	template:`
-	<button v-if="newEventsBtn" type="button" class="load-more-btn" @click="loadNew">Load new&hellip;</button>
+	<button v-if="newEventsBtn" type="button" class="load-more-btn" @click="loadNew">Load new <span class="badge">{{ newEvents.length }}</span></button>
 	<FeedView :events="events" replyTo />
 	<AlertView v-if="loading" color="blue" icon="hourglass">Loading&hellip;</AlertView>
 	<AlertView v-else-if="noEvents" color="blue" icon="mood-empty">

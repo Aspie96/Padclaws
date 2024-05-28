@@ -3,22 +3,13 @@ import Session from "../../js/session.js"
 
 
 export default {
-	created() {
-		this.fetchData();
-	},
-
-	methods: {
-		async fetchData() { }
-	},
-
-	computed: {
-		filters() {
-			const filters = {
+	data() {
+		return {
+			filters: {
 				kinds: [nostrEventKinds.text_note],
 				"#p": [Session.userKeys.public]
-			};
-			return filters;
-		}
+			}
+		};
 	},
 
 	components: {

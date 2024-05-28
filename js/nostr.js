@@ -592,7 +592,7 @@ const nostrClient = function() {
 		timeout(maxTime).then(() => cancelSubscription(subId));
 	}
 
-	async function fetchUserMetadataSubarray(subarray, callback, maxTime) {
+	function fetchUserMetadataSubarray(subarray, callback, maxTime) {
 		const filters = {
 			authors: subarray,
 			kinds: [nostrEventKinds.set_metadata]
@@ -615,10 +615,11 @@ const nostrClient = function() {
 		timeout(maxTime).then(() => {
 			if(nextStep) {
 				nextStep();
+				nextStep = null;
 			}
 			cancelSubscription(subId);
 		});
-		await p1;
+		return p1;
 	}
 
 	async function fetchUsersMetadata(pubkeys, callback, maxTime) {
@@ -626,6 +627,8 @@ const nostrClient = function() {
 		if(pubkeys.length > 32) {
 			for(var i = 0; i < pubkeys.length; i += 64) {
 				const subarray = pubkeys.slice(i, i + 64);
+				console.log(subarray);
+				console.log(pubkeys);
 				await fetchUserMetadataSubarray(subarray, callback, maxTime);
 				if(i + 64 < pubkeys.length) {
 					await timeout(1500);

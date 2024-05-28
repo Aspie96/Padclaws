@@ -1,27 +1,7 @@
-async function waitAndFetch(users, user) {
-	if(user in users.locked) {
-		await users.locked[user];
-		if(!(user in users.locked)) {
-			return;
-		}
-	}
-	console.log("Fetching user: " + user);
-	nostrClient.fetchUserMetadata(user, (pubkey, metadata) => {
-		if(user in users.users) {
-			users.users[user].metadata = metadata;
-			users.users[user].pubkey = pubkey;
-			users.users[user].loading = false;
-		}
-		if(pubkey != user && pubkey in users.users) {
-			users.users[pubkey].metadata = metadata;
-			users.users[pubkey].loading = false;
-		}
-	});
-}
-
 const users = Vue.reactive({
 	users: {},
-	locked: {},
+	locked: false,
+	lockList: [],
 
 	fetchMetadata(user) {
 		if(this.users[user]) {
@@ -31,7 +11,25 @@ const users = Vue.reactive({
 				loading: true,
 				refs: 1
 			};
-			waitAndFetch(this, user);
+			if(this.locked) {
+				if(!this.lockList.includes(user)) {
+					this.lockList.push(user);
+				}
+			} else {
+				console.log(user);
+				nostrClient.fetchUserMetadata(user, (pubkey, metadata) => {
+					console.log("Received: " + user);
+					if(user in this.users) {
+						this.users[user].metadata = metadata;
+						this.users[user].pubkey = pubkey;
+						this.users[user].loading = false;
+					}
+					if(pubkey != user && pubkey in users.users) {
+						this.users[pubkey].metadata = metadata;
+						this.users[pubkey].loading = false;
+					}
+				});
+			}
 		}
 		return this.users[user];
 	},
@@ -44,10 +42,6 @@ const users = Vue.reactive({
 					loading: true,
 					refs: 1
 				};
-				newUsers.push(user);
-			} else if(user in this.locked) {
-				delete this.locked[user];
-				this.users[user].refs++;
 				newUsers.push(user);
 			} else {
 				this.users[user].refs++;
@@ -65,6 +59,33 @@ const users = Vue.reactive({
 				this.users[pubkey].loading = false;
 			}
 		});
+	},
+
+	lock() {
+		this.locked = true;
+	},
+
+	unlock() {
+		this.locked = false;
+		if(this.lockList.length > 0) {
+			console.log(this.lockList.length);
+			console.log(this.lockList);
+			console.log([...this.lockList]);
+			nostrClient.fetchUsersMetadata([...this.lockList], (user, pubkey, metadata) => {
+				if(user in this.users) {
+					this.users[user].metadata = metadata;
+					this.users[user].pubkey = pubkey;
+					this.users[user].loading = false;
+				} else {
+					console.log(user);
+				}
+				if(pubkey != user && pubkey in this.users) {
+					this.users[pubkey].metadata = metadata;
+					this.users[pubkey].loading = false;
+				}
+			});
+			this.lockList.length = 0;
+		}
 	}
 });
 

@@ -511,6 +511,16 @@ input[type=checkbox]:checked:before {
 	float: right;
 }
 
+.badge {
+	display: inline-block;
+	background-color: #CCC;
+	color: #222;
+	padding: 1px 5px;
+	min-width: 25px;
+	margin: 0 5px;
+	border-radius: 5px;
+}
+
 .about-info {
 	white-space: pre-wrap;
 	overflow-wrap: break-word;

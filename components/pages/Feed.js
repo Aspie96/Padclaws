@@ -3,6 +3,12 @@ import Session from "../../js/session.js"
 
 
 export default {
+	data() {
+		return {
+			filters: null
+		};
+	},
+
 	created() {
 		this.$watch(
 			() => Session.following,
@@ -15,20 +21,15 @@ export default {
 	},
 
 	methods: {
-		async fetchData() { }
-	},
-
-	computed: {
-		filters() {
+		fetchData() {
 			const authors = [...Session.following];
 			if(Session.logged && !Session.following.has(Session.userKeys.public)) {
 				authors.push(Session.userKeys.public)
 			}
-			const filters = {
+			this.filters = {
 				authors,
 				kinds: [nostrEventKinds.text_note]
 			};
-			return filters;
 		}
 	},
 
