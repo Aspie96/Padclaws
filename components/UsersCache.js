@@ -71,7 +71,7 @@ const users = Vue.reactive({
 			console.log(this.lockList.length);
 			console.log(this.lockList);
 			console.log([...this.lockList]);
-			nostrClient.fetchUsersMetadata([...this.lockList], (user, pubkey, metadata) => {
+			nostrClient.fetchUsersMetadata(this.lockList, (user, pubkey, metadata) => {
 				if(user in this.users) {
 					this.users[user].metadata = metadata;
 					this.users[user].pubkey = pubkey;

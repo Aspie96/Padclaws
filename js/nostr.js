@@ -593,6 +593,7 @@ const nostrClient = function() {
 	}
 
 	function fetchUserMetadataSubarray(subarray, callback, maxTime) {
+		console.log(subarray);
 		const filters = {
 			authors: subarray,
 			kinds: [nostrEventKinds.set_metadata]
@@ -608,6 +609,7 @@ const nostrClient = function() {
 			if(!timestamps[event.pubkey] || event.created_at > timestamps[event.pubkey]) {
 				const metadata = JSON.parse(event.content);
 				timestamps[event.pubkey] = event.created_at;
+				console.log(subarray);
 				const user = subarray.find(pubkey => event.pubkey.startsWith(pubkey));
 				callback(user, event.pubkey, Object.freeze(metadata));
 			}
@@ -624,6 +626,7 @@ const nostrClient = function() {
 
 	async function fetchUsersMetadata(pubkeys, callback, maxTime) {
 		maxTime ||= 10000;
+		pubkeys = [...pubkeys];
 		if(pubkeys.length > 32) {
 			for(var i = 0; i < pubkeys.length; i += 64) {
 				const subarray = pubkeys.slice(i, i + 64);
