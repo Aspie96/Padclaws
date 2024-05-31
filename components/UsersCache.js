@@ -16,9 +16,7 @@ const users = Vue.reactive({
 					this.lockList.push(user);
 				}
 			} else {
-				console.log(user);
 				nostrClient.fetchUserMetadata(user, (pubkey, metadata) => {
-					console.log("Received: " + user);
 					if(user in this.users) {
 						this.users[user].metadata = metadata;
 						this.users[user].pubkey = pubkey;
@@ -47,7 +45,6 @@ const users = Vue.reactive({
 				this.users[user].refs++;
 			}
 		}
-		console.log(newUsers);
 		nostrClient.fetchUsersMetadata(newUsers, (user, pubkey, metadata) => {
 			if(user in this.users) {
 				this.users[user].metadata = metadata;
@@ -68,16 +65,11 @@ const users = Vue.reactive({
 	unlock() {
 		this.locked = false;
 		if(this.lockList.length > 0) {
-			console.log(this.lockList.length);
-			console.log(this.lockList);
-			console.log([...this.lockList]);
 			nostrClient.fetchUsersMetadata(this.lockList, (user, pubkey, metadata) => {
 				if(user in this.users) {
 					this.users[user].metadata = metadata;
 					this.users[user].pubkey = pubkey;
 					this.users[user].loading = false;
-				} else {
-					console.log(user);
 				}
 				if(pubkey != user && pubkey in this.users) {
 					this.users[pubkey].metadata = metadata;
