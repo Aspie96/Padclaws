@@ -1,0 +1,15 @@
+<section>
+	<h2>About Nostr</h2>
+	<p><a href="https://github.com/nostr-protocol/nostr">Nostr</a> (<i>Notes and Other Stuff Transmitted by Relays</i>) is a protocol for decentralized and censorship-resistant social networking.</p>
+	<p>Nostr servers (<i>relays</i>) act essentially in the same way as traditional centralized platforms, except that they all communicate with users' devices in (roughly) the same way. Relays are fully independent of each other and can be operated by anybody.</p>
+	<p>Each Nostr user runs a client, which provides a user interface, and allows interaction with any number of chosen relays. Publishing the same post to multiple relays is trivial. When reading, if the client fetches the same post multiple times it only shows it once.</p>
+	<p>While from the technical point of view of relay operators each relay is essentially analogous to an independent platform, this is mostly transparent to the user. From the point of view of the user, which is the one that matters the most, the whole Nostr ecosystem is just one decentralized censorship-resistant platform.</p>
+	<p>Each Nostr user has a cryptographic <i>key pair</i>: a <i>public key</i>, which acts as the public identifier of the user, and the corresponding <i>private key</i>, which is to be kept secret. Data is published to relays in the form of <i>events</i> (there are multiple <i>kinds</i> of event, such as the publication of a note), which have a unique identifier, contain the author's public key and are cryptographically <i>signed</i>.</p>
+	<p>Computing the <i>signature</i> for an event requires knowing the author's private key, but verifying it only requires the public key. The content of an event can't be modified without invalidating its signature. Clients automatically verify signatures and ignore invalid events.</p>
+</section>
+<section>
+	<h2>About Padclaws</h2>
+	<p>Padclaws is a free and open source web client for Nostr. Its source code is hosted on <a href="https://github.com/Aspie96/Padclaws"></a>GitHub</p>a>.</p>
+	<p>Anyone can host an instance of Padclaws for private or public use. Indeed, Padclaws is served to the browser as a static website, which only requires the basic functionalities of any HTTP server. The official hosted public instance of Padclaws has the same name as the software and is located at <a href="https://padclaws.org/">padclaws.org</a>.</p>
+	<p>Besides software freedom and easiness of deployment, Padclaws is focused on robustness, privacy (it never talks to any relay or other server unless manually configured by the user), accessibility (trough <a href="https://www.w3.org/TR/WCAG21/">WCAG guidelines</a> and the <a href="https://brailleinstitute.org/freefont">Atkinson Hyperlegible</a> font) and security (trough <a href="https://github.com/paulmillr/noble-secp256k1#security">audited</a> cryptographic libraries).</p>
+</section>
