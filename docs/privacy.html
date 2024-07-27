@@ -1,1 +1,26 @@
-N/A
+<section>
+	<h2>The Padclaws service</h2>
+	<p>The service covered by this privacy policy gives you access, under the <a href="https://padclaws.org/">padclaws.org</a> domain, to a public instance of a Web client for the <a href="https://github.com/nostr-protocol/nostr">Nostr</a> protocol for decentralized social networking.</p>
+	<p>The controller of the service is Valentino Giudice, who may be reached by email at <a href="mailto:valentino.giudice96@gmail.com">valentino.giudice96@gmail.com</a>.</p>
+	<p>The service receives browsing data, such as your IP address, the transmission of which is implied by the use of Web communication protocols. Your browsing data is disclosed to Web hosts or other data processors, which processes it, on behalf of the controller, for the purpose of fulfilling your requests, retaining it for the short time needed for this purpose.</p>
+	<p>Padclaws stores data which is necessary for its functionalities, including account information and other settings, as well as data retained for efficiency, locally on your device using <a href="https://html.spec.whatwg.org/multipage/webstorage.html#webstorage">Web storage</a>, a mechanism similar to cookies. This data is stored either for the duration of a browser session or indefinitely, until manual deletion, depending on the kind of data.</p>
+	<p>Padclaws will display data published by you, associated with the public identifier of your account, to any user that fetches it, even if published trough another client.</p>
+	<p>If you believe that the processing of your personal data infringes the applicable law, you have the right to lodge a complaint with a competent privacy supervisory authority in the <a href="https://www.edpb.europa.eu/about-edpb/about-edpb/members">European Union</a> or the <a href="https://ico.org.uk/">United Kingdom</a>.</p>
+</section>
+<section>
+	<h2>Nostr Relays</h2>
+	<p>Padclaws is a tool for communicating with any number of relays (Nostr servers) of your choice.</p>
+	<p>Each Nostr account is identified uniquely by a cryptographic public key. Information published to relays (such as text notes or account metadata) is associated with your public key. Erasing or rectifying data which has been previously published may be impossible.</p>
+	<p>The relays you communicate will receive, directly from your device, data the transmission of which is implied by the use of the Nostr protocol or by your activity, such as your IP address, your public key, the content of your requests and anything you publish.</p>
+	<p>Relays are controlled independently by third parties, unaffiliated with Padclaws, who determine the purpose, the means and the duration of any processing of data they may perform. In general, their activities will include processing data received from you for the purpose of fulfilling your requests, according to their role and the Nostr protocol.</p>
+	<p>Anything published to any relay may be processed by any Nostr client and displayed to other users, in association with your public key and account metadata. It may also become available from relays you don't directly communicate with.</p>
+	<p>To prevent relays from receiving your IP address, it's advisable to use an anonymizing system, such as a VPN service or a darknet.</p>
+	<p>You can configure your selected relays in the <i><RouterLink :to="{ name: 'settings-relays' }">Relays</RouterLink></i> page.</p>
+</section>
+<section>
+	<h2>Data management</h2>
+	<p>Your can obtain a copy of the data stored in Web storage from the <i><RouterLink :to="{ name: 'settings-data' }">Data</RouterLink></i> page.</p>
+	<p>The same page also allows you to delete all data currently stored in Web storage.</p>
+	<p>If you are logged in, the page allows you to fetch from relays data previously published by you. Because relays are operated by independent parties, and because they don't all offer the same set of features, the result of this operation cannot be guaranteed to be complete.</p>
+	<p>You will be able to download the available data in a structured and machine-readable format.</p>
+</section>

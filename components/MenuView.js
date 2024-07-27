@@ -114,7 +114,7 @@ export default {
 					</RouterLink>
 				</li>
 				<li>
-					<a href="https://github.com/Aspie96/Padclaws">
+					<a href="https://github.com/Aspie96/Padclaws/tree/deploy">
 						<span class="ti ti-code"></span>
 						<span class="menu-option">Source code</span>
 					</a>
@@ -140,7 +140,7 @@ export default {
 					</RouterLink>
 				</li>
 				<li>
-					<a href="https://github.com/Aspie96/Padclaws">
+					<a href="https://github.com/Aspie96/Padclaws/tree/deploy">
 						<span class="ti ti-code"></span>
 						<span class="menu-option">Source code</span>
 					</a>
